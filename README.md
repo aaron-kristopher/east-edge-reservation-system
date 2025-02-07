@@ -48,8 +48,8 @@
 
 <!--[![Product Name Screen Shot][product-screenshot]](https://example.com)-->
 
-Welcome to the East K' Edge Barbershop Reservation System, a web-based application designed to simplify the scheduling process for barbershop appointments. 
-This system provides an efficient, user-friendly platform for both customers and barbers, ensuring seamless reservations, notifications, and time management.
+Welcome to the **East K' Edge Barbershop Reservation System**, a web-based application designed to simplify the scheduling process for barbershop appointments. This system provides an efficient, user-friendly platform for both customers and barbers, ensuring seamless reservations, notifications, 
+and time management.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -57,10 +57,12 @@ This system provides an efficient, user-friendly platform for both customers and
 
 ### Built With
 
-This section should list any major frameworks/libraries used to bootstrap your project. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
+This project leverages the following technologies to deliver a seamless and user-friendly experience:
 
 * [![Bootstrap][Bootstrap.com]][Bootstrap-url]
 * [![Django][Django.com]][Django-url]
+
+These technologies work together to create a robust, scalable, and visually appealing reservation system.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
