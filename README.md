@@ -4,7 +4,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/aaron-kristopher/east-edge-reservation-system">
-    <img src="images/logo.png" alt="Logo">
+    <img src="images/logo.png" alt="Logo" height="150" width="150">
   </a>
 
   <h3 align="center">East K' Edge Reservation System</h3>
@@ -57,12 +57,10 @@ and time management.
 
 ### Built With
 
-This project leverages the following technologies to deliver a seamless and user-friendly experience:
+This project leverages the following technologies to deliver a seamless and user-friendly experience. These technologies work together to create a robust, scalable, and visually appealing reservation system.:
 
 * [![Bootstrap][Bootstrap.com]][Bootstrap-url]
 * [![Django][Django.com]][Django-url]
-
-These technologies work together to create a robust, scalable, and visually appealing reservation system.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
