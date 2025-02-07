@@ -4,7 +4,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/aaron-kristopher/east-edge-reservation-system">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
+    <img src="images/logo.png" alt="Logo">
   </a>
 
   <h3 align="center">East K' Edge Reservation System</h3>
@@ -12,7 +12,7 @@
   <p align="center">
     A reservation system for East K' Edge Barbershop &amp; Salon
     <br />
-    <a href="https://github.com/othneildrew/Best-README-Template"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/aaron-kristopher/east-edge-reservation-system"><strong>Explore the docs »</strong></a>
     <br />
   </p>
 </div>
@@ -80,12 +80,12 @@ Make sure you have the following tools installed on your system:
 
 
 ### Installation
-1.Clone the Repository
+1. Clone the Repository
 ```sh
 git clone https://github.com/aaron-kristopher/east-edge-reservation-system.git
 ```
 
-2.Set up a Virtual Environment
+2. Set up a Virtual Environment
 ```sh
 python3 -m venv venv
 source venv/bin/activate  # Linux/macOS
@@ -119,7 +119,7 @@ Open your browser and visit [http://127.0.0.1:8000](http://127.0.0.1:8000) to ac
 - [ ] Customer Appointment Page
 - [ ] Notification System
 
-See the [open issues](https://github.com/othneildrew/Best-README-Template/issues) for a full list of proposed features (and known issues).
+See the [open issues](https://github.com/aaron-kristopher/east-edge-reservation-system/issues) for a full list of proposed features (and known issues).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
