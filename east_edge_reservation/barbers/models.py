@@ -7,7 +7,7 @@ class Barber(models.Model):
     phone_number = models.CharField(max_length=11)
 
     def __str__(self):
-        return f"ID: {self.id}\nName:{self.first_name} {self.last_name}\nPhone number: {self.phone_number}"
+        return f"{self.first_name} {self.last_name}"
 
 
 class Service(models.Model):
