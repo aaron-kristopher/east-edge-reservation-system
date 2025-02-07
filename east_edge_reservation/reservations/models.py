@@ -25,20 +25,21 @@ class Reservation(models.Model):
         help_text="Calculated based on services' estimated time",
     )
 
-    def calculate_end_datetime(self):
+    def update_end_datetime(self):
         """
-        Calculates the end time of the reservation based on the total estimated time of services.
+        Updates the reservation's end_datetime based on all related ReservationServices.
         """
         total_estimated_time = sum(
             rs.barber_service.service.estimated_time
             for rs in self.reservation_services.all()
         )
-        return self.start_datetime + timedelta(minutes=total_estimated_time)
+        self.end_datetime = self.start_datetime + timedelta(
+            minutes=total_estimated_time
+        )
+        self.save()
 
-    def save(self, *args, **kwargs):
-        # Automatically calculate and set end_datetime
-        self.end_datetime = self.calculate_end_datetime()
-        super().save(*args, **kwargs)
+    def __str__(self):
+        return f"[{self.barber.first_name}]: Reservation for {self.customer.first_name}"
 
 
 class ReservationService(models.Model):
@@ -55,6 +56,14 @@ class ReservationService(models.Model):
         related_name="reservation_services",
     )
 
+    def save(self, *args, **kwargs):
+        """
+        Overrides the save method to update the reservation's end_datetime
+        whenever a ReservationService is added or modified.
+        """
+        super().save(*args, **kwargs)  # Save the instance first
+        self.reservation.update_end_datetime()  # Update the reservation's end time
+
     def clean(self):
         """
         Ensure that the barber in the reservation matches the barber in the barber_service.
@@ -63,6 +72,9 @@ class ReservationService(models.Model):
             raise ValidationError(
                 "The barber for this service does not match the barber in the reservation."
             )
+
+    def __str__(self):
+        return f"Reservation {self.reservation.id}: {self.barber_service.service.service_name}"
 
     class Meta:
         unique_together = ("reservation", "barber_service")
