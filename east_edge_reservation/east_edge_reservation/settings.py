@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "barbers.apps.BarbersConfig",
     "customers.apps.CustomersConfig",
+    "reservations.apps.ReservationsConfig",
 ]
 
 MIDDLEWARE = [
