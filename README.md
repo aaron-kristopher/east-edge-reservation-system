@@ -87,8 +87,7 @@ git clone https://github.com/aaron-kristopher/east-edge-reservation-system.git
 
 2. Set up a Virtual Environment
 ```sh
-python3 -m venv venv
-source venv/bin/activate  # Linux/macOS
+source linux_venv/bin/activate  # Linux/macOS
 venv\Scripts\activate     # Windows
 ```
 
