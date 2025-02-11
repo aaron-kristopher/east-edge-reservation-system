@@ -1,6 +1,6 @@
 from django.db import models
 from datetime import timedelta
-from barbers.models import Barber, BarberService
+from barbers.models import Barber, Service
 from customers.models import Customer
 
 
@@ -18,6 +18,12 @@ class Reservation(models.Model):
         verbose_name="Customer",
         related_name="reservations",
     )
+    services = models.ManyToManyField(
+        Service,
+        verbose_name="Services",
+        related_name="reservations",
+        help_text="Services included in this reservation",
+    )
     end_datetime = models.DateTimeField(
         blank=True,
         null=True,
@@ -25,56 +31,25 @@ class Reservation(models.Model):
         help_text="Calculated based on services' estimated time",
     )
 
+    def save(self, *args, **kwargs):
+        """
+        Overrides the save method to update end_datetime.
+        Ensures the object is saved first before calculating the end_datetime.
+        """
+        super().save(*args, **kwargs)  # Save the instance to generate an ID
+        self.update_end_datetime()  # Update end_datetime based on services
+        super().save(*args, **kwargs)  # Save again to persist the changes
+
     def update_end_datetime(self):
         """
-        Updates the reservation's end_datetime based on all related ReservationServices.
+        Updates the reservation's end_datetime based on all selected services.
         """
         total_estimated_time = sum(
-            rs.barber_service.service.estimated_time
-            for rs in self.reservation_services.all()
+            service.estimated_time for service in self.services.all()
         )
         self.end_datetime = self.start_datetime + timedelta(
             minutes=total_estimated_time
         )
-        self.save()
 
     def __str__(self):
         return f"[{self.barber.first_name}]: Reservation for {self.customer.first_name}"
-
-
-class ReservationService(models.Model):
-    reservation = models.ForeignKey(
-        Reservation,
-        on_delete=models.CASCADE,
-        verbose_name="Reservation",
-        related_name="reservation_services",
-    )
-    barber_service = models.ForeignKey(
-        BarberService,
-        on_delete=models.CASCADE,
-        verbose_name="Barber Service",
-        related_name="reservation_services",
-    )
-
-    def save(self, *args, **kwargs):
-        """
-        Overrides the save method to update the reservation's end_datetime
-        whenever a ReservationService is added or modified.
-        """
-        super().save(*args, **kwargs)  # Save the instance first
-        self.reservation.update_end_datetime()  # Update the reservation's end time
-
-    def clean(self):
-        """
-        Ensure that the barber in the reservation matches the barber in the barber_service.
-        """
-        if self.reservation.barber != self.barber_service.barber:
-            raise ValidationError(
-                "The barber for this service does not match the barber in the reservation."
-            )
-
-    def __str__(self):
-        return f"Reservation {self.reservation.id}: {self.barber_service.service.service_name}"
-
-    class Meta:
-        unique_together = ("reservation", "barber_service")
