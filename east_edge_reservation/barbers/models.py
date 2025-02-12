@@ -20,3 +20,15 @@ class Service(models.Model):
 
     def __str__(self):
         return f"{self.service_name} - {self.price} PHP ({self.estimated_time} mins)"
+
+
+class Schedule(models.Model):
+    start_datetime = models.DateTimeField()
+    end_datetime = models.DateTimeField()
+    barber = models.ForeignKey(Barber, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.start_datetime} - {self.start_datetime}"
+
+    class Meta:
+        ordering = ["start_datetime"]
