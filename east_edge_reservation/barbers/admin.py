@@ -3,7 +3,7 @@ from django.utils.translation import gettext_lazy as _
 from unfold.admin import ModelAdmin
 from unfold.contrib.filters.admin import MultipleRelatedDropdownFilter
 
-from .models import Barber, Service
+from .models import Barber, Service, Schedule
 
 
 class MultipleRelatedDropdownFilterAND(MultipleRelatedDropdownFilter):
@@ -26,6 +26,7 @@ class MultipleRelatedDropdownFilterAND(MultipleRelatedDropdownFilter):
 
 @register(Barber)
 class BarberAdmin(ModelAdmin):
+    list_display = ("first_name", "last_name")
     list_filter_submit = True
     list_filter = [
         ("services", MultipleRelatedDropdownFilterAND),
@@ -34,4 +35,9 @@ class BarberAdmin(ModelAdmin):
 
 @register(Service)
 class ServiceAdmin(ModelAdmin):
-    pass
+    list_display = ("service_name", "price")
+
+
+@register(Schedule)
+class ScheduleAdmin(ModelAdmin):
+    list_display = ("barber", "start_datetime", "end_datetime")
