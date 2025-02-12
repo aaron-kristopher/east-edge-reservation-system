@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "barbers.apps.BarbersConfig",
     "customers.apps.CustomersConfig",
     "reservations.apps.ReservationsConfig",
+    "core.apps.CoreConfig",
 ]
 
 MIDDLEWARE = [

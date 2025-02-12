@@ -1,4 +1,8 @@
-from django.contrib import admin
+from django.contrib.admin import register
+from unfold.admin import ModelAdmin
 from .models import Customer
 
-admin.site.register(Customer)
+
+@register(Customer)
+class CustomerAdmin(ModelAdmin):
+    pass

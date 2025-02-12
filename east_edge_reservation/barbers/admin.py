@@ -1,6 +1,13 @@
-from django.contrib import admin
+from django.contrib.admin import register
+from unfold.admin import ModelAdmin
 from .models import Barber, Service
 
-# Register your models here.
-admin.site.register(Barber)
-admin.site.register(Service)
+
+@register(Barber)
+class BarberAdmin(ModelAdmin):
+    pass
+
+
+@register(Service)
+class ServiceAdmin(ModelAdmin):
+    pass
