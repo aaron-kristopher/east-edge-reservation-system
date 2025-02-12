@@ -224,6 +224,11 @@ UNFOLD = {
                         "icon": "content_cut",
                         "link": reverse_lazy("admin:barbers_service_changelist"),
                     },
+                    {
+                        "title": _("Schedules"),
+                        "icon": "calendar_month",
+                        "link": reverse_lazy("admin:barbers_schedule_changelist"),
+                    },
                 ],
             },
             {
