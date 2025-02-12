@@ -23,6 +23,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     "unfold",
+    "unfold.contrib.filters",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -194,7 +195,7 @@ UNFOLD = {
                     },
                     {
                         "title": _("Reservations"),
-                        "icon": "dashboard",  # Supported icon set: https://fonts.google.com/icons
+                        "icon": "event_available",  # Supported icon set: https://fonts.google.com/icons
                         "link": reverse_lazy(
                             "admin:reservations_reservation_changelist"
                         ),
@@ -214,13 +215,13 @@ UNFOLD = {
                 "items": [
                     {
                         "title": _("Barbers"),
-                        "icon": "dashboard",  # Supported icon set: https://fonts.google.com/icons
+                        "icon": "person_apron",  # Supported icon set: https://fonts.google.com/icons
                         "link": reverse_lazy("admin:barbers_barber_changelist"),
                         "permission": lambda request: request.user.is_superuser,
                     },
                     {
                         "title": _("Services"),
-                        "icon": "people",
+                        "icon": "content_cut",
                         "link": reverse_lazy("admin:barbers_service_changelist"),
                     },
                 ],
@@ -232,7 +233,7 @@ UNFOLD = {
                 "items": [
                     {
                         "title": _("Customers"),
-                        "icon": "dashboard",  # Supported icon set: https://fonts.google.com/icons
+                        "icon": "person",  # Supported icon set: https://fonts.google.com/icons
                         "link": reverse_lazy("admin:customers_customer_changelist"),
                         "permission": lambda request: request.user.is_superuser,
                     },
