@@ -1,3 +1,4 @@
+{%load static%}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,18 +9,27 @@
 
     <!-- Latest compiled JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <title>Barber List</title>
+    <link rel="stylesheet" href="{% static 'css/landing-styles.css' %}">
+    <title>Main</title>
+    <style>
+      body {
+          background-image: url("{% static 'images/bg.png' %}");
+          background-size: cover;
+          background-position: center;
+          background-repeat: no-repeat;
+      }
+  </style>
 </head>
 <body>
 
-    <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+    <nav class="navbar navbar-expand-sm navbar-dark">
         <div class="container-fluid">
-          <a class="navbar-brand" href="#">Logo</a>
+          <a class="navbar-brand" href="#"><img src="{% static 'images/logo.png' %}" alt="logo" width="12%"> EAST 'K EDGE</a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
-            <span class="navbar-toggler-icon"></span>
+            <span class="ti-menu"></span>
           </button>
           <div class="collapse navbar-collapse" id="collapsibleNavbar">
-            <ul class="navbar-nav">
+            <ul class="navbar-nav mx-auto" id="navbar-navlist">
               <li class="nav-item">
                 <a class="nav-link" href="#">Login</a>
               </li>
@@ -31,24 +41,33 @@
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="#">FAQ</a>
-              </li>    
+              </li> 
+              <!--<li class="list-inline-item text-whiter"></li>
+              <li class="list-inline-item"></li> -->
             </ul>
           </div>
         </div>
     </nav>
 
     
-    <div class="mt-4 p-5">
-        <h1>A Style That Speaks For You</h1>
-        </p>"Love is in the air. Let you hair down, and let's have fun"</p>
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="align-self-center col-md-7">
+          <div class=" p-5">
+            <h1>A Style That Speaks For You</h1>
+            </p>"Lorem Ipsum is simply dummy text of the printing and typesetting industry. 
+            Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.
+            "</p>
+            <div class="mt-4">
+              <a href="#" class="btn btn-outline-secondary btn-round">Reserve Now!</a>
+            </div>
+          </div>
+        </div>
+        <div class="align-self-center col-md-5">
+          <img src="{% static 'images/hooman.png' %}" alt="landing-pg-image" width="80%" id="img">
+        </div>
+      </div>
     </div>
-
-    <button type="button" class="btn btn-outline-secondary">Reserve Now!</button>
-
-    {% for barber in barbers %}
-	<li>{{barber}}</li>
-	{% endfor %}
-
 
     
 </body>
