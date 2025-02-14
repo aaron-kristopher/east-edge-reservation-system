@@ -9,6 +9,7 @@ class Reservation(models.Model):
     class ReservationStatus(models.TextChoices):
         COMPLETED = "C", _("Completed")
         PENDING = "P", _("Pending")
+        CANCELLED = "X", _("Cancelled")
 
     start_datetime = models.DateTimeField()
     barber = models.ForeignKey(

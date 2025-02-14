@@ -58,13 +58,14 @@ class ReservationAdmin(ModelAdmin):
         Returns the status field with different colors depending on the value.
         """
         color_map = {
-            "P": "color: #f3aa20; font-weight: 600;",  # Pending (Yellow)
-            "C": "color: #2a9d8f; font-weight: 600;",  # Confirmed (Green)
+            "P": "bg-primary-200 text-primary-700 dark:bg-primary-500/20 dark:text-primary-400",
+            "C": "bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400",  # Confirmed (Green)
+            "X": "bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400",  # Confirmed (Green)
         }
-        style = color_map.get(obj.status, "color: black; font-weight: 600;")
+        color_class = color_map.get(obj.status, "")
         return format_html(
-            '<span style="{}">{}</span>',
-            style,
+            '<span class="inline-block font-semibold leading-normal px-2 py-1 rounded text-xxs uppercase whitespace-nowrap {}">{}</span>',
+            color_class,
             obj.get_status_display(),
         )
 
