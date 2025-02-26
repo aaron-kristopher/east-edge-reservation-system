@@ -4,9 +4,15 @@ from . import views
 urlpatterns = [
     path("", views.customers, name="customers"),
     path(
-        "make-reservation/",
+        "reservation/select",
         views.customer_reservations,
         name="customer_reservations",
     ),
-    path("make-reservation/barbers", views.barbers, name="barbers"),
+    path(
+        "reservation/schedule",
+        views.reservation_schedule,
+        name="reservation_schedule",
+    ),
+    path("api/barbers", views.barbers, name="barbers"),
+    path("api/reservations", views.get_barber_reservations, name="reservations"),
 ]

@@ -2,6 +2,7 @@ from django.db.models import Q, Count
 from django.http import JsonResponse
 from django.shortcuts import render
 from barbers.models import Barber, Service
+from reservations.models import Reservation
 
 # Create your views here.
 
@@ -12,7 +13,7 @@ def customers(request):
 
 def customer_reservations(request):
     context = {"services": Service.objects.all(), "barbers": Barber.objects.all()}
-    return render(request, "customers/reservations.html", context)
+    return render(request, "customers/reservation_select.html", context)
 
 
 def barbers(request):
@@ -27,3 +28,21 @@ def barbers(request):
         .values()
     )
     return JsonResponse(barbers, safe=False)
+
+
+def reservation_schedule(request):
+    return render(request, "customers/reservation_schedule.html")
+
+
+def get_barber_reservations(request):
+    barber_id = int(request.GET.get("id"))
+    datetime = request.GET.get("datetime")
+
+    reservations = list(
+        Reservation.objects.filter(barber__id=barber_id)
+        .filter(start_datetime__gte=datetime)
+        .filter(status="P")
+        .values()
+    )
+
+    return JsonResponse(reservations, safe=False)
