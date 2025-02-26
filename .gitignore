@@ -2,12 +2,8 @@
 *.log
 *.pot
 *.pyc
-*.py[cod]
-*/*/__pycache__/
-__pycache__/
+__pycache__
 db.sqlite3
 media
 
-
 venv/
-linux_venv/
