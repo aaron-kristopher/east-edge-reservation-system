@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -16,42 +18,10 @@
 
   <!--ICONS-->
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
-  <style>
-    :root {
-      --white: #F2FEFF;
-      --black: #1E1E1E;
-      --grey: #C4C4C4;
-      --primary: #FF5C08;
-      --secondary: #F6DBA0;
-    }
 
-    body {
-      background: var(--primary);
-      font-family: "Montserrat" !important;
-    }
+  <!--CUSTOM CSS-->
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 
-    .navbar {
-      background: var(--primary) !important;
-    }
-
-    .navbar-brand {
-      font-weight: 600 !important;
-    }
-
-    .navbar .nav-link,
-    .navbar-brand {
-      color: var(--white) !important;
-    }
-
-    .navbar-toggler {
-      color: var(--white) !important;
-      border: none !important;
-    }
-
-    .profile {
-      color: var(--white);
-    }
-  </style>
 </head>
 
 <body>
@@ -92,8 +62,173 @@
     </div>
   </nav>
 
+  
+
+  <!--START OF SELECTION-->
+  <div class="container vh-100 mt-5" id="select-service">
+    <div id="services-section">
+      <button class="btn btn-secondary rounded-pill d-flex align-items-center ps-3" data-bs-toggle="collapse" data-bs-target="#services-offered">
+        SELECTED SERVICES <i class="ps-2 material-symbols-outlined">keyboard_arrow_down</i>
+      </button>
+      <div id="services-offered" class="collapse">
+        <div class="row mt-3">
+
+          <div class="col-lg-4" id="hair-services">
+          <h6>HAIR SERVICES</h6>
+          {% for service in services %}
+
+            {% if service.category == "H" %}
+            <div class="form-check custom-checkbox">
+              <input class="form-check-input" type="checkbox" value={{ service.id }}>
+              <label class="form-check-label text-uppercase ps-3 mb-3">{{ service.service_name }}</input>
+            </div>
+            {% endif %}
+          {% endfor %}
+          </div>
+
+          <div class="col-lg-4" id="nail-services">
+          <h6>HAIR SERVICES</h6>
+          {% for service in services %}
+
+            {% if service.category == "N" %}
+            <div class="form-check custom-checkbox">
+              <input class="form-check-input" type="checkbox" value={{ service.id }}>
+              <label class="form-check-label text-uppercase ps-3 mb-3">{{ service.service_name }}</input>
+            </div>
+            {% endif %}
+          {% endfor %}
+          </div>
+
+          <div class="col-lg-4" id="grooming-services">
+          <h6>GROOMING SERVICES</h6>
+          {% for service in services %}
+
+            {% if service.category == "G" %}
+            <div class="form-check custom-checkbox">
+              <input class="form-check-input" type="checkbox" value={{ service.id }}>
+              <label class="form-check-label text-uppercase ps-3 mb-3">{{ service.service_name }}</input>
+            </div>
+            {% endif %}
+          {% endfor %}
+          </div>
+        </div>
+    </div>
+    <div class="mt-3 overflow-auto text-nowrap" id="selected-services"></div>
+    <div class="row g-3" id="barbers">
+      {% for barber in barbers %}
+        <div class="col-12 col-sm-6 col-lg-3 card-wrapper d-none" data-barber-id="{{barber.id}}">
+          <div class="card">
+            <img class="card-img-top" src="https://placehold.co/300" alt="Card image" style="width:100%">
+            <div class="card-body">
+                <h4 class="card-title">{{ barber.first_name}} {{ barber.last_name}}</h4>
+              <p class="card-text">Some example text some example text. John Doe is an architect and engineer</p>
+              <a href="#" class="btn btn-primary">See Profile</a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+        <div id="empty-barber-section">
+          <h4>Please Select Services to choose barber</h4>
+        </div>
+    </div>
+  </div>
 
 
+  <script>
+    const ids = new Set()
+    const selectedServicesDiv = document.getElementById("selected-services");
+    const checkboxes = document.querySelectorAll('input[type=checkbox]');
+    const barbersDiv = document.getElementById("barbers");
+    const barberCards = document.querySelectorAll(".card-wrapper");
+    const emptyBarberDiv = document.getElementById("empty-barber-section");
+    console.log(barberCards)
+
+    checkboxes.forEach(checkbox => {
+      checkbox.addEventListener("change", () => handleServiceToggle(checkbox))
+    });
+
+    function handleServiceToggle(checkbox) {
+      const serviceId = checkbox.value;
+      const serviceName = checkbox.nextSibling.nextSibling.textContent.trim();
+
+      if (checkbox.checked) {
+        addServicePill(serviceId, serviceName)
+        ids.add(serviceId);
+      } else {
+        removeServicePill(serviceId);
+        ids.delete(serviceId);
+      }
+
+      getBarbers();
+    }
+
+    function addServicePill(serviceId, serviceName) {
+
+      const pill = document.createElement("span");
+      pill.textContent = serviceName;
+      pill.className = "service-pill d-inline-flex align-items-center text-uppercase";
+      pill.id = `pill-${serviceId}`;
+
+      const icon = document.createElement("span");
+      icon.textContent = "close";
+      icon.className = "material-symbols-outlined ps-1";
+
+      icon.onclick = () => {
+        document.querySelector(`#services-offered input[value="${serviceId}"]`).checked = false;
+        removeServicePill(serviceId);
+        ids.delete(serviceId);
+        getBarbers();
+      };
+
+      pill.appendChild(icon);
+      selectedServicesDiv.appendChild(pill);
+    }
+
+    function removeServicePill(serviceId) {
+      const pill = document.getElementById(`pill-${serviceId}`);
+      if (pill) pill.remove();
+
+    }
+
+    async function getBarbers() {
+      if (ids.size === 0) {
+
+        barberCards.forEach(barberCard => {
+          barberCard.classList.add("d-none");
+        });
+        emptyBarberDiv.classList.remove("d-none");
+        console.log("No services selected");
+        return; 
+      } 
+
+      const url = `http://127.0.0.1:8000/make-reservation/barbers?ids=${Array.from(ids).join()}`
+      try {
+        const response = await fetch(url);
+
+        if (!response.ok) 
+          throw new Error(`Response status: ${response.status}`)
+
+        const data = await response.json();
+        if (data) 
+          updateBarbers(data);
+
+      } catch (error){
+        console.log(error.message)
+      }
+    }
+
+    function updateBarbers(data) {
+      const barberIds = new Set(data.map(barber => barber.id));
+      console.log(barberIds);
+
+      emptyBarberDiv.classList.add("d-none");
+      barberCards.forEach(barberCard => {
+        const cardId = Number(barberCard.dataset.barberId);
+  
+        barberCard.classList.toggle("d-none", !barberIds.has(cardId));
+      })
+    }
+  </script>
 </body>
 
 </html>
