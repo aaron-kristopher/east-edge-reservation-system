@@ -201,7 +201,7 @@
         return; 
       } 
 
-      const url = `http://127.0.0.1:8000/make-reservation/barbers?ids=${Array.from(ids).join()}`
+      const url = `http://127.0.0.1:8000/api/barbers?ids=${Array.from(ids).join()}`
       try {
         const response = await fetch(url);
 
