@@ -1,0 +1,111 @@
+:root {
+    /* global styling (main) */
+    --color-main-orange: #FF5C08;
+    --color-main-light-orange: #FE8F08;
+    --gradient-navbar-og: linear-gradient(to right,#ff5c08, #fe8f08);
+    --font-main-sans-serif: "Montserrat", "sans-serif";
+    --bs-box-shadow: 0.1px 0 20px rgba(0, 0, 0, 0.03); 
+
+    /* additional colors */
+    --color-blue: #007bff;
+    --color-indigo: #6610f2;
+    --color-purple: #696cff;
+    --color-pink: #e83e8c;
+    --color-red: #ff3e1d;
+    --color-orange: #fd7e14;
+    --color-yellow: #ffab00;
+    --color-green: #71dd37;
+    --color-teal: #20c997;
+    --color-cyan: #03c3ec;
+    --color-white: #fff;
+    --color-gray: rgba(67, 89, 113, 0.6);
+    --color-gray-dark: rgba(67, 89, 113, 0.8);
+    --color-primary: #696cff;
+    --color-secondary: #8592a3;
+    --color-success: #71dd37;
+    --color-info: #03c3ec;
+    --color-warning: #ffab00;
+    --color-danger: #ff3e1d;
+    --color-light: #fcfdfd;
+    --color-dark: #233446;
+    --bs-gray: rgba(67, 89, 113, 0.1);
+}
+
+
+body{
+    font-family: var(--font-main-sans-serif);
+}
+
+.navbar{
+    background-image: var(--gradient-navbar-og);
+}
+
+.navbar-logo{
+    margin-top: 0.25em;
+}
+.navbar-brand{
+    font-weight: bold;
+}
+
+#logo{
+    margin-bottom: 0.1em;
+    margin-right: 0.2em;
+}
+
+.navbar-collapse{
+    flex-grow: 0;
+    margin-right: 1.5em;
+    font-weight: 500;
+}
+
+.nav-item > .nav-link{
+    color: var(--color-white);
+}
+
+.navbar-container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.navbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.navbar-logo, .navbar-menu-button {
+    flex: 1; 
+}
+
+.navbar-menu-button {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.profilenav {
+    margin-left: 1em; 
+}
+
+.profilenav a i {
+    font-size: 24px; 
+    color: white; 
+    margin: 0.24em 0.2em;
+}
+
+@media screen and (max-width: 991px){
+    #logo{
+        width: 18%;
+        margin-bottom: 0.18em;
+    }
+
+
+}
+
+
+
+
+
+

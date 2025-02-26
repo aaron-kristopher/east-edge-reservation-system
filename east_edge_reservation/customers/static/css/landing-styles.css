@@ -1,40 +1,185 @@
+:root {
+    /* global styling (main) */
+    --color-main-orange: #FF5C08;
+    --color-main-light-orange: #FE8F08;
+    --gradient-navbar-og: linear-gradient(to right,#ff5c08, #fe8f08);
+    --font-main-sans-serif: "Montserrat", "sans-serif";
+    --bs-box-shadow: 0.1px 0 20px rgba(0, 0, 0, 0.03); 
+
+    /* additional colors */
+    --color-blue: #007bff;
+    --color-indigo: #6610f2;
+    --color-purple: #696cff;
+    --color-pink: #e83e8c;
+    --color-red: #ff3e1d;
+    --color-orange: #fd7e14;
+    --color-yellow: #ffab00;
+    --color-green: #71dd37;
+    --color-teal: #20c997;
+    --color-cyan: #03c3ec;
+    --color-white: #fff;
+    --color-gray: rgba(67, 89, 113, 0.6);
+    --color-gray-dark: rgba(67, 89, 113, 0.8);
+    --color-primary: #696cff;
+    --color-secondary: #8592a3;
+    --color-success: #71dd37;
+    --color-info: #03c3ec;
+    --color-warning: #ffab00;
+    --color-danger: #ff3e1d;
+    --color-light: #fcfdfd;
+    --color-dark: #233446;
+    --bs-gray: rgba(67, 89, 113, 0.1);
+}
+
 body{
-    overflow-x: hidden;
-    height: 100vh;
-    margin: 0;
-    padding: 0;
-    max-width: 100%;
-    max-height: 100%;
-    font-family: 'Montserrat', sans-serif;
-    background-color: #FEE5C8;
+    background-color: #2D241F;
+    overflow: hidden;
+}
+
+
+#landing-pg-content{
+    min-height: 85vh;
+    align-items: center;
+    max-width: 800px;
+    color: var(--color-white);
+    text-shadow: 2px 2px 4px #000000;
 
 }
 
-h1{
+.landing-paragraph > h1{
     font-weight: 600;
-}
-.navbar{
-    background-image: linear-gradient(to right, #FF5C08, #FE8F08);
-}
-.navbar-brand{
-    font-weight: 700;
+    box-shadow: var(--bs-box-shadow);
 }
 
-#img{
-    margin-left: 1.5em;
-    margin-top: 1em;
+
+.reserve-button{
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-@media only screen and (max-width: 425px) {
-    #img{
-        margin-top: -12%;
+.button {
+    justify-content: center;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+    padding-block: 0.5rem;
+    padding-inline: 1.25rem;
+    background-image: var(--gradient-navbar-og);
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffff;
+    gap: 10px;
+    font-weight: bold;
+    border: 3px solid #ffffff4d;
+    outline: none;
+    overflow: hidden;
+    font-size: 15px;
+    cursor: pointer;
+
+    /* align button to the center a bit */
+    margin-right: 0.5em;
+  }
+  
+  .icon {
+    width: 24px;
+    height: 24px;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .button:hover {
+    transform: scale(1.05);
+    border-color: #fff9;
+  }
+  
+  .button:hover .icon {
+    transform: translate(4px);
+  }
+  
+  .button:hover::before {
+    animation: shine 1.5s ease-out infinite;
+  }
+  
+  .button::before {
+    content: "";
+    position: absolute;
+    width: 100px;
+    height: 100%;
+    background-image: linear-gradient(
+      120deg,
+      rgba(255, 255, 255, 0) 30%,
+      rgba(255, 255, 255, 0.8),
+      rgba(255, 255, 255, 0) 70%
+    );
+    top: 0;
+    left: -100px;
+    opacity: 0.6;
+  }
+  
+  @keyframes shine {
+    0% {
+      left: -100px;
+    }
+  
+    60% {
+      left: 100%;
+    }
+  
+    to {
+      left: 100%;
     }
   }
 
-.p-5{
-    margin-top: 4%;
-}
+  .gradient-bg{
+    height: 9999px;
+    width: 100%;
+    margin-top: -100em;
+    background-color: #2D241F;
+    position: absolute;
+    z-index: -1;
+    opacity: 0.7;
+  }
 
+  /* button reserve top */
 
-
-
+  .btn {
+    outline: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--color-main-light-orange);
+    min-width: 110px;
+    min-height: 26px;
+    border: 0;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
+    box-sizing: border-box;
+    padding: 0px 10px;
+    color: var(--color-light);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  
+  .btn:hover {
+    opacity: .95;
+  }
+  
+  .btn .animation {
+    border-radius: 100%;
+    animation: ripple 0.6s linear infinite;
+  }
+  
+  @keyframes ripple {
+    0% {
+      box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.1), 0 0 0 20px rgba(255, 255, 255, 0.1), 0 0 0 40px rgba(255, 255, 255, 0.1), 0 0 0 60px rgba(255, 255, 255, 0.1);
+    }
+  
+    100% {
+      box-shadow: 0 0 0 20px rgba(255, 255, 255, 0.1), 0 0 0 40px rgba(255, 255, 255, 0.1), 0 0 0 60px rgba(255, 255, 255, 0.1), 0 0 0 80px rgba(255, 255, 255, 0);
+    }
+  }

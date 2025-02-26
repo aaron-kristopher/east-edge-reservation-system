@@ -1,0 +1,222 @@
+{% extends "customers/base.html" %}
+{%load static%}
+
+{% block landing-pg-styles %}{% endblock %}
+
+<title>{% block head_title %}Reservation{% endblock %}</title>
+
+
+{% block navbar %}
+    <nav class="navbar navbar-expand-sm navbar-dark">
+
+      <div class="container navbar-container">
+        <div class="navbar-logo">
+          <a class="navbar-brand" href="#"><img id="logo" src="{% static 'images/logo.png' %}" alt="logo" width="12%">EAST 'K EDGE</a>
+        </div>
+
+        <div class="navbar-menu-button">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+        </div>
+
+        <div class="profilenav">
+          <a href="#">
+            <i class="bx bx-user-circle"></i>
+          </a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="collapsibleNavbar">
+          <ul class="navbar-nav" id="navbar-navlist">
+            <li class="nav-item">
+              <a class="nav-link" href="#">Reservation</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">FAQ</a>              
+            </li> 
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+{% endblock %}
+
+
+
+{% block content %}
+    <div class="container-fluid mt-3">
+      <div class="p-5 bg-secondary text-white">
+        <h1>Welcome to East 'K Edge April!</h1> 
+        <p>Choose from our services and reserve from our amazing barbers</p> 
+      </div>
+    </div>
+
+    <div class="container-fluid mt-3">
+      <div id="accordion">
+        <div class="card">
+          <div class="card-header">
+            <a class="btn"  data-bs-toggle="collapse" href="#collapseOne">
+              Hair Services
+            </a>
+          </div>
+          <div id="collapseOne" class="collapse show" data-bs-parent="#accordion">
+            <div class="card-body">
+              <div class="checkbox-inputs hairservices">
+                  <label>
+                    <input class="checkbox-input" type="checkbox" name="haircut">
+                      <span class="checkbox-tile">
+                        <span class="checkbox-label">Haircut</span>
+                      </span>
+                  </label>
+                
+                
+                  <label>
+                    <input class="checkbox-input" type="checkbox" name="hairspa">
+                    <span class="checkbox-tile">
+                      <span class="checkbox-label">Hairspa</span>
+                    </span>
+                  </label>
+                
+                
+                  <label>
+                    <input class="checkbox-input" type="checkbox" name="shave">
+                    <span class="checkbox-tile">
+                      <span class="checkbox-label">Shave</span>
+                    </span>
+                  </label>
+                
+                
+                  <label>
+                    <input class="checkbox-input" type="checkbox" name="hairdye">
+                    <span class="checkbox-tile">
+                      <span class="checkbox-label">Hair Dye</span>
+                    </span>
+                  </label>
+                
+                
+                  <label>
+                    <input class="checkbox-input" type="checkbox" name="trim">
+                    <span class="checkbox-tile">
+                      <span class="checkbox-label">Trim Haircut</span>
+                    </span>
+                  </label>
+                
+                
+                  <label>
+                    <input class="checkbox-input" type="checkbox" name="massage">
+                    <span class="checkbox-tile">
+                      <span class="checkbox-label">Massage</span>
+                    </span>
+                  </label>
+              
+                  <label>
+                    <input class="checkbox-input" type="checkbox" name="massage">
+                    <span class="checkbox-tile">
+                      <span class="checkbox-label">Hair Rebond</span>
+                    </span>
+                  </label>
+                  <label>
+                    <input class="checkbox-input" type="checkbox" name="massage">
+                    <span class="checkbox-tile">
+                      <span class="checkbox-label">Hair Perm</span>
+                    </span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <a class="btn" data-bs-toggle="collapse" href="#collapseTwo">
+              Grooming Services
+            </a>
+          </div>
+          <div id="collapseTwo" class="collapse" data-bs-parent="#accordion">
+            <div class="card-body">
+              <div class="checkbox-inputs hairservices">
+                  <label>
+                    <input class="checkbox-input" type="checkbox" name="haircut">
+                      <span class="checkbox-tile">
+                        <span class="checkbox-label">Haircut1</span>
+                      </span>
+                  </label>
+                
+                
+                  <label>
+                    <input class="checkbox-input" type="checkbox" name="hairspa">
+                    <span class="checkbox-tile">
+                      <span class="checkbox-label">Hairspa1</span>
+                    </span>
+                  </label>
+                
+                
+                  <label>
+                    <input class="checkbox-input" type="checkbox" name="shave">
+                    <span class="checkbox-tile">
+                      <span class="checkbox-label">Shave1</span>
+                    </span>
+                  </label>
+                
+                
+                  <label>
+                    <input class="checkbox-input" type="checkbox" name="hairdye">
+                    <span class="checkbox-tile">
+                      <span class="checkbox-label">Hair Dye1</span>
+                    </span>
+                  </label>
+                
+                
+                  <label>
+                    <input class="checkbox-input" type="checkbox" name="trim">
+                    <span class="checkbox-tile">
+                      <span class="checkbox-label">Trim Haircut1</span>
+                    </span>
+                  </label>
+                
+                
+                  <label>
+                    <input class="checkbox-input" type="checkbox" name="massage">
+                    <span class="checkbox-tile">
+                      <span class="checkbox-label">Massage1</span>
+                    </span>
+                  </label>
+              
+                  <label>
+                    <input class="checkbox-input" type="checkbox" name="massage">
+                    <span class="checkbox-tile">
+                      <span class="checkbox-label">Hair Rebond1</span>
+                    </span>
+                  </label>
+                  <label>
+                    <input class="checkbox-input" type="checkbox" name="massage">
+                    <span class="checkbox-tile">
+                      <span class="checkbox-label">Hair Perm1</span>
+                    </span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="container mt-3">
+      <div class="x-button rounded" onclick="this.style.display='none'">
+          <a href="#">
+            Haircut <i class='bx bx-x'></i>
+          </a>
+      </div>
+    </div>
+
+    
+{% endblock %}
+
+
+
+
+    
+    
+
