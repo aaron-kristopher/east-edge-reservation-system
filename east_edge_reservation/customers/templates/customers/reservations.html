@@ -116,7 +116,7 @@
     <div class="mt-3 overflow-auto text-nowrap" id="selected-services"></div>
     <div class="row g-3" id="barbers">
       {% for barber in barbers %}
-        <div class="col-12 col-sm-6 col-lg-3 card-wrapper" data-barber-id="{{barber.id}}">
+        <div class="col-12 col-sm-6 col-lg-3 card-wrapper d-none" data-barber-id="{{barber.id}}">
           <div class="card">
             <img class="card-img-top" src="https://placehold.co/300" alt="Card image" style="width:100%">
             <div class="card-body">
@@ -127,6 +127,9 @@
           </div>
         </div>
       {% endfor %}
+        <div id="empty-barber-section">
+          <h4>Please Select Services to choose barber</h4>
+        </div>
     </div>
   </div>
 
@@ -136,7 +139,8 @@
     const selectedServicesDiv = document.getElementById("selected-services");
     const checkboxes = document.querySelectorAll('input[type=checkbox]');
     const barbersDiv = document.getElementById("barbers");
-    const barberCards = document.querySelectorAll(".card-wrapper")
+    const barberCards = document.querySelectorAll(".card-wrapper");
+    const emptyBarberDiv = document.getElementById("empty-barber-section");
     console.log(barberCards)
 
     checkboxes.forEach(checkbox => {
@@ -190,8 +194,9 @@
       if (ids.size === 0) {
 
         barberCards.forEach(barberCard => {
-          barberCard.classList.remove("d-none");
-        })
+          barberCard.classList.add("d-none");
+        });
+        emptyBarberDiv.classList.remove("d-none");
         console.log("No services selected");
         return; 
       } 
@@ -216,6 +221,7 @@
       const barberIds = new Set(data.map(barber => barber.id));
       console.log(barberIds);
 
+      emptyBarberDiv.classList.add("d-none");
       barberCards.forEach(barberCard => {
         const cardId = Number(barberCard.dataset.barberId);
   
