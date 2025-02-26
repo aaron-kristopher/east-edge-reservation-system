@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 
 class Barber(models.Model):
@@ -14,9 +15,17 @@ class Barber(models.Model):
 
 
 class Service(models.Model):
+    class ServiceCategory(models.TextChoices):
+        HAIR = "H", _("Hair Services")
+        NAIL = "N", _("Nail Services")
+        GROOM = "G", _("Grooming Services")
+
     service_name = models.CharField(max_length=100)
     price = models.FloatField()
     estimated_time = models.SmallIntegerField()
+    category = models.CharField(
+        max_length=1, choices=ServiceCategory, default=ServiceCategory.HAIR
+    )
 
     def __str__(self):
         return f"{self.service_name} - {self.price} PHP ({self.estimated_time} mins)"
