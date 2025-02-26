@@ -1,10 +1,16 @@
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 from datetime import timedelta
 from barbers.models import Barber, Service
 from customers.models import Customer
 
 
 class Reservation(models.Model):
+    class ReservationStatus(models.TextChoices):
+        COMPLETED = "C", _("Completed")
+        PENDING = "P", _("Pending")
+        CANCELLED = "X", _("Cancelled")
+
     start_datetime = models.DateTimeField()
     barber = models.ForeignKey(
         Barber,
@@ -30,6 +36,11 @@ class Reservation(models.Model):
         verbose_name="End Time",
         help_text="Calculated based on services' estimated time",
     )
+    status = models.CharField(
+        max_length=1,
+        choices=ReservationStatus,
+        default=ReservationStatus.PENDING,
+    )
 
     def save(self, *args, **kwargs):
         """
@@ -52,4 +63,4 @@ class Reservation(models.Model):
         )
 
     def __str__(self):
-        return f"[{self.barber.first_name}]: Reservation for {self.customer.first_name}"
+        return f"{self.barber.first_name}: Reservation for {self.customer.first_name}"

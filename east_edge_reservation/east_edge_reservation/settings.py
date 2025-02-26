@@ -1,3 +1,4 @@
+import os
 from django.templatetags.static import static
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
@@ -113,6 +114,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = "static/"
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "customers/static/"),
+    os.path.join(BASE_DIR, "static/"),
+]
+STATIC_ROOT = os.path.join(BASE_DIR, "assets")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -132,10 +138,10 @@ UNFOLD = {
     ],
     "SITE_URL": "/",
     "SITE_ICON": lambda request: static(
-        "icon.svg"
+        "images/logo.svg"
     ),  # both modes, optimise for 32px height
     "SITE_LOGO": lambda request: static(
-        "logo.svg"
+        "images/logo.svg"
     ),  # both modes, optimise for 32px height
     "SITE_SYMBOL": "speed",  # symbol from icon set
     "SHOW_HISTORY": True,  # show/hide "History" button, default: True
@@ -157,17 +163,17 @@ UNFOLD = {
             "950": "3 7 18",
         },
         "primary": {
-            "50": "250 245 255",
-            "100": "243 232 255",
-            "200": "233 213 255",
-            "300": "216 180 254",
-            "400": "192 132 252",
-            "500": "168 85 247",
-            "600": "147 51 234",
-            "700": "126 34 206",
-            "800": "107 33 168",
-            "900": "88 28 135",
-            "950": "59 7 100",
+            "50": "255 255 255",
+            "100": "255 254 253",
+            "200": "255 213 192",
+            "300": "255 200 171",
+            "400": "255 173 130",
+            "500": "255 146 90",
+            "600": "255 119 49",
+            "700": "255 92 8",
+            "800": "207 70 0",
+            "900": "151 51 0",
+            "950": "123 42 0",
         },
         "font": {
             "subtle-light": "var(--color-base-500)",  # text-base-500
@@ -246,4 +252,11 @@ UNFOLD = {
             },
         ],
     },
+    # "TABS": [
+    #     {
+    #         "models" : [
+    #             "app"
+    #         ]
+    #     }
+    # ]
 }
