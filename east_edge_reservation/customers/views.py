@@ -100,7 +100,7 @@ def customer_login(request):
         if user is not None:
             user.backend = "customers.backends.EmailBackend"
             login(request, user)
-            redirected_url = request.POST.get("next") or request.GET.get("next") or "customers" 
+            redirected_url = request.POST.get("next") or request.GET.get("next") or "reservation" 
             return redirect(redirected_url)
         else:
             error_message = "Invalid email or password."

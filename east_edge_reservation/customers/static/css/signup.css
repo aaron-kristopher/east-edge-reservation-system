@@ -107,12 +107,10 @@ input[type="number"]::-webkit-inner-spin-button{
     color: var(--text-color);
 }
   
-/* input background change in focus */
 .input:focus ~ .fancy-bg {
     background: var(--focus-input-bg-color);
 }
    
-/* this is for the default background in input,when selecting autofill options -- you can remove this code if you do not want to override the browser style.  */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,

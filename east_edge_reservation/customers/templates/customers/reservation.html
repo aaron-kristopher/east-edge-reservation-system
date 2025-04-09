@@ -174,12 +174,104 @@
         <div class="calendar-container d-flex flex-column align-items-center gap-4 col-sm-6">
           <div id="datetimepicker"></div>
           <select id="time-select" style="display: none;"></select>
-          <button onclick="getBarberReservations(this)" style="display: none;" class="getReservationButton">Get Reservation</button>
+          <button onclick="getBarberReservations(this)" style="display: none;" class="getReservationButton" data-bs-toggle="modal" data-bs-target="#myModal">Get Reservation</button>
           <div id="output"></div>
         </div>
       </div>
     </section>
     <br>
+
+
+    <!-- The Modal -->
+    <div class="modal" id="myModal">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <div class="d-flex flex-column">
+              <h4 class="modal-title">Guest Details</h4>
+              <div class="form-check form-switch me-3">
+                <input class="form-check-input" type="checkbox" role="switch" id="guestToggleSwitch" checked><h6 class="my-1"> Toggle this button off if reserving for a different person</h6>
+              </div>
+            </div>
+            <button type="button" class="btn-close mb-4" data-bs-dismiss="modal"></button>
+          </div>
+
+          <!-- Modal body -->
+          <div class="modal-body">
+            <form id="guestForm">
+              <div class="row mb-3 mt-3">
+                <div class="col-md-6 mb-3">
+                  <input type="text" class="form-control" id="guestFirstName" name="guestFirstName" placeholder="First Name">
+                </div>
+                <div class="col-md-6">
+                  <input type="text" class="form-control" id="guestLastName" name="guestLastName" placeholder="Last Name">
+                </div>
+              </div>
+              <div class="row mb-4">
+                <div class="col-md-6 mb-3">
+                  <input type="tel" class="form-control" id="guestContact" name="guestContact" placeholder="Contact Number">
+                </div>
+                <div class="col-md-6">
+                  <input type="email" class="form-control" id="guestEmail" name="guestEmail" placeholder="Email">
+                </div>
+              </div>
+    
+              <hr>
+    
+              <!-- Overview Section -->
+              <h4 class="mt-4">Overview</h4>
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="firstname" class="form-label">First Name</label>
+                  <input type="text" class="form-control overview" id="firstname" value="Matthew" readonly>
+                </div>
+                <div class="col-md-6">
+                  <label for="lastname" class="form-label">Last Name</label>
+                  <input type="text" class="form-control overview" id="lastname" value="Mascuñana" readonly>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="contact" class="form-label">Contact Number</label>
+                  <input type="text" class="form-control overview" id="contact" value="09123456789" readonly>
+                </div>
+                <div class="col-md-6">
+                  <label for="email" class="form-label">Email</label>
+                  <input type="text" class="form-control overview" id="email" value="matnmas@gmail.com" readonly>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="services" class="form-label">Service</label>
+                  <input type="text" class="form-control overview" id="services" value="Haircut" readonly>
+                </div>
+                <div class="col-md-6">
+                  <label for="barber" class="form-label">Barber</label>
+                  <input type="text" class="form-control overview" id="barber" value="Juan" readonly>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="datetime" class="form-label">Reservation Date and Time</label>
+                  <input type="text" class="form-control overview" id="datetime" value="March 19, 2025 - 10:00 am" readonly>
+                </div>
+                <div class="col-md-6">
+                  <label for="price" class="form-label">Total Price</label>
+                  <input type="text" class="form-control overview" id="overviewPrice" value="price" readonly>
+                </div>
+              </div>
+    
+              <div class="modal-footer">
+                <!-- <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button> -->
+                <button type="submit" form="guestForm" class="btn btn-warning submit-button ">Submit</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <script>
       let selectedBarberId = null;
