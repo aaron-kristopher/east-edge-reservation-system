@@ -1,8 +1,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from datetime import timedelta
 from barbers.models import Barber, Service
-from customers.models import Customer, UserModel
+from customers.models import UserModel
 
 
 class Reservation(models.Model):
@@ -18,12 +17,18 @@ class Reservation(models.Model):
         verbose_name="Barber",
         related_name="reservations",
     )
-    customer = models.ForeignKey(
-        Customer,
+    reserved_by = models.ForeignKey(
+        UserModel,
         on_delete=models.CASCADE,
-        verbose_name="Customer",
+        verbose_name="Reserved By",
         related_name="reservations",
     )
+    reserved_for_first_name = models.CharField(max_length=50, blank=True, null=True)
+    reserved_for_last_name = models.CharField(max_length=50, blank=True, null=True)
+    reserved_for_email = models.EmailField(blank=True, null=True)
+    reserved_for_phone = models.CharField(max_length=11, blank=True, null=True)
+    is_reserved_for_self = models.BooleanField(default=True)
+
     services = models.ManyToManyField(
         Service,
         verbose_name="Services",
@@ -42,25 +47,8 @@ class Reservation(models.Model):
         default=ReservationStatus.PENDING,
     )
 
-    def save(self, *args, **kwargs):
-        """
-        Overrides the save method to update end_datetime.
-        Ensures the object is saved first before calculating the end_datetime.
-        """
-        super().save(*args, **kwargs)  # Save the instance to generate an ID
-        self.update_end_datetime()  # Update end_datetime based on services
-        super().save(*args, **kwargs)  # Save again to persist the changes
-
-    def update_end_datetime(self):
-        """
-        Updates the reservation's end_datetime based on all selected services.
-        """
-        total_estimated_time = sum(
-            service.estimated_time for service in self.services.all()
-        )
-        self.end_datetime = self.start_datetime + timedelta(
-            minutes=total_estimated_time
-        )
+    def reserved_for_name(self):
+        return f"{self.reserved_for_first_name or ''} {self.reserved_for_last_name or ''}".strip()
 
     def __str__(self):
-        return f"{self.barber.first_name}: Reservation for {self.customer.first_name}"
+        return f"{self.barber.first_name}: Reservation for {self.reserved_for_name()}"
