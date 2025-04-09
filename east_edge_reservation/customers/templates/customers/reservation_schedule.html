@@ -1,0 +1,40 @@
+{% extends "customers/reservation.html" %}
+{% load static %}
+
+{% block landing-pg-styles %}{% endblock %}
+
+{% block content %}
+
+  <h2>Select Date and Time:</h2>
+  <input type="datetime-local" id="datetimePicker">
+
+  <button onclick="getBarberReservations()">Get Reservation</button>
+  <p id="output"></p>
+
+  <script>
+    function showSelectedDateTime() {
+      document.getElementById('output').textContent = dateTime
+        ? `Selected Date & Time: ${dateTime}`
+        : 'Please select a date and time.';
+    }
+
+    async function getBarberReservations() {
+      const dateTime = document.getElementById('datetimePicker').value;
+      const url = `http://127.0.0.1:8000/api/reservations?id=7&datetime=${dateTime}`
+
+      try {
+        const response = await fetch(url);
+
+        if (!response.ok)
+          throw new Error(`Response status: ${response.status}`)
+
+        const data = await response.json();
+        if (data)
+          console.log(data)
+
+      } catch (error) {
+        console.log(error.message)
+      }
+    }
+  </script>
+{% endblock %}

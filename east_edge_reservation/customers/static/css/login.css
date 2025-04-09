@@ -1,0 +1,151 @@
+body{
+    font-family: "Montserrat", serif;
+    background-image: linear-gradient(#FF5C08 40%, #FEFCFB 90%);
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+  }
+  
+  .container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .eastklogo{
+    margin-top: 80px;
+    margin-bottom: 30px;
+    max-width: 200px;
+    height: auto;
+  }
+  
+  #welcome{
+    color: #FEFCFB;
+  }
+  
+  #eastk{
+    color: #FEFCFB;
+    font-weight: bolder;
+    text-transform: uppercase;
+    font-size: xx-large;
+  }
+  
+  p{
+    color: #FF5C08;
+    font-size: 12px;
+    font-weight: 900;
+  }
+  
+  #forgotpassword{
+    text-decoration: none;
+  }
+  
+  .form{
+    margin-top: 30px; 
+    display: flex;
+    flex-direction: column;
+    width: 350px;
+  }
+  
+  .formcontainer{
+    display: flex;
+    justify-content: space-between;
+    height: 45px;
+    width: 100%;
+    font-size: 16px;
+    font-weight: 500;
+    border: 1px solid #FF5700;
+    background: transparent;
+    color: #FEFCFB;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    padding: 0px 5px 0px 5px;
+  }
+  
+  .formcontainer input{
+    display: flex;
+    width: 100%;
+    border: none;
+    outline: none;
+    box-shadow: none; 
+    background: none;
+    color:#FEFCFB;
+  }
+  
+  input::placeholder{
+    color:#FEFCFB;
+  }
+  
+  .formcontainer .button i{
+    color: #FEFCFB;
+    padding: 5px;
+  }
+  
+  button{
+    position: relative;
+    cursor: pointer;
+    border: none;
+    background: none;
+    color: #FEFCFB;
+    font-size: 16px;
+  }
+  
+  button:active{
+    color: #FEFCFB;
+  }
+  
+  .btn{
+    background-image: linear-gradient(to right, #FF5C08 10%, #FE8F08 90%);
+    border-radius: 40px;
+    border: none;
+    height: 50px;
+    width: 220px;
+    color: #FEFCFB;
+    font-weight: bold;
+    font-size: 20px;
+  }
+  
+  .btn:hover{
+    color:#FE8F08;
+  }
+  
+  .btn:active{
+    color:  transparent!important;
+  }
+  a{
+    color: #FF5C08;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  
+  #Signup{
+    color: #8A8888;
+  }
+  
+  #footerText{
+    font-size: 14px;
+    font-weight: 500;
+    margin-top: 50px;
+  }
+  
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+  }
+  
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+      -webkit-text-fill-color: #FEFCFB !important;
+      background-color: transparent !important;
+      transition: background-color 9999s ease-in-out;
+  }
+  
+   

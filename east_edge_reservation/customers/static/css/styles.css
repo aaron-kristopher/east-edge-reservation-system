@@ -1,0 +1,105 @@
+:root {
+    --white: #FEFEFE;
+    --black: #1E1E1E;
+    --primary: #FF5C08;
+    --secondary: #F6DBA0;
+
+    --secondary-50: #FFFEFD;
+    --secondary-100: #FDF7EB;
+    --secondary-200: #FAE9C5;
+    --secondary-300: #F6DBA0;
+    --secondary-400: #F1C86D;
+    --secondary-500: #ECB43A;
+    --secondary-600: #D99B15;
+    --secondary-700: #A67710;
+    --secondary-800: #73520B;
+    --secondary-900: #3F2D06;
+    --secondary-950: #261B04;
+
+    --grey-50: #F5F5F5;
+    --grey-100: #E7E7E7;
+    --grey-200: #CBCBCB;
+    --grey-300: #AFAFAF;
+    --grey-400: #939393;
+    --grey-500: #777777;
+    --grey-600: #5B5B5B;
+    --grey-700: #3F3F3F;
+    --grey-800: #232323;
+    --grey-900: #070707;
+    --grey-950: #000000;
+}
+
+body {
+    padding-top: 90px;
+    font-family: "Montserrat";
+    background: var(--white);
+}
+
+/* NAVBAR */
+
+.navbar {
+    background: var(--primary);
+}
+
+.navbar-brand {
+    font-weight: 600;
+}
+
+.navbar .nav-link,
+.navbar-brand {
+    color: var(--white);
+}
+
+.navbar-toggler {
+    color: var(--white);
+    border: none;
+}
+
+.profile {
+    color: var(--white);
+}
+
+/* SERVICE SECTION */
+
+label {
+    color: var(--grey-700);
+    font-weight: 600;
+    font-size: .85rem;
+}
+
+button.btn-secondary {
+    color: var(--grey-600);
+    background: var(--grey-50);
+    font-weight: 700;
+    font-size: .65rem;
+    border-width: 0;
+    padding: 8px 16px;
+}
+
+.custom-checkbox .form-check-input:focus {
+    outline-color: var(--grey-400);
+}
+
+.custom-checkbox .form-check-input:checked {
+    background-color: var(--grey-600);
+    border-color: var(--grey-400);
+}
+
+#selected-services {
+    height: 50px;
+}
+
+.service-pill .material-symbols-outlined {
+    font-size: .65rem;
+    cursor: pointer;
+}
+
+.service-pill {
+    padding: 8px 16px;
+    margin-right: 8px;
+    font-size: .65rem;
+    font-weight: 500;
+    border: 1px solid var(--grey-600);
+    border-radius: 25px;
+    cursor: default;
+}
