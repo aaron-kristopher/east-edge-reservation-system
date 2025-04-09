@@ -1,0 +1,126 @@
+body{
+    font-family: "Montserrat", serif;
+    background-image: linear-gradient(#FF5C08 65%, #FEFCFB 95%);
+    background-repeat: repeat-x;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+}
+
+.eastklogo{
+    max-width: 80px;
+    height: auto;
+}
+
+h3{
+    font-weight: bold;
+    color: #FEFCFB;
+}
+
+p{
+    color: #FF5C08;
+    font-weight: 600;
+}
+
+#desc{
+    color: #FEFCFB;
+    font-size: 13px;
+}
+
+#pGrey{
+    color: #8A8888;
+    font-weight: 500;
+}
+
+a{
+    text-decoration: none;
+    color: #ff5c0a;
+}
+
+.btn{
+    font-weight: bold;
+    color: #FF5C08;
+    width: 180px;
+    height: 45px;
+    font-size: 14px;
+}
+
+.form{
+    --input-text-color: #FEFCFB;
+    --input-bg-color: rgba(242, 254, 255, 0.05);
+    --focus-input-bg-color: rgba(242, 254, 255, 0.05);
+    --text-color: #FEFCFB;
+    --active-color: none;
+    --width-of-input: 300px;
+    --height-of-input: 45px;
+    --inline-padding-of-input: 00.1rem;
+    --gap: 0.9rem;
+    --input-border-radius: 8px;
+}
+  
+.form {
+    font-size: 0.9rem;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    max-width: var(--width-of-input);
+    height: var(--height-of-input);
+    border: 2px solid var(--active-color);
+    position: relative;
+    isolation: isolate;
+    border-radius: var(--input-border-radius);
+    margin-bottom: 15px;
+    background-color: var(--input-bg-color);
+}
+  
+.input {
+    color: var(--input-text-color);
+    width: 100%;
+    margin-inline: min(2em,calc(var(--inline-padding-of-input) + var(--gap)));
+    background: none;
+    border: none;
+}
+  
+button{
+    position: relative;
+    cursor: pointer;
+    border: none;
+    background: none;
+    color: #FEFCFB;
+    font-size: 14px;
+    margin-right: 5px;
+}
+  
+.input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button{
+    -webkit-appearance: none;
+    margin: 0;
+}
+    
+.input:focus {
+    outline: none;
+}
+    
+.input::placeholder {
+    color: var(--text-color);
+}
+  
+/* input background change in focus */
+.input:focus ~ .fancy-bg {
+    background: var(--focus-input-bg-color);
+}
+   
+/* this is for the default background in input,when selecting autofill options -- you can remove this code if you do not want to override the browser style.  */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-transition: "color 9999s ease-out, background-color 9999s ease-out";
+    -webkit-transition-delay: 9999s;
+}
+
+  
+  
+ 

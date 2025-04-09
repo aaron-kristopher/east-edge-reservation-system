@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from datetime import timedelta
 from barbers.models import Barber, Service
-from customers.models import Customer
+from customers.models import Customer, UserModel
 
 
 class Reservation(models.Model):

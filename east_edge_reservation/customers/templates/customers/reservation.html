@@ -3,9 +3,6 @@
 
 {% block landing-pg-styles %}{% endblock %}
 
-<title>{% block head_title %}Reservation{% endblock %}</title>
-
-
 {% block navbar %}
     <nav class="navbar navbar-expand-sm navbar-dark">
 
@@ -19,11 +16,21 @@
             <span class="navbar-toggler-icon"></span>
           </button>
         </div>
-
-        <div class="profilenav">
-          <a href="#">
+        <div class="profilenav dropdown">
+          <a data-bs-toggle="dropdown" style="cursor: pointer; user-select: none;">
             <i class="bx bx-user-circle"></i>
           </a>
+          <ul class="dropdown-menu">
+            <li><h5 class="dropdown-header">Where to {{request.user.first_name}}?</h5></li>
+            <li><a class="dropdown-item" href="#">Profile</a></li>
+            <hr>
+            <li>
+              <form action="{% url 'logout' %}" method="POST">
+                {% csrf_token %}
+                <button class="dropdown-item" href="{% url 'logout' %}">Logout</button>
+              </form>
+            </li>
+          </ul>
         </div>
 
         <div class="collapse navbar-collapse" id="collapsibleNavbar">
@@ -44,179 +51,365 @@
 
 
 {% block content %}
-    <div class="container-fluid mt-3">
-      <div class="p-5 bg-secondary text-white">
-        <h1>Welcome to East 'K Edge April!</h1> 
+
+
+    <style>
+      .reservation-bg{
+        background-image: url("{% static 'images/photo-barber.jpg' %}");
+        width: 100%;
+        background-size: cover;
+        background-position: center -120px;
+        background-repeat: no-repeat;
+        padding-bottom: 5em !important;
+      }
+    </style>
+    <div class="container-fluid p-0">
+      <div class="p-5 bg-secondary text-white reservation-bg">
+        <h1 class="mt-3">Welcome to East 'K Edge {{request.user.first_name}}!</h1> 
         <p>Choose from our services and reserve from our amazing barbers</p> 
       </div>
     </div>
 
-    <div class="container-fluid mt-3">
-      <div id="accordion">
-        <div class="card">
-          <div class="card-header">
-            <a class="btn"  data-bs-toggle="collapse" href="#collapseOne">
-              Hair Services
-            </a>
-          </div>
-          <div id="collapseOne" class="collapse show" data-bs-parent="#accordion">
-            <div class="card-body">
-              <div class="checkbox-inputs hairservices">
-                  <label>
-                    <input class="checkbox-input" type="checkbox" name="haircut">
-                      <span class="checkbox-tile">
-                        <span class="checkbox-label">Haircut</span>
-                      </span>
-                  </label>
-                
-                
-                  <label>
-                    <input class="checkbox-input" type="checkbox" name="hairspa">
-                    <span class="checkbox-tile">
-                      <span class="checkbox-label">Hairspa</span>
-                    </span>
-                  </label>
-                
-                
-                  <label>
-                    <input class="checkbox-input" type="checkbox" name="shave">
-                    <span class="checkbox-tile">
-                      <span class="checkbox-label">Shave</span>
-                    </span>
-                  </label>
-                
-                
-                  <label>
-                    <input class="checkbox-input" type="checkbox" name="hairdye">
-                    <span class="checkbox-tile">
-                      <span class="checkbox-label">Hair Dye</span>
-                    </span>
-                  </label>
-                
-                
-                  <label>
-                    <input class="checkbox-input" type="checkbox" name="trim">
-                    <span class="checkbox-tile">
-                      <span class="checkbox-label">Trim Haircut</span>
-                    </span>
-                  </label>
-                
-                
-                  <label>
-                    <input class="checkbox-input" type="checkbox" name="massage">
-                    <span class="checkbox-tile">
-                      <span class="checkbox-label">Massage</span>
-                    </span>
-                  </label>
-              
-                  <label>
-                    <input class="checkbox-input" type="checkbox" name="massage">
-                    <span class="checkbox-tile">
-                      <span class="checkbox-label">Hair Rebond</span>
-                    </span>
-                  </label>
-                  <label>
-                    <input class="checkbox-input" type="checkbox" name="massage">
-                    <span class="checkbox-tile">
-                      <span class="checkbox-label">Hair Perm</span>
-                    </span>
-                  </label>
-                </div>
-              </div>
+    <div class="container-fluid accords mt-4">
+      <div class="container">
+        <ul class="nav nav-pills services-pills d-flex justify-content-center align-items-center gap-4">
+          <li class="nav-item">
+            <a class="nav-link active services-link d-flex justify-content-center fs-5" data-bs-toggle="pill" href="#H">Hair Services</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link services-link d-flex justify-content-center fs-5 text-nowrap" data-bs-toggle="pill" href="#G">Grooming Services</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link services-link d-flex justify-content-center fs-5" data-bs-toggle="pill" href="#N">Nail Services</a>
+          </li>
+        </ul>
+        
+        <!-- Tab panes -->
+        <div class="tab-content">
+          <div class="tab-pane container active" id="H">
+            <div class="d-flex flex-wrap justify-content-center gap-3 mt-5">
+            {% for service in services %}
+              {% if service.category == "H" %}
+              <label>
+                <input class="checkbox-input" type="checkbox" value={{service.id}}>
+                  <span class="checkbox-tile">
+                    <span class="checkbox-label">{{ service.service_name }}</span>
+                  </span>
+              </label>
+              {% endif %}
+            {% endfor %}
             </div>
           </div>
-        </div>
-        <div class="card">
-          <div class="card-header">
-            <a class="btn" data-bs-toggle="collapse" href="#collapseTwo">
-              Grooming Services
-            </a>
-          </div>
-          <div id="collapseTwo" class="collapse" data-bs-parent="#accordion">
-            <div class="card-body">
-              <div class="checkbox-inputs hairservices">
-                  <label>
-                    <input class="checkbox-input" type="checkbox" name="haircut">
-                      <span class="checkbox-tile">
-                        <span class="checkbox-label">Haircut1</span>
-                      </span>
-                  </label>
-                
-                
-                  <label>
-                    <input class="checkbox-input" type="checkbox" name="hairspa">
+          <div class="tab-pane container fade" id="G">
+            <div class="d-flex flex-wrap justify-content-center gap-3 mt-5">
+              {% for service in services %}
+                {% if service.category == "G" %}
+                <label>
+                  <input class="checkbox-input" type="checkbox" value={{service.id}}>
                     <span class="checkbox-tile">
-                      <span class="checkbox-label">Hairspa1</span>
+                      <span class="checkbox-label">{{ service.service_name }}</span>
                     </span>
-                  </label>
-                
-                
-                  <label>
-                    <input class="checkbox-input" type="checkbox" name="shave">
-                    <span class="checkbox-tile">
-                      <span class="checkbox-label">Shave1</span>
-                    </span>
-                  </label>
-                
-                
-                  <label>
-                    <input class="checkbox-input" type="checkbox" name="hairdye">
-                    <span class="checkbox-tile">
-                      <span class="checkbox-label">Hair Dye1</span>
-                    </span>
-                  </label>
-                
-                
-                  <label>
-                    <input class="checkbox-input" type="checkbox" name="trim">
-                    <span class="checkbox-tile">
-                      <span class="checkbox-label">Trim Haircut1</span>
-                    </span>
-                  </label>
-                
-                
-                  <label>
-                    <input class="checkbox-input" type="checkbox" name="massage">
-                    <span class="checkbox-tile">
-                      <span class="checkbox-label">Massage1</span>
-                    </span>
-                  </label>
-              
-                  <label>
-                    <input class="checkbox-input" type="checkbox" name="massage">
-                    <span class="checkbox-tile">
-                      <span class="checkbox-label">Hair Rebond1</span>
-                    </span>
-                  </label>
-                  <label>
-                    <input class="checkbox-input" type="checkbox" name="massage">
-                    <span class="checkbox-tile">
-                      <span class="checkbox-label">Hair Perm1</span>
-                    </span>
-                  </label>
-                </div>
+                </label>
+                {% endif %}
+              {% endfor %}
               </div>
+          </div>
+          <div class="tab-pane container fade" id="N">
+            <div class="d-flex flex-wrap justify-content-center gap-3 mt-5">
+              {% for service in services %}
+                {% if service.category == "N" %}
+                <label>
+                  <input class="checkbox-input" type="checkbox" value={{service.id}}>
+                    <span class="checkbox-tile">
+                      <span class="checkbox-label">{{ service.service_name }}</span>
+                    </span>
+                </label>
+                {% endif %}
+              {% endfor %}
             </div>
           </div>
         </div>
       </div>
-    </div>
+      <hr>
+      <div class="mt-3 overflow-auto text-nowrap" id="selected-services"></div>
+      <hr>
 
-    
-    <div class="container mt-3">
-      <div class="x-button rounded" onclick="this.style.display='none'">
-          <a href="#">
-            Haircut <i class='bx bx-x'></i>
-          </a>
+      <div class="container mt-5 d-flex justify-content-center">
+        <div class="d-flex align-items-center flex-column">
+          <h4>Barbers</h4>
+          <div id="empty-barber-section">
+            <h6>Available barber(s) from chosen services</h6>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="container mt-3 mb-5" id="barbers">
+        <div class="row">
+            {% for barber in barbers %}
+            <div class="col-12 col-sm-6 col-md-6 col-lg-3 mt-5 card-wrapper" data-barber-id="{{ barber.id }}">
+                <div class="card-1 p-3">
+                    <div class="image-barber"></div>
+                    <div class="card-info">
+                        <span>{{ barber.first_name }} {{ barber.last_name }}</span>
+                        <p>Lorem Ipsum</p>
+                    </div>
+                    <a id="button-{{ barber.id }}" class="button-reserve-barber">Reserve</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
       </div>
     </div>
+    <br><br>
+    
+
+    <section class="container-fluid py-3" id="select-date">
+      <div class="row d-flex justify-content-evenly position-relative">
+        <div class="py-4 py-md-5 d-flex flex-column align-items-center justify-content-center col-sm-6 full-width-bg text-white">
+          <h2 class="mt-4 pb-md-2">Select Date and Time</h2>
+          <p class="mb-3"> Reserve now, and experience the haircut of your life
+          <p id="output"></p>
+        </div>
+        <div class="calendar-container d-flex flex-column align-items-center gap-4 col-sm-6">
+          <div id="datetimepicker"></div>
+          <select id="time-select" style="display: none;"></select>
+          <button onclick="getBarberReservations(this)" style="display: none;" class="getReservationButton">Get Reservation</button>
+          <div id="output"></div>
+        </div>
+      </div>
+    </section>
+    <br>
+
+    <script>
+      let selectedBarberId = null;
+  
+      function populateTimeDropdown() {
+           const select = document.getElementById("time-select");
+           select.innerHTML = '';
+           const startHour = 8;
+           const endHour = 17;
+  
+           for (let hour = startHour; hour <= endHour; hour++) {
+               for (let minute of [0, 30]) {
+                   let period = hour < 12 ? "AM" : "PM";
+                   let displayHour = (hour === 0 || hour === 12) ? 12 : hour % 12;
+                   let displayMinute = minute === 0 ? "00" : "30";
+                   let timeString = `${displayHour}:${displayMinute} ${period}`;
+  
+                   let option = document.createElement("option");
+                   option.value = timeString;
+                   option.textContent = timeString;
+                   select.appendChild(option);
+               }
+           }
+       }
+  
+      document.addEventListener("DOMContentLoaded", () => {
+          populateTimeDropdown();
+  
+          const timeSelect = document.getElementById("time-select");
+          const reservationButton = document.querySelector('.calendar-container button[onclick^="getBarberReservations"]');
+  
+          if (timeSelect) timeSelect.style.display = 'block';
+          if (reservationButton) reservationButton.style.display = 'block';
+  
+          flatpickr("#datetimepicker", {
+              enableTime: false,
+              time_24hr: false,
+              inline: true,
+              defaultDate: new Date(),
+              dateFormat: "F j, Y",
+              onReady: function(selectedDates, dateStr, instance) {
+                  const calendarInnerContainer = instance.calendarContainer.querySelector('.flatpickr-innerContainer');
+  
+                  if (calendarInnerContainer && timeSelect && reservationButton) {
+                      const customControlsContainer = document.createElement('div');
+                      customControlsContainer.classList.add('custom-flatpickr-controls');
+  
+                      customControlsContainer.appendChild(timeSelect);
+                      customControlsContainer.appendChild(reservationButton);
+  
+                      calendarInnerContainer.appendChild(customControlsContainer);
+                   }
+              },
+          });
+  
+          const barberReserveButtons = document.querySelectorAll('.button-reserve-barber');
+          barberReserveButtons.forEach(button => {
+              button.addEventListener('click', function(event) {
+                  event.preventDefault(); 
+                  const buttonId = this.id; 
+                  if (buttonId && buttonId.includes('-')) {
+                      selectedBarberId = buttonId.split("-")[1];
+                      console.log("Barber selected:", selectedBarberId);
+                      alert(`Barber ${selectedBarberId} selected. Now choose date and time.`);
+                  } else {
+                      console.error("Could not determine barber ID from button:", this);
+                      selectedBarberId = null; 
+                  }
+              });
+          });
+      });
+  
+      function showSelectedDateTime() {
+        const datePicker = document.getElementById("datetimepicker")._flatpickr;
+        const timeSelect = document.getElementById("time-select");
+        let dateTime = '';
+        if (datePicker && datePicker.selectedDates.length > 0 && timeSelect.value) {
+            const dateStr = flatpickr.formatDate(datePicker.selectedDates[0], "F j, Y");
+            dateTime = `${dateStr} at ${timeSelect.value}`;
+        }
+        document.getElementById('output').textContent = dateTime
+          ? `Selected Date & Time: ${dateTime}`
+          : 'Please select a date and time.';
+      }
+
+      async function getBarberReservations(buttonInsideCalendar) {
+     if (!selectedBarberId) {
+         alert("Please select a barber first by clicking 'Reserve' on their card.");
+         return;
+     }
+
+     const datePicker = document.getElementById("datetimepicker")._flatpickr;
+     const timeSelect = document.getElementById("time-select");
+     let datePart = '';
+     let timePart = timeSelect.value;
+
+     if (datePicker && datePicker.selectedDates.length > 0) {
+         datePart = flatpickr.formatDate(datePicker.selectedDates[0], "Y-m-d");
+     } else {
+         alert("Please select a date from the calendar.");
+         return;
+     }
+
+     showSelectedDateTime();
+
+     console.log(`Getting reservations for Barber ID: ${selectedBarberId}, Date: ${datePart}, Time: ${timePart}`);
+
+     const url = `http://127.0.0.1:8000/api/reservations?id=${selectedBarberId}&date=${datePart}&time=${timePart}`;
+
+     try {
+       const response = await fetch(url);
+
+       if (!response.ok)
+         throw new Error(`Response status: ${response.status}`)
+
+       const data = await response.json();
+       if (data)
+         console.log(data)
+         // TODO: Process the reservation data
+
+     } catch (error) {
+       console.log(error.message)
+     }
+ }
+  </script>
+
+  <script>
+    const ids = new Set()
+    const selectedServicesDiv = document.getElementById("selected-services");
+    const checkboxes = document.querySelectorAll('input[type=checkbox]');
+    const barbersDiv = document.getElementById("barbers");
+    const barberCards = document.querySelectorAll(".card-wrapper");
+    const emptyBarberDiv = document.getElementById("empty-barber-section");
+    const barberButtons = document.querySelectorAll(".button-reserve-barber");
+    const selectDate = document.getElementById("select-date");
+    console.log(barberCards)
+  
+    checkboxes.forEach(checkbox => {
+      checkbox.addEventListener("change", () => handleServiceToggle(checkbox))
+    });
+
+    barberButtons.forEach(barberButton => {
+      barberButton.addEventListener("click", () => getBarberReservations(barberButton))
+    })
+
+    function handleServiceToggle(checkbox) {
+      const serviceId = checkbox.value;
+      const serviceName = checkbox.nextSibling.nextSibling.textContent.trim();
+  
+      if (checkbox.checked) {
+        addServicePill(serviceId, serviceName)
+        ids.add(serviceId);
+      } else {
+        removeServicePill(serviceId);
+        ids.delete(serviceId);
+      }
+  
+      getBarbers();
+    }
+  
+    function addServicePill(serviceId, serviceName) {
+  
+      const pill = document.createElement("span");
+      pill.textContent = serviceName;
+      pill.className = "service-pill d-inline-flex align-items-center text-uppercase";
+      pill.id = `pill-${serviceId}`;
+  
+      const icon = document.createElement("span");
+      icon.textContent = "close";
+      icon.className = "material-symbols-outlined ps-1";
+  
+      icon.onclick = () => {
+      const checkbox = document.querySelector(`input[type="checkbox"][value="${serviceId}"]`);
+        if (checkbox) {
+          checkbox.checked = false;
+          removeServicePill(serviceId);
+          ids.delete(serviceId);
+          getBarbers();
+        }
+      };
+  
+      pill.appendChild(icon);
+      selectedServicesDiv.appendChild(pill);
+    }
+  
+    function removeServicePill(serviceId) {
+      const pill = document.getElementById(`pill-${serviceId}`);
+      if (pill) pill.remove();
+  
+    }
+  
+    async function getBarbers() {
+      if (ids.size === 0) {
+  
+        barberCards.forEach(barberCard => {
+          barberCard.classList.add("d-none");
+        });
+        emptyBarberDiv.classList.remove("d-none");
+        console.log("No services selected");
+        return; 
+      } 
+  
+      const url = `http://127.0.0.1:8000/api/barbers?ids=${Array.from(ids).join()}`
+      try {
+        const response = await fetch(url);
+  
+        if (!response.ok) 
+          throw new Error(`Response status: ${response.status}`)
+  
+        const data = await response.json();
+        if (data) 
+          updateBarbers(data);
+  
+      } catch (error){
+        console.log(error.message)
+      }
+    }
+  
+    function updateBarbers(data) {
+      const barberIds = new Set(data.map(barber => barber.id));
+      console.log(barberIds);
+  
+      emptyBarberDiv.classList.add("d-none");
+      barberCards.forEach(barberCard => {
+        const cardId = Number(barberCard.dataset.barberId);
+  
+        barberCard.classList.toggle("d-none", !barberIds.has(cardId));
+      })
+    }
+  </script>
 
     
 {% endblock %}
-
-
-
-
-    
-    
-

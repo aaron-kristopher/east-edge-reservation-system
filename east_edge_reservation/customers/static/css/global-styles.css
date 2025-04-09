@@ -100,8 +100,29 @@ body{
         width: 18%;
         margin-bottom: 0.18em;
     }
+}
 
+@media (max-width: 1000px) {
+    footer{
+      margin-top: 50px;
+    }
+  }
 
+#east-k-edge-footer{
+    background-image: var(--gradient-navbar-og);
+}
+  
+.footer-text{
+    color: var(--color-white);
+    font-weight: 500;
+    white-space: nowrap;
+    display: inline-block;
+}
+.add-footer{
+    background-color: var(--color-white);
+}
+.add-footer-text{
+    color: var(--color-main-orange);
 }
 
 

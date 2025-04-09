@@ -1,13 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "customers/reservation.html" %}
+{% load static %}
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>East K' Edge</title>
-</head>
+{% block landing-pg-styles %}{% endblock %}
 
-<body>
+{% block content %}
 
   <h2>Select Date and Time:</h2>
   <input type="datetime-local" id="datetimePicker">
@@ -41,6 +37,4 @@
       }
     }
   </script>
-</body>
-
-</html>
+{% endblock %}
