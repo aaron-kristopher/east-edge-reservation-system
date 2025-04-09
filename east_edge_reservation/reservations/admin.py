@@ -37,7 +37,7 @@ class ReservationAdmin(ModelAdmin):
     )
     list_display = (
         "barber",
-        "customer",
+        "reserved_by",
         "get_reserved_services",
         "get_reservation",
         "formatted_status",
