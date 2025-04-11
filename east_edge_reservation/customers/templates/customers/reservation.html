@@ -198,7 +198,7 @@
 
         <!-- Modal body -->
         <div class="modal-body">
-          <form id="guestForm">
+          <form id="form-1">
             <div class="row mb-3 mt-3">
               <div class="col-md-6 mb-3">
                 <label for="guestFirstName" class="form-label">First Name</label>
@@ -246,52 +246,54 @@
 
           <!-- Modal Body -->
           <div class="modal-body row">
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <label for="firstname" class="form-label">First Name</label>
-                <input type="text" class="form-control overview" id="firstname" readonly>
+            <form action="" id="guestForm">
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="firstname" class="form-label">First Name</label>
+                  <input type="text" class="form-control overview" id="firstname" readonly>
+                </div>
+                <div class="col-md-6">
+                  <label for="lastname" class="form-label">Last Name</label>
+                  <input type="text" class="form-control overview" id="lastname" readonly>
+                </div>
               </div>
-              <div class="col-md-6">
-                <label for="lastname" class="form-label">Last Name</label>
-                <input type="text" class="form-control overview" id="lastname" readonly>
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="contact" class="form-label">Contact Number</label>
+                  <input type="text" class="form-control overview" id="contact" readonly>
+                </div>
+                <div class="col-md-6">
+                  <label for="email" class="form-label">Email</label>
+                  <input type="text" class="form-control overview" id="email" readonly>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="services" class="form-label">Service</label>
+                  <input type="text" class="form-control overview" id="services" readonly>
+                </div>
+                <div class="col-md-6">
+                  <label for="barber" class="form-label">Barber</label>
+                  <input type="text" class="form-control overview" id="barber" readonly>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="datetime" class="form-label">Reservation Date and Time</label>
+                  <input type="text" class="form-control overview" id="datetime" readonly>
+                </div>
+                <div class="col-md-6">
+                  <label for="price" class="form-label">Total Price</label>
+                  <input type="text" class="form-control overview" id="overviewPrice" readonly>
+                </div>
               </div>
             </div>
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <label for="contact" class="form-label">Contact Number</label>
-                <input type="text" class="form-control overview" id="contact" readonly>
-              </div>
-              <div class="col-md-6">
-                <label for="email" class="form-label">Email</label>
-                <input type="text" class="form-control overview" id="email" readonly>
-              </div>
-            </div>
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <label for="services" class="form-label">Service</label>
-                <input type="text" class="form-control overview" id="services" readonly>
-              </div>
-              <div class="col-md-6">
-                <label for="barber" class="form-label">Barber</label>
-                <input type="text" class="form-control overview" id="barber" readonly>
-              </div>
-            </div>
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <label for="datetime" class="form-label">Reservation Date and Time</label>
-                <input type="text" class="form-control overview" id="datetime" readonly>
-              </div>
-              <div class="col-md-6">
-                <label for="price" class="form-label">Total Price</label>
-                <input type="text" class="form-control overview" id="overviewPrice" readonly>
-              </div>
-            </div>
-          </div>
 
-          <div class="modal-footer row">
-            <a data-bs-toggle="modal" data-bs-target="#reservationFormModal" class="btn btn-warning submit-button">Back</a>
-            <button type="submit" form="guestForm" class="btn btn-warning submit-button">Submit</button>
-          </div>
+            <div class="modal-footer row">
+              <a data-bs-toggle="modal" data-bs-target="#reservationFormModal" class="btn btn-warning submit-button">Back</a>
+              <button type="submit" form="guestForm" class="btn btn-warning submit-button">Submit</button>
+            </div>
+        </form>
          </div>
       </div>
     </div>

@@ -11,3 +11,6 @@ def update_end_datetime_on_services_change(sender, instance, action, **kwargs):
     if action in ["post_add", "post_remove", "post_clear"]:
         instance.end_datetime = instance.calculate_end_datetime()
         instance.save()
+
+    def ready(self):
+        import reservations.signals 
