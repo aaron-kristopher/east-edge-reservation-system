@@ -9,8 +9,10 @@ from datetime import timedelta
 class Reservation(models.Model):
     class ReservationStatus(models.TextChoices):
         COMPLETED = "C", _("Completed")
-        PENDING = "P", _("Pending")
         CANCELLED = "X", _("Cancelled")
+        REQUESTED = "R", _("Requested")
+        ACCEPTED = "A", _("Accepted")
+        DECLINED = "D", _("Declined")
 
     start_datetime = models.DateTimeField()
     barber = models.ForeignKey(
@@ -46,7 +48,7 @@ class Reservation(models.Model):
     status = models.CharField(
         max_length=1,
         choices=ReservationStatus,
-        default=ReservationStatus.PENDING,
+        default=ReservationStatus.REQUESTED,
     )
 
     def calculate_end_datetime(self):
