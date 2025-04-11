@@ -79,8 +79,8 @@ DATABASES = {
 }
 
 AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-    'customers.backends.EmailBackend',
+    "django.contrib.auth.backends.ModelBackend",
+    "customers.backends.EmailBackend",
 ]
 
 # Password validation
@@ -129,9 +129,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, "assets")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-LOGIN_REDIRECT_URL = 'reservation'
+LOGIN_REDIRECT_URL = "reservation"
 
-AUTH_USER_MODEL = 'customers.UserModel'
+AUTH_USER_MODEL = "customers.UserModel"
 
 UNFOLD = {
     "SITE_TITLE": "East K' Edge",
@@ -245,19 +245,6 @@ UNFOLD = {
                     },
                 ],
             },
-            {
-                "title": _("Customers Corner"),
-                "separator": True,  # Top border
-                "collapsible": True,  # Collapsible group of links
-                "items": [
-                    {
-                        "title": _("Customers"),
-                        "icon": "person",  # Supported icon set: https://fonts.google.com/icons
-                        "link": reverse_lazy("admin:customers_customer_changelist"),
-                        "permission": lambda request: request.user.is_superuser,
-                    },
-                ],
-            },
         ],
     },
     # "TABS": [
@@ -268,5 +255,3 @@ UNFOLD = {
     #     }
     # ]
 }
-
-
