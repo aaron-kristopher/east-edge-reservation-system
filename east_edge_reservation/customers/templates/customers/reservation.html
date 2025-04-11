@@ -172,7 +172,7 @@
       <div class="calendar-container d-flex flex-column align-items-center gap-4 col-sm-6">
         <div id="datetimepicker"></div>
         <select id="time-select" style="display: none;"></select>
-        <button onclick="getBarberReservations(this)" style="display: none;" class="getReservationButton" data-bs-toggle="modal" data-bs-target="#reservationFormModal">Get Reservation</button>
+        <button id="get-reservation" disabled="true" onclick="getBarberReservations(this)" style="display: none;" class="getReservationButton" data-bs-toggle="modal" data-bs-target="#reservationFormModal">Get Reservation</button>
         <div id="output"></div>
       </div>
     </div>
@@ -313,6 +313,7 @@
       email: '{{ request.user.email|escapejs }}',
       phone: '{{ request.user.phone_number|escapejs }}',
     };
+    const getReservationBtn = document.getElementById("get-reservation");
 
     let selectedBarberId = null;
     let selectedBarberName = null; 
@@ -503,6 +504,8 @@
             console.error("Could not determine barber ID from button:", this);
             selectedBarberId = null; 
           }
+
+          manageDisabledButton();
         });
       });
     });
@@ -582,6 +585,7 @@
         ids.delete(serviceId);
       }
 
+      manageDisabledButton();
       getBarbers();
     }
 
@@ -654,5 +658,20 @@
         barberCard.classList.toggle("d-none", !barberIds.has(cardId));
       })
     }
+
+    function manageDisabledButton() {
+      if (selectedBarberId == null || ids.size == 0) {
+        console.log("No Service");
+        console.log("BarberId: " + selectedBarberId);
+        console.log("Ids: " + Array.from(ids));
+        getReservationBtn.setAttribute("disabled", true);
+      } else {
+        console.log("We good");
+        console.log("BarberId: " + selectedBarberId);
+        console.log("Ids: " + ids.size);
+        getReservationBtn.removeAttribute("disabled");
+      }
+    }
+
 </script>
 {% endblock %}
