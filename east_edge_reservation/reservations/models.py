@@ -59,7 +59,6 @@ class Reservation(models.Model):
         total_duration_minutes = sum(service.estimated_time for service in self.services.all())
 
         return start_time + timedelta(minutes=total_duration_minutes)
-    
     def reserved_for_name(self):
         if self.is_reserved_for_self and self.reserved_by:
              return f"{self.reserved_by.first_name or ''} {self.reserved_by.last_name or ''}".strip()

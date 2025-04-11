@@ -172,7 +172,7 @@
       <div class="calendar-container d-flex flex-column align-items-center gap-4 col-sm-6">
         <div id="datetimepicker"></div>
         <select id="time-select" style="display: none;"></select>
-        <button onclick="getBarberReservations(this)" style="display: none;" class="getReservationButton" data-bs-toggle="modal" data-bs-target="#reservationFormModal">Get Reservation</button>
+        <button onclick="getBarberReservations(this)" style="display: none;" class="getReservationButton" disabled data-bs-toggle="modal" data-bs-target="#reservationFormModal">Get Reservation</button>
         <div id="output"></div>
       </div>
     </div>
@@ -525,10 +525,10 @@
 
     async function getBarberReservations(buttonInsideCalendar) {
 
-      // if (!selectedBarberId) {
-      //   alert("Please select a barber first by clicking 'Reserve' on their card.");
-      //   return;
-      // }
+      if (!selectedBarberId) {
+        alert("Please select a barber first by clicking 'Reserve' on their card.");
+        return;
+      }
 
       const datePicker = document.getElementById("datetimepicker")._flatpickr;
       const timeSelect = document.getElementById("time-select");

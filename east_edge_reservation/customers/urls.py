@@ -21,5 +21,4 @@ urlpatterns = [
     path("logout/", views.customer_logout, name="logout"),
     path("signup/", views.customer_signup, name="signup"),
     path("profile/", views.customers_profile, name="profile")
-
 ]
