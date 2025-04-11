@@ -3,7 +3,7 @@
 *.pot
 *.pyc
 __pycache__
-db.sqlite3
+east_edge_reservation/db.sqlite3
 media
 
 venv/
