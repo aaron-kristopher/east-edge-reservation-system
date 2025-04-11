@@ -1,0 +1,146 @@
+body{
+    background-image: linear-gradient(#FF5C08 65%, #FEFCFB 95%);
+    font-family: "Montserrat", serif;
+    background-size: cover;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    color: #FEFCFB;
+}
+
+h3 .profile{
+    font-weight: bolder;
+    color: #FEFCFB;
+}
+
+.aboutme h4,
+.myaccount h4{
+    font-weight: bolder;
+    margin-top: 40px;
+}
+
+.topcontainer{
+    height: 60px;
+    width: 100%;
+}
+
+#nav-btn{
+    border: none;
+    background: none;
+}
+
+.profile{
+    color: #FEFCFB;
+}
+
+/*icons*/
+.fas{
+    color:#FEFCFB;
+    font-size: 27px;
+}
+
+/*ABOUT ME SECTION*/
+.form{
+    margin-top: 20px;
+}
+
+.form input{
+    width: 330px;
+    height: 40px;
+    font-size: 16px;
+    font-weight: 500;
+    padding-left: 10px;
+    border: none;
+    background: #FEFCFB;
+    color: #424242;
+    border-radius: 8px;
+}
+
+input:focus{
+    outline: none;
+    box-shadow: 2px 2px 5px rgba(30, 30, 30, 0.3); 
+}
+
+
+p{
+    color: #424242;
+    margin-top: 10px;
+}
+
+/*MY ACCOUNT SECTION*/
+
+.myaccount{
+    width: 330px;
+}
+ 
+.button {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    position: relative;
+    margin-top: 5px;
+    margin-bottom: 20px;;
+    width: 330px;
+    height: 40px;
+    gap: 10px;
+    padding: 0px 15px;
+    background-color: #FEFCFB;
+    border-radius: 8px;
+    color: #C54C0E;
+    border: none;
+    cursor: pointer;
+    transition-duration: .2s;
+    box-shadow: 2px 2px 5px rgba(30, 30, 30, 0.3); 
+}
+  
+.button .far {
+    width: 13px;
+    color: #C54C0E;
+    padding-right: 30px;
+}
+  
+.arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    right: 0;
+    width: 30px;
+    height: 100%;
+    font-size: 18px;
+}
+  
+.button:hover {
+    background-color: #f5a177;
+}
+ 
+.button:active {
+    transform: translate(1px , 1px);
+    transition-duration: .2s;
+}
+
+.btn{
+    background-color: #C54C0E;
+    color: #FEFCFB;
+}
+
+.modal-title{
+    font-weight: bold;
+    color: #424242;
+}
+
+.modal-body{
+    background-color: #FEFCFB;
+}
+
+.modal-label{
+    display: flex;
+    align-self: self-start;
+    color: #424242;
+}
+
+#confirm-email, #new-email,
+#current-pswd, #new-pswd, #confirm-pswd{
+    border: 1px solid #C54C0E;
+}
+  
+ 

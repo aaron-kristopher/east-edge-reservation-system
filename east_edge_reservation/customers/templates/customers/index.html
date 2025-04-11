@@ -37,13 +37,13 @@
               <span class="navbar-toggler-icon"></span>
             </button>
           </div>
-          <div class="profilenav dropdown">
+          <div class="profilenav dropdown dropstart">
             <a data-bs-toggle="dropdown" style="cursor: pointer; user-select: none;">
               <i class="bx bx-user-circle"></i>
             </a>
             <ul class="dropdown-menu">
               <li><h5 class="dropdown-header">Where to {{request.user.first_name}}?</h5></li>
-              <li><a class="dropdown-item" href="#">Profile</a></li>
+              <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
               <hr>
               <li>
                 <form action="{% url 'logout' %}" method="POST">

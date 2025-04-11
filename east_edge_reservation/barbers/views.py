@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta, time
 from django.http import JsonResponse
 from django.views import View
+from django.utils import timezone
 from django.utils.dateparse import parse_date
 from .models import Service, Barber
 from reservations.models import Reservation
@@ -24,7 +25,7 @@ class AvailableTimeSlotsView(View):
         barber_id = request.GET.get("barber_id")
         date_str = request.GET.get("date")
         service_ids = request.GET.getlist("service_ids[]")
-
+        
         if not barber_id or not date_str or not service_ids:
             return JsonResponse({"error": "Missing parameters."}, status=400)
 
@@ -32,18 +33,19 @@ class AvailableTimeSlotsView(View):
             barber = Barber.objects.get(pk=barber_id)
             date = parse_date(date_str)
             services = Service.objects.filter(id__in=service_ids)
-            total_duration = sum([s.estimated_duration for s in services])  # minutes
+            total_duration = sum([s.estimated_time for s in services])  # minutes
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=400)
 
         # Define working hours
+        print(total_duration)
         start_time = time(8, 0)
-        end_time = time(17, 0)
+        end_time = time(17, 30)
         slot_interval = timedelta(minutes=30)
         all_slots = []
 
-        current_start = datetime.combine(date, start_time)
-        end_of_day = datetime.combine(date, end_time)
+        current_start = timezone.make_aware(datetime.combine(date, start_time))
+        end_of_day = timezone.make_aware(datetime.combine(date, end_time))
 
         # Get reservations for this barber on that day
         existing_reservations = Reservation.objects.filter(

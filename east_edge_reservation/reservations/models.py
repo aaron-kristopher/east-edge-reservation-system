@@ -2,6 +2,8 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from barbers.models import Barber, Service
 from customers.models import UserModel
+from django.utils import timezone 
+from datetime import timedelta
 
 
 class Reservation(models.Model):
@@ -47,8 +49,21 @@ class Reservation(models.Model):
         default=ReservationStatus.PENDING,
     )
 
+    def calculate_end_datetime(self):
+        
+        if not self.start_datetime:
+            return None 
+        start_time = timezone.localtime(self.start_datetime)
+        total_duration_minutes = sum(service.estimated_time for service in self.services.all())
+
+        return start_time + timedelta(minutes=total_duration_minutes)
+
     def reserved_for_name(self):
+        if self.is_reserved_for_self and self.reserved_by:
+             return f"{self.reserved_by.first_name or ''} {self.reserved_by.last_name or ''}".strip()
         return f"{self.reserved_for_first_name or ''} {self.reserved_for_last_name or ''}".strip()
 
     def __str__(self):
-        return f"{self.barber.first_name}: Reservation for {self.reserved_for_name()}"
+        reserved_name = self.reserved_for_name()
+        datetime_str = timezone.localtime(self.start_datetime).strftime('%Y-%m-%d %I:%M %p') if self.start_datetime else 'N/A'
+        return f"Reservation for {reserved_name} with {self.barber.first_name} at {datetime_str}"

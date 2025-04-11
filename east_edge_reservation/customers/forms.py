@@ -1,6 +1,8 @@
 from django import forms
-from .models import Customer, UserModel
+from .models import UserModel
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, AdminPasswordChangeForm
+from django.contrib.auth import get_user_model
+
 
 class SignUpForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput)
@@ -58,3 +60,31 @@ class CustomAdminPasswordChangeForm(AdminPasswordChangeForm):
     """Form for changing a user's password in the admin panel."""
     pass
 
+
+
+UserModel = get_user_model()
+
+class UserProfileUpdateForm(forms.ModelForm):
+    class Meta:
+        model = UserModel
+        fields = ['first_name', 'last_name', 'phone_number']
+
+class UserEmailChangeForm(forms.ModelForm):
+    email_confirm = forms.EmailField(label="Confirm new email", required=True)
+
+    class Meta:
+        model = UserModel
+        fields = ['email']
+
+    def clean(self):
+        cleaned_data = super().clean()
+        email = cleaned_data.get("email")
+        email_confirm = cleaned_data.get("email_confirm")
+
+        if email and email_confirm and email != email_confirm:
+            self.add_error('email_confirm', "Emails do not match.")
+
+        if email and UserModel.objects.filter(email=email).exclude(pk=self.instance.pk).exists():
+             self.add_error('email', "This email address is already in use.")
+
+        return cleaned_data

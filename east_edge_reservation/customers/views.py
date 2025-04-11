@@ -9,11 +9,15 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
 from django.contrib.auth.models import User
 from .forms import SignUpForm
-from .models import Customer, UserModel, UserManagerModel
+from .models import UserModel, UserManagerModel
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.hashers import check_password
-from .backends import EmailBackend 
+from .backends import EmailBackend
 
+from .forms import UserProfileUpdateForm, UserEmailChangeForm 
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
+from django.contrib import messages
 
 # Create your views here.
 
@@ -121,3 +125,60 @@ def reservation(request):
     context = {"services": Service.objects.all(), "barbers": Barber.objects.all()}
     return render(request, "customers/reservation.html", context)
 
+@login_required
+def customers_profile(request):
+    user = request.user
+
+    if request.method == 'POST':
+        form_type = request.POST.get('form_type') 
+
+        if form_type == 'profile_update':
+            profile_form = UserProfileUpdateForm(request.POST, instance=user)
+            if profile_form.is_valid():
+                profile_form.save()
+                messages.success(request, 'Your profile details have been updated.')
+                return redirect('profile') 
+            else:
+                for field, errors in profile_form.errors.items():
+                    for error in errors:
+                        messages.error(request, f"{field.replace('_',' ').title()}: {error}")
+            
+        elif form_type == 'email_change':
+            email_form = UserEmailChangeForm(request.POST, instance=user)
+            if email_form.is_valid():
+                email_form.save()
+                messages.success(request, 'Email updated successfully.')
+                return redirect('profile')
+            else:
+                 for field, errors in email_form.errors.items():
+                    for error in errors:
+                        messages.error(request, f"{field.replace('_',' ').title()}: {error}")
+                 if email_form.non_field_errors():
+                      messages.error(request, email_form.non_field_errors().as_text())
+
+
+        elif form_type == 'password_change':
+             password_form = PasswordChangeForm(user=user, data=request.POST)
+             if password_form.is_valid():
+                 user = password_form.save()
+                 update_session_auth_hash(request, user)
+                 messages.success(request, 'Your password was successfully updated!')
+                 return redirect('profile')
+             else:
+                for field, errors in password_form.errors.items():
+                    for error in errors:
+                        field_name = field.replace('_', ' ').replace('1','').replace('2','').title()
+                        messages.error(request, f"{field_name}: {error}")
+                if password_form.non_field_errors():
+                      messages.error(request, password_form.non_field_errors().as_text())
+
+        elif form_type == 'delete_account':
+             user_to_delete = request.user
+             logout(request)
+             user_to_delete.delete()
+             messages.info(request, 'Your account has been deleted.')
+             return redirect('customers') 
+
+    context = {
+    }
+    return render(request, "customers/profile.html", context)

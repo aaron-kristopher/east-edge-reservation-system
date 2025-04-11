@@ -8,7 +8,7 @@
 
       <div class="container navbar-container">
         <div class="navbar-logo">
-          <a class="navbar-brand" href="#"><img id="logo" src="{% static 'images/logo.png' %}" alt="logo" width="12%">EAST 'K EDGE</a>
+          <a class="navbar-brand" href="{% url 'customers' %}"><img id="logo" src="{% static 'images/logo.png' %}" alt="logo" width="12%">EAST 'K EDGE</a>
         </div>
 
         <div class="navbar-menu-button">
@@ -16,13 +16,13 @@
             <span class="navbar-toggler-icon"></span>
           </button>
         </div>
-        <div class="profilenav dropdown">
+        <div class="profilenav dropdown dropstart">
           <a data-bs-toggle="dropdown" style="cursor: pointer; user-select: none;">
             <i class="bx bx-user-circle"></i>
           </a>
           <ul class="dropdown-menu">
             <li><h5 class="dropdown-header">Where to {{request.user.first_name}}?</h5></li>
-            <li><a class="dropdown-item" href="#">Profile</a></li>
+            <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
             <hr>
             <li>
               <form action="{% url 'logout' %}" method="POST">
@@ -89,7 +89,7 @@
           {% for service in services %}
             {% if service.category == "H" %}
             <label>
-              <input class="checkbox-input" type="checkbox" value={{service.id}}>
+              <input class="checkbox-input" type="checkbox" value="{{ service.id }}" data-price="{{ service.price }}">
                 <span class="checkbox-tile">
                   <span class="checkbox-label">{{ service.service_name }}</span>
                 </span>
@@ -103,7 +103,7 @@
             {% for service in services %}
               {% if service.category == "G" %}
               <label>
-                <input class="checkbox-input" type="checkbox" value={{service.id}}>
+                <input class="checkbox-input" type="checkbox" value="{{ service.id }}" data-price="{{ service.price }}">
                   <span class="checkbox-tile">
                     <span class="checkbox-label">{{ service.service_name }}</span>
                   </span>
@@ -117,7 +117,7 @@
             {% for service in services %}
               {% if service.category == "N" %}
               <label>
-                <input class="checkbox-input" type="checkbox" value={{service.id}}>
+                <input class="checkbox-input" type="checkbox" value="{{ service.id }}" data-price="{{ service.price }}">
                   <span class="checkbox-tile">
                     <span class="checkbox-label">{{ service.service_name }}</span>
                   </span>
@@ -219,58 +219,80 @@
                 <input type="email" class="form-control" id="guestEmail" name="guestEmail" placeholder="e.g. sample@email.com" value="{{ request.user.email }}">
               </div>
             </div>
+  
+            <div class="modal-footer">
+              <!-- <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button> -->
+              <a class="btn btn-warning submit-button" data-bs-toggle="modal" data-bs-target="#reservationOverview"onclick="return getOverviewDetails()">Next</a>
 
-            <hr>
+              <!-- <button type="submit" form="guestForm" class="btn btn-warning submit-button">Next</button> -->
 
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="reservationOverview">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content container-fluid">
+        <!-- Modal Header -->
+         <div class="modal-header row">
+          <div class="d-flex p-4">
             <!-- Overview Section -->
-            <h4 class="mt-4">Overview</h4>
+            <h4 class="modal-title">Overview</h4>
+            <button class="btn-close mt-1" data-bs-dismiss="modal"></button>
+          </div>
+
+          <!-- Modal Body -->
+          <div class="modal-body row">
             <div class="row mb-3">
               <div class="col-md-6">
                 <label for="firstname" class="form-label">First Name</label>
-                <input type="text" class="form-control overview" id="firstname" value="Matthew" readonly>
+                <input type="text" class="form-control overview" id="firstname" readonly>
               </div>
               <div class="col-md-6">
                 <label for="lastname" class="form-label">Last Name</label>
-                <input type="text" class="form-control overview" id="lastname" value="Mascuñana" readonly>
+                <input type="text" class="form-control overview" id="lastname" readonly>
               </div>
             </div>
             <div class="row mb-3">
               <div class="col-md-6">
                 <label for="contact" class="form-label">Contact Number</label>
-                <input type="text" class="form-control overview" id="contact" value="09123456789" readonly>
+                <input type="text" class="form-control overview" id="contact" readonly>
               </div>
               <div class="col-md-6">
                 <label for="email" class="form-label">Email</label>
-                <input type="text" class="form-control overview" id="email" value="matnmas@gmail.com" readonly>
+                <input type="text" class="form-control overview" id="email" readonly>
               </div>
             </div>
             <div class="row mb-3">
               <div class="col-md-6">
                 <label for="services" class="form-label">Service</label>
-                <input type="text" class="form-control overview" id="services" value="Haircut" readonly>
+                <input type="text" class="form-control overview" id="services" readonly>
               </div>
               <div class="col-md-6">
                 <label for="barber" class="form-label">Barber</label>
-                <input type="text" class="form-control overview" id="barber" value="Juan" readonly>
+                <input type="text" class="form-control overview" id="barber" readonly>
               </div>
             </div>
             <div class="row mb-3">
               <div class="col-md-6">
                 <label for="datetime" class="form-label">Reservation Date and Time</label>
-                <input type="text" class="form-control overview" id="datetime" value="March 19, 2025 - 10:00 am" readonly>
+                <input type="text" class="form-control overview" id="datetime" readonly>
               </div>
               <div class="col-md-6">
                 <label for="price" class="form-label">Total Price</label>
-                <input type="text" class="form-control overview" id="overviewPrice" value="price" readonly>
+                <input type="text" class="form-control overview" id="overviewPrice" readonly>
               </div>
             </div>
-  
-            <div class="modal-footer">
-              <!-- <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button> -->
-              <button type="submit" form="guestForm" class="btn btn-warning submit-button ">Submit</button>
-            </div>
-          </form>
-        </div>
+          </div>
+
+          <div class="modal-footer row">
+            <a data-bs-toggle="modal" data-bs-target="#reservationFormModal" class="btn btn-warning submit-button">Back</a>
+            <button type="submit" form="guestForm" class="btn btn-warning submit-button">Submit</button>
+          </div>
+         </div>
       </div>
     </div>
   </div>
@@ -293,6 +315,73 @@
     };
 
     let selectedBarberId = null;
+    let selectedBarberName = null; 
+
+    function getOverviewDetails() {
+    selectedServiceIds = Array.from(ids);
+    const datePicker = document.getElementById("datetimepicker")?._flatpickr;
+    const timeSelect = document.getElementById("time-select");
+    selectedTimeStr = timeSelect ? timeSelect.value : "";
+
+    if (!selectedBarberId || selectedServiceIds.length === 0 || !selectedTimeStr || !datePicker || datePicker.selectedDates.length === 0) {
+        alert("Please ensure you have selected service(s), a barber, a date, and a time before proceeding.");
+        return false;
+    }
+
+    // --- Populate Overview ---
+    document.getElementById('firstname').value = document.getElementById('guestFirstName').value;
+    document.getElementById('lastname').value = document.getElementById('guestLastName').value;
+    document.getElementById('contact').value = document.getElementById('guestContact').value;
+    document.getElementById('email').value = document.getElementById('guestEmail').value;
+
+    selectedDateStrFormatted = flatpickr.formatDate(datePicker.selectedDates[0], "F j, Y");
+    selectedDateStrYMD = flatpickr.formatDate(datePicker.selectedDates[0], "Y-m-d");
+    document.getElementById('datetime').value = `${selectedDateStrFormatted} - ${selectedTimeStr}`;
+
+
+    // --- Price & Service Calculation ---
+    selectedServiceNames = [];
+    calculatedTotalPrice = 0;
+    console.log("Starting price calculation for service IDs:", selectedServiceIds);
+
+    for (const serviceId of selectedServiceIds) {
+        console.log("Processing Service ID:", serviceId);
+        const checkboxSelector = `input.checkbox-input[value="${serviceId}"]`;
+        const checkbox = document.querySelector(checkboxSelector);
+
+        if (checkbox) {
+            const nameSpan = checkbox.closest('label')?.querySelector('.checkbox-label');
+            if (nameSpan) { selectedServiceNames.push(nameSpan.textContent.trim()); }
+            else { selectedServiceNames.push(`Service ${serviceId}`); }
+
+            const priceAttribute = checkbox.dataset.price; 
+            console.log(`  Checkbox found. data-price attribute: '${priceAttribute}'`);
+
+            if (priceAttribute !== undefined && priceAttribute !== null && priceAttribute.trim() !== '') {
+                const price = parseFloat(priceAttribute); 
+                console.log(`  Parsed price: ${price}`);
+                if (!isNaN(price)) {
+                    calculatedTotalPrice += price;
+                    console.log(`  Running total: ${calculatedTotalPrice}`);
+                } else {
+                    console.warn(`  Could not parse price '${priceAttribute}' as float.`);
+                }
+            } else {
+                console.warn(`  data-price attribute is missing or empty.`);
+            }
+        } else {
+            console.warn(`  Could not find checkbox with selector: ${checkboxSelector}`);
+        }
+    }
+    console.log("Final Calculated Price:", calculatedTotalPrice);
+
+    document.getElementById('services').value = selectedServiceNames.join(', ') || 'N/A';
+    document.getElementById('barber').value = selectedBarberName || 'N/A'; 
+    document.getElementById('overviewPrice').value = `Php ${calculatedTotalPrice.toFixed(2)}`; 
+
+    console.log("Overview details populated.");
+    return true;
+}
 
     guestToggle.addEventListener('change', () => {
       document.getElementById("guestFirstName").value = guestToggle.checked ? fields.first_name : '';
@@ -333,7 +422,7 @@
         time_24hr: false,
         inline: true,
         defaultDate: new Date(),
-        dateFormat: "F j, Y",
+        dateFormat: "Y-m-d", //F j, Y
 
         onReady: function(selectedDates, dateStr, instance) {
           const calendarInnerContainer = instance.calendarContainer.querySelector('.flatpickr-innerContainer');
@@ -351,7 +440,9 @@
 
           const selectedDate = dateStr;
           const barberId = selectedBarberId;
-          const serviceIds = ids;
+          const serviceIds = Array.from(ids);
+
+          console.log(typeof(serviceIds))
 
           if (!!barberId && serviceIds.length > 0) {
             fetchAvailableTimeSlots(barberId, selectedDate, serviceIds);
@@ -368,11 +459,12 @@
         });
         serviceIds.forEach(id => params.append('service_ids[]', id));
 
-        const response = await fetch(`/api/available-times/?${params}`);
+        const response = await fetch(`/barbers/api/available-times/?${params}`);
         const data = await response.json();
 
         const select = document.getElementById("time-select");
         select.innerHTML = '';
+        console.log(data.available_slots);
 
         if (data.available_slots) {
           data.available_slots.forEach(time => {
@@ -396,11 +488,16 @@
         button.addEventListener('click', function(event) {
           event.preventDefault(); 
           const buttonId = this.id; 
+          const cardWrapper = button.closest('.card-wrapper'); 
+          const cardInfoSpan = cardWrapper?.querySelector('.card-info span');
 
-          if (buttonId && buttonId.includes('-')) {
+          if (buttonId && buttonId.includes('-')  && cardWrapper && cardInfoSpan) {
             selectedBarberId = buttonId.split("-")[1];
-            console.log("Barber selected:", selectedBarberId);
-            alert(`Barber ${selectedBarberId} selected. Now choose date and time.`);
+            const barberName = cardInfoSpan.textContent.trim(); 
+            selectedBarberName = barberName;
+            console.log("Barber selected:", selectedBarberId, "Barber name:", selectedBarberName);
+            alert(`Barber ${selectedBarberId} ${selectedBarberName} selected. Now choose date and time.`);
+            
 
           } else {
             console.error("Could not determine barber ID from button:", this);
@@ -416,7 +513,7 @@
       let dateTime = "";
 
       if (datePicker && datePicker.selectedDates.length > 0 && timeSelect.value) {
-        const dateStr = flatpickr.formatDate(datePicker.selectedDates[0], "F j, Y");
+        const dateStr = flatpickr.formatDate(datePicker.selectedDates[0], "Y-m-d"); //F j, Y
         dateTime = `${dateStr} at ${timeSelect.value}`;
       }
       document.getElementById('output').textContent = dateTime
@@ -426,10 +523,10 @@
 
     async function getBarberReservations(buttonInsideCalendar) {
 
-      if (!selectedBarberId) {
-        alert("Please select a barber first by clicking 'Reserve' on their card.");
-        return;
-      }
+      // if (!selectedBarberId) {
+      //   alert("Please select a barber first by clicking 'Reserve' on their card.");
+      //   return;
+      // }
 
       const datePicker = document.getElementById("datetimepicker")._flatpickr;
       const timeSelect = document.getElementById("time-select");
@@ -437,7 +534,7 @@
       let timePart = timeSelect.value;
       
       if (datePicker && datePicker.selectedDates.length > 0) {
-        datePart = flatpickr.formatDate(datePicker.selectedDates[0], "Y-m-d");
+        datePart = flatpickr.formatDate(datePicker.selectedDates[0], "Y-m-d"); //Y-m-d
       } else {
         alert("Please select a date from the calendar.");
         return;
@@ -459,7 +556,6 @@
 
         if (data)
           console.log(data)
-          // TODO: Process the reservation data
 
       } catch (error) {
         console.log(error.message)
