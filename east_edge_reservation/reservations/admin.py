@@ -1,12 +1,12 @@
+from django.contrib import admin
 from django.contrib.admin import register
 from django.utils.html import format_html
 from unfold.admin import ModelAdmin
 from unfold.contrib.filters.admin import RangeDateTimeFilter, ChoicesDropdownFilter
-from unfold.decorators import action
 from .models import Reservation
 
 
-@action(description="Set reservation status to complete")
+@admin.action(description="Set reservation status to complete")
 def complete_reservation(modeladmin, request, queryset):
     queryset.update(status="C")
 
@@ -16,13 +16,43 @@ def complete_reservation(modeladmin, request, queryset):
     )
 
 
-@action(description="Revert reservation status to pending")
-def revert_reservation_status(modeladmin, request, queryset):
-    queryset.update(status="P")
+@admin.action(description="Set reservation status to cancelled")
+def cancel_reservation(modeladmin, request, queryset):
+    queryset.update(status="X")
 
     modeladmin.message_user(
         request,
-        f"Set reservation status for {len(queryset)} reservations to `Pending`. ",
+        f"Set reservation status for {len(queryset)} reservations to `Cancelled`. ",
+    )
+
+
+@admin.action(description="Set reservation status to decline")
+def decline_reservation(modeladmin, request, queryset):
+    queryset.update(status="D")
+
+    modeladmin.message_user(
+        request,
+        f"Set reservation status for {len(queryset)} reservations to `Declined`. ",
+    )
+
+
+@admin.action(description="Set reservation status to accepted")
+def accept_reservation(modeladmin, request, queryset):
+    queryset.update(status="A")
+
+    modeladmin.message_user(
+        request,
+        f"Set reservation status for {len(queryset)} reservations to `Accepted`. ",
+    )
+
+
+@admin.action(description="Set reservation status to requested")
+def request_reservation(modeladmin, request, queryset):
+    queryset.update(status="R")
+
+    modeladmin.message_user(
+        request,
+        f"Set reservation status for {len(queryset)} reservations to `Requested`. ",
     )
 
 
@@ -58,9 +88,11 @@ class ReservationAdmin(ModelAdmin):
         Returns the status field with different colors depending on the value.
         """
         color_map = {
-            "P": "bg-primary-200 text-primary-700 dark:bg-primary-500/20 dark:text-primary-400",
-            "C": "bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400",  # Confirmed (Green)
-            "X": "bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400",  # Confirmed (Green)
+            "R": "bg-primary-200 text-primary-700 dark:bg-yellow-500/20 dark:text-primary-400",
+            "A": "bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-400",
+            "C": "bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400",
+            "X": "bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400",
+            "D": "bg-base-300 text-base-700 dark:bg-base-500/20 dark:text-base-400",
         }
         color_class = color_map.get(obj.status, "")
         return format_html(
@@ -71,6 +103,10 @@ class ReservationAdmin(ModelAdmin):
 
     actions = [
         complete_reservation,
+        accept_reservation,
+        request_reservation,
+        cancel_reservation,
+        decline_reservation,
     ]
 
     formatted_status.short_description = "Status"

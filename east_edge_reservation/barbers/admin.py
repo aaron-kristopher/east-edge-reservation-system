@@ -33,7 +33,7 @@ class MultipleRelatedDropdownFilterAND(MultipleRelatedDropdownFilter):
 
 
 @action(
-    description="Generate barber schedule for next week (Sunday to Saturday, 8 AM - 8 PM)"
+    description="Generate barber schedule for next week (Sunday to Saturday, 8 AM - 5:30 PM)"
 )
 def generate_weekly_schedule(modeladmin, request, queryset):
     today = now().date()
@@ -50,7 +50,7 @@ def generate_weekly_schedule(modeladmin, request, queryset):
             start_time = datetime.combine(schedule_date, datetime.min.time()).replace(
                 hour=8, minute=0, second=0
             )
-            end_time = start_time + timedelta(hours=12)  # Ends at 8 PM
+            end_time = start_time + timedelta(hours=9, minutes=30)  # Ends at 8 PM
             schedules.append(
                 Schedule(
                     barber=barber, start_datetime=start_time, end_datetime=end_time
