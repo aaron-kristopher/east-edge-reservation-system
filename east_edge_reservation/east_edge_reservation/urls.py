@@ -22,9 +22,13 @@ from customers import views
 urlpatterns = [
     path("", include("customers.urls")),
     path("barbers/", include("barbers.urls")),
+    # path("reservations/", include("reservations.urls")),
     path("admin/", admin.site.urls),
     #logging in 
     path('accounts/login/', views.customer_login, name="login"),
     path('accounts/logout/', views.customer_logout, name="logout"),
-    path('accounts/signup/', views.customer_signup, name="signup")
+    path('accounts/signup/', views.customer_signup, name="signup"),
+    
+    path('', include('reservations.urls')),
+
 ]

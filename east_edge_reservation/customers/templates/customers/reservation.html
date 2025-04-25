@@ -8,7 +8,7 @@
 
       <div class="container navbar-container">
         <div class="navbar-logo">
-          <a class="navbar-brand" href="#"><img id="logo" src="{% static 'images/logo.png' %}" alt="logo" width="12%">EAST 'K EDGE</a>
+          <a class="navbar-brand" href="{% url 'customers' %}"><img id="logo" src="{% static 'images/logo.png' %}" alt="logo" width="12%">EAST 'K EDGE</a>
         </div>
 
         <div class="navbar-menu-button">
@@ -16,13 +16,13 @@
             <span class="navbar-toggler-icon"></span>
           </button>
         </div>
-        <div class="profilenav dropdown">
+        <div class="profilenav dropdown dropstart">
           <a data-bs-toggle="dropdown" style="cursor: pointer; user-select: none;">
             <i class="bx bx-user-circle"></i>
           </a>
           <ul class="dropdown-menu">
             <li><h5 class="dropdown-header">Where to {{request.user.first_name}}?</h5></li>
-            <li><a class="dropdown-item" href="#">Profile</a></li>
+            <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
             <hr>
             <li>
               <form action="{% url 'logout' %}" method="POST">
@@ -36,7 +36,7 @@
         <div class="collapse navbar-collapse" id="collapsibleNavbar">
           <ul class="navbar-nav" id="navbar-navlist">
             <li class="nav-item">
-              <a class="nav-link" href="#">Reservation</a>
+              <a class="nav-link" href="{% url 'customer_reservations' %}">Reservation</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="#">FAQ</a>              
@@ -51,47 +51,59 @@
 
 
 {% block content %}
-
-
-    <style>
-      .reservation-bg{
-        background-image: url("{% static 'images/photo-barber.jpg' %}");
-        width: 100%;
-        background-size: cover;
-        background-position: center -120px;
-        background-repeat: no-repeat;
-        padding-bottom: 5em !important;
-      }
-    </style>
-    <div class="container-fluid p-0">
-      <div class="p-5 bg-secondary text-white reservation-bg">
-        <h1 class="mt-3">Welcome to East 'K Edge {{request.user.first_name}}!</h1> 
-        <p>Choose from our services and reserve from our amazing barbers</p> 
-      </div>
+  <style>
+    .reservation-bg{
+      background-image: url("{% static 'images/photo-barber.jpg' %}");
+      width: 100%;
+      background-size: cover;
+      background-position: center -120px;
+      background-repeat: no-repeat;
+      padding-bottom: 5em !important;
+    }
+  </style>
+  <div class="container-fluid p-0">
+    <div class="p-5 bg-secondary text-white reservation-bg">
+      <h1 class="mt-3">Welcome to East 'K Edge {{request.user.first_name}}!</h1> 
+      <p>Choose from our services and reserve from our amazing barbers</p> 
     </div>
+  </div>
 
-    <div class="container-fluid accords mt-4">
-      <div class="container">
-        <ul class="nav nav-pills services-pills d-flex justify-content-center align-items-center gap-4">
-          <li class="nav-item">
-            <a class="nav-link active services-link d-flex justify-content-center fs-5" data-bs-toggle="pill" href="#H">Hair Services</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link services-link d-flex justify-content-center fs-5 text-nowrap" data-bs-toggle="pill" href="#G">Grooming Services</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link services-link d-flex justify-content-center fs-5" data-bs-toggle="pill" href="#N">Nail Services</a>
-          </li>
-        </ul>
-        
-        <!-- Tab panes -->
-        <div class="tab-content">
-          <div class="tab-pane container active" id="H">
-            <div class="d-flex flex-wrap justify-content-center gap-3 mt-5">
+  <div class="container-fluid accords mt-4">
+    <div class="container">
+      <ul class="nav nav-pills services-pills d-flex justify-content-center align-items-center gap-4">
+        <li class="nav-item">
+          <a class="nav-link active services-link d-flex justify-content-center fs-5" data-bs-toggle="pill" href="#H">Hair Services</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link services-link d-flex justify-content-center fs-5 text-nowrap" data-bs-toggle="pill" href="#G">Grooming Services</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link services-link d-flex justify-content-center fs-5" data-bs-toggle="pill" href="#N">Nail Services</a>
+        </li>
+      </ul>
+      
+      <!-- Tab panes -->
+      <div class="tab-content">
+        <div class="tab-pane container active" id="H">
+          <div class="d-flex flex-wrap justify-content-center gap-3 mt-5">
+          {% for service in services %}
+            {% if service.category == "H" %}
+            <label>
+              <input class="checkbox-input" type="checkbox" value="{{ service.id }}" data-price="{{ service.price }}">
+                <span class="checkbox-tile">
+                  <span class="checkbox-label">{{ service.service_name }}</span>
+                </span>
+            </label>
+            {% endif %}
+          {% endfor %}
+          </div>
+        </div>
+        <div class="tab-pane container fade" id="G">
+          <div class="d-flex flex-wrap justify-content-center gap-3 mt-5">
             {% for service in services %}
-              {% if service.category == "H" %}
+              {% if service.category == "G" %}
               <label>
-                <input class="checkbox-input" type="checkbox" value={{service.id}}>
+                <input class="checkbox-input" type="checkbox" value="{{ service.id }}" data-price="{{ service.price }}">
                   <span class="checkbox-tile">
                     <span class="checkbox-label">{{ service.service_name }}</span>
                   </span>
@@ -99,304 +111,196 @@
               {% endif %}
             {% endfor %}
             </div>
-          </div>
-          <div class="tab-pane container fade" id="G">
-            <div class="d-flex flex-wrap justify-content-center gap-3 mt-5">
-              {% for service in services %}
-                {% if service.category == "G" %}
-                <label>
-                  <input class="checkbox-input" type="checkbox" value={{service.id}}>
-                    <span class="checkbox-tile">
-                      <span class="checkbox-label">{{ service.service_name }}</span>
-                    </span>
-                </label>
-                {% endif %}
-              {% endfor %}
-              </div>
-          </div>
-          <div class="tab-pane container fade" id="N">
-            <div class="d-flex flex-wrap justify-content-center gap-3 mt-5">
-              {% for service in services %}
-                {% if service.category == "N" %}
-                <label>
-                  <input class="checkbox-input" type="checkbox" value={{service.id}}>
-                    <span class="checkbox-tile">
-                      <span class="checkbox-label">{{ service.service_name }}</span>
-                    </span>
-                </label>
-                {% endif %}
-              {% endfor %}
-            </div>
-          </div>
         </div>
-      </div>
-      <hr>
-      <div class="mt-3 overflow-auto text-nowrap" id="selected-services"></div>
-      <hr>
-
-      <div class="container mt-5 d-flex justify-content-center">
-        <div class="d-flex align-items-center flex-column">
-          <h4>Barbers</h4>
-          <div id="empty-barber-section">
-            <h6>Available barber(s) from chosen services</h6>
-          </div>
-        </div>
-      </div>
-
-
-      <div class="container mt-3 mb-5" id="barbers">
-        <div class="row">
-            {% for barber in barbers %}
-            <div class="col-12 col-sm-6 col-md-6 col-lg-3 mt-5 card-wrapper" data-barber-id="{{ barber.id }}">
-                <div class="card-1 p-3">
-                    <div class="image-barber"></div>
-                    <div class="card-info">
-                        <span>{{ barber.first_name }} {{ barber.last_name }}</span>
-                        <p>Lorem Ipsum</p>
-                    </div>
-                    <a id="button-{{ barber.id }}" class="button-reserve-barber">Reserve</a>
-                </div>
-            </div>
+        <div class="tab-pane container fade" id="N">
+          <div class="d-flex flex-wrap justify-content-center gap-3 mt-5">
+            {% for service in services %}
+              {% if service.category == "N" %}
+              <label>
+                <input class="checkbox-input" type="checkbox" value="{{ service.id }}" data-price="{{ service.price }}">
+                  <span class="checkbox-tile">
+                    <span class="checkbox-label">{{ service.service_name }}</span>
+                  </span>
+              </label>
+              {% endif %}
             {% endfor %}
+          </div>
         </div>
       </div>
     </div>
-    <br><br>
-    
+    <hr>
+    <div class="mt-3 overflow-auto text-nowrap" id="selected-services"></div>
+    <hr>
 
-    <section class="container-fluid py-3" id="select-date">
-      <div class="row d-flex justify-content-evenly position-relative">
-        <div class="py-4 py-md-5 d-flex flex-column align-items-center justify-content-center col-sm-6 full-width-bg text-white">
-          <h2 class="mt-4 pb-md-2">Select Date and Time</h2>
-          <p class="mb-3"> Reserve now, and experience the haircut of your life
-          <p id="output"></p>
+    <div class="container mt-5 d-flex justify-content-center">
+      <div class="d-flex align-items-center flex-column">
+        <h4>Barbers</h4>
+        <div id="empty-barber-section">
+          <h6>No Barbers Available. Please select a service first.</h6>
         </div>
-        <div class="calendar-container d-flex flex-column align-items-center gap-4 col-sm-6">
-          <div id="datetimepicker"></div>
-          <select id="time-select" style="display: none;"></select>
-          <button onclick="getBarberReservations(this)" style="display: none;" class="getReservationButton" data-bs-toggle="modal" data-bs-target="#myModal">Get Reservation</button>
-          <div id="output"></div>
-        </div>
+        <!-- <div id="no-services-selected-section">
+          <h6>No Barbers Available. Please select a service first.</h6>
+        </div> -->
       </div>
-    </section>
-    <br>
+    </div>
 
 
-    <!-- The Modal -->
-    <div class="modal" id="myModal">
-      <div class="modal-dialog modal-lg">
-        <div class="modal-content">
+    <div class="container mt-3 mb-5" id="barbers">
+      <div class="row">
+          {% for barber in barbers %}
+          <div class="col-12 col-sm-6 col-md-6 col-lg-3 mt-5 card-wrapper d-none" data-barber-id="{{ barber.id }}">
+              <div class="card-1 p-3">
+                  <div class="image-barber"></div>
+                  <div class="card-info">
+                      <span>{{ barber.first_name }} {{ barber.last_name }}</span>
+                      <p>Lorem Ipsum</p>
+                  </div>
+                  <a id="button-{{ barber.id }}" class="button-reserve-barber" href="#select-date">Reserve</a>
+              </div>
+          </div>
+          {% endfor %}
+      </div>
+    </div>
+  </div>
+  <br><br>
+  
 
-          <!-- Modal Header -->
-          <div class="modal-header">
-            <div class="d-flex flex-column">
-              <h4 class="modal-title">Guest Details</h4>
-              <div class="form-check form-switch me-3">
-                <input class="form-check-input" type="checkbox" role="switch" id="guestToggleSwitch" checked><h6 class="my-1"> Toggle this button off if reserving for a different person</h6>
+  <section class="container-fluid py-3" id="select-date">
+    <div class="row d-flex justify-content-evenly position-relative">
+      <div class="py-4 py-md-5 d-flex flex-column align-items-center justify-content-center col-md-6 full-width-bg text-white">
+        <h2 class="mt-4 pb-md-2">Select Date and Time</h2>
+        <p class="mb-3"> Reserve now, and experience the haircut of your life
+        <p id="output"></p>
+      </div>
+      <div class="calendar-container d-flex flex-column align-items-center gap-4 col-md-6">
+        <div id="datetimepicker"></div>
+        <select id="time-select" style="display: none;"></select>
+        <button id="get-reservation" disabled="true" onclick="getBarberReservations(this)" style="display: none;" class="getReservationButtonDisabled" data-bs-toggle="modal" data-bs-target="#reservationFormModal">Get Reservation</button>
+        <div id="output"></div>
+      </div>
+    </div>
+  </section>
+  <br>
+
+
+  <!-- The Modal -->
+  <div class="modal" id="reservationFormModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <div class="d-flex flex-column">
+            <h4 class="modal-title">Guest Details</h4>
+            <div class="form-check form-switch me-3">
+              <input class="form-check-input" type="checkbox" role="switch" id="guestToggleSwitch" checked><h6 class="my-1"> Toggle this button off if reserving for a different person</h6>
+            </div>
+          </div>
+          <button type="button" class="btn-close mb-4" data-bs-dismiss="modal"></button>
+        </div>
+
+        <!-- Modal body -->
+        <div class="modal-body">
+          <form id="form-1">
+            <div class="row mb-3 mt-3">
+              <div class="col-md-6 mb-3">
+                <label for="guestFirstName" class="form-label">First Name</label>
+                <input type="text" class="form-control" id="guestFirstName" name="guestFirstName" placeholder="e.g. Juan"  value="{{ request.user.first_name }}">
+              </div>
+              <div class="col-md-6">
+                <label for="guestLastName" class="form-label">Last Name</label>
+                <input type="text" class="form-control" id="guestLastName" name="guestLastName" placeholder="e.g. Dela Cruz" value="{{ request.user.last_name }}">
               </div>
             </div>
-            <button type="button" class="btn-close mb-4" data-bs-dismiss="modal"></button>
+            <div class="row mb-4">
+              <div class="col-md-6 mb-3">
+                <label for="guestContact" class="form-label">Phone Number</label>
+                <input type="tel" class="form-control" id="guestContact" name="guestContact" placeholder="e.g. 09876543210" value="{{ request.user.phone_number }}">
+              </div>
+              <div class="col-md-6">
+                <label for="guestEmail" class="form-label">Email</label>
+                <input type="email" class="form-control" id="guestEmail" name="guestEmail" placeholder="e.g. sample@email.com" value="{{ request.user.email }}">
+              </div>
+            </div>
+  
+            <div class="modal-footer">
+              <!-- <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button> -->
+              <a class="btn btn-warning submit-button" data-bs-toggle="modal" data-bs-target="#reservationOverview"onclick="return getOverviewDetails()">Next</a>
+
+              <!-- <button type="submit" form="guestForm" class="btn btn-warning submit-button">Next</button> -->
+
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="reservationOverview">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content container-fluid">
+        <!-- Modal Header -->
+         <div class="modal-header row">
+          <div class="d-flex p-4">
+            <!-- Overview Section -->
+            <h4 class="modal-title">Overview</h4>
+            <button class="btn-close mt-1" data-bs-dismiss="modal"></button>
           </div>
 
-          <!-- Modal body -->
-          <div class="modal-body">
-            <form id="guestForm">
-              <div class="row mb-3 mt-3">
-                <div class="col-md-6 mb-3">
-                  <input type="text" class="form-control" id="guestFirstName" name="guestFirstName" placeholder="First Name">
-                </div>
-                <div class="col-md-6">
-                  <input type="text" class="form-control" id="guestLastName" name="guestLastName" placeholder="Last Name">
-                </div>
-              </div>
-              <div class="row mb-4">
-                <div class="col-md-6 mb-3">
-                  <input type="tel" class="form-control" id="guestContact" name="guestContact" placeholder="Contact Number">
-                </div>
-                <div class="col-md-6">
-                  <input type="email" class="form-control" id="guestEmail" name="guestEmail" placeholder="Email">
-                </div>
-              </div>
-    
-              <hr>
-    
-              <!-- Overview Section -->
-              <h4 class="mt-4">Overview</h4>
+          <!-- Modal Body -->
+          <div class="modal-body row">
+            <form action="" id="guestForm">
               <div class="row mb-3">
                 <div class="col-md-6">
                   <label for="firstname" class="form-label">First Name</label>
-                  <input type="text" class="form-control overview" id="firstname" value="Matthew" readonly>
+                  <input type="text" class="form-control overview" id="firstname" readonly>
                 </div>
                 <div class="col-md-6">
                   <label for="lastname" class="form-label">Last Name</label>
-                  <input type="text" class="form-control overview" id="lastname" value="Mascuñana" readonly>
+                  <input type="text" class="form-control overview" id="lastname" readonly>
                 </div>
               </div>
               <div class="row mb-3">
                 <div class="col-md-6">
                   <label for="contact" class="form-label">Contact Number</label>
-                  <input type="text" class="form-control overview" id="contact" value="09123456789" readonly>
+                  <input type="text" class="form-control overview" id="contact" readonly>
                 </div>
                 <div class="col-md-6">
                   <label for="email" class="form-label">Email</label>
-                  <input type="text" class="form-control overview" id="email" value="matnmas@gmail.com" readonly>
-                </div>
+                  <input type="text" class="form-control overview" id="email" readonly>
+                </div>  
               </div>
               <div class="row mb-3">
                 <div class="col-md-6">
                   <label for="services" class="form-label">Service</label>
-                  <input type="text" class="form-control overview" id="services" value="Haircut" readonly>
+                  <input type="text" class="form-control overview" id="services" readonly>
                 </div>
                 <div class="col-md-6">
                   <label for="barber" class="form-label">Barber</label>
-                  <input type="text" class="form-control overview" id="barber" value="Juan" readonly>
+                  <input type="text" class="form-control overview" id="barber" readonly>
                 </div>
               </div>
               <div class="row mb-3">
                 <div class="col-md-6">
                   <label for="datetime" class="form-label">Reservation Date and Time</label>
-                  <input type="text" class="form-control overview" id="datetime" value="March 19, 2025 - 10:00 am" readonly>
+                  <input type="text" class="form-control overview" id="datetime" readonly>
                 </div>
                 <div class="col-md-6">
                   <label for="price" class="form-label">Total Price</label>
-                  <input type="text" class="form-control overview" id="overviewPrice" value="price" readonly>
+                  <input type="text" class="form-control overview" id="overviewPrice" readonly>
                 </div>
               </div>
-    
-              <div class="modal-footer">
-                <!-- <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button> -->
-                <button type="submit" form="guestForm" class="btn btn-warning submit-button ">Submit</button>
-              </div>
-            </form>
-          </div>
-        </div>
+            </div>
+
+            <div class="modal-footer row">
+              <a data-bs-toggle="modal" data-bs-target="#reservationFormModal" class="btn btn-warning submit-button">Back</a>
+              <button type="submit" form="guestForm" class="btn btn-warning submit-button">Submit</button>
+            </div>
+        </form>
+         </div>
       </div>
     </div>
-
-    <script>
-      let selectedBarberId = null;
-  
-      function populateTimeDropdown() {
-           const select = document.getElementById("time-select");
-           select.innerHTML = '';
-           const startHour = 8;
-           const endHour = 17;
-  
-           for (let hour = startHour; hour <= endHour; hour++) {
-               for (let minute of [0, 30]) {
-                   let period = hour < 12 ? "AM" : "PM";
-                   let displayHour = (hour === 0 || hour === 12) ? 12 : hour % 12;
-                   let displayMinute = minute === 0 ? "00" : "30";
-                   let timeString = `${displayHour}:${displayMinute} ${period}`;
-  
-                   let option = document.createElement("option");
-                   option.value = timeString;
-                   option.textContent = timeString;
-                   select.appendChild(option);
-               }
-           }
-       }
-  
-      document.addEventListener("DOMContentLoaded", () => {
-          populateTimeDropdown();
-  
-          const timeSelect = document.getElementById("time-select");
-          const reservationButton = document.querySelector('.calendar-container button[onclick^="getBarberReservations"]');
-  
-          if (timeSelect) timeSelect.style.display = 'block';
-          if (reservationButton) reservationButton.style.display = 'block';
-  
-          flatpickr("#datetimepicker", {
-              enableTime: false,
-              time_24hr: false,
-              inline: true,
-              defaultDate: new Date(),
-              dateFormat: "F j, Y",
-              onReady: function(selectedDates, dateStr, instance) {
-                  const calendarInnerContainer = instance.calendarContainer.querySelector('.flatpickr-innerContainer');
-  
-                  if (calendarInnerContainer && timeSelect && reservationButton) {
-                      const customControlsContainer = document.createElement('div');
-                      customControlsContainer.classList.add('custom-flatpickr-controls');
-  
-                      customControlsContainer.appendChild(timeSelect);
-                      customControlsContainer.appendChild(reservationButton);
-  
-                      calendarInnerContainer.appendChild(customControlsContainer);
-                   }
-              },
-          });
-  
-          const barberReserveButtons = document.querySelectorAll('.button-reserve-barber');
-          barberReserveButtons.forEach(button => {
-              button.addEventListener('click', function(event) {
-                  event.preventDefault(); 
-                  const buttonId = this.id; 
-                  if (buttonId && buttonId.includes('-')) {
-                      selectedBarberId = buttonId.split("-")[1];
-                      console.log("Barber selected:", selectedBarberId);
-                      alert(`Barber ${selectedBarberId} selected. Now choose date and time.`);
-                  } else {
-                      console.error("Could not determine barber ID from button:", this);
-                      selectedBarberId = null; 
-                  }
-              });
-          });
-      });
-  
-      function showSelectedDateTime() {
-        const datePicker = document.getElementById("datetimepicker")._flatpickr;
-        const timeSelect = document.getElementById("time-select");
-        let dateTime = '';
-        if (datePicker && datePicker.selectedDates.length > 0 && timeSelect.value) {
-            const dateStr = flatpickr.formatDate(datePicker.selectedDates[0], "F j, Y");
-            dateTime = `${dateStr} at ${timeSelect.value}`;
-        }
-        document.getElementById('output').textContent = dateTime
-          ? `Selected Date & Time: ${dateTime}`
-          : 'Please select a date and time.';
-      }
-
-      async function getBarberReservations(buttonInsideCalendar) {
-     if (!selectedBarberId) {
-         alert("Please select a barber first by clicking 'Reserve' on their card.");
-         return;
-     }
-
-     const datePicker = document.getElementById("datetimepicker")._flatpickr;
-     const timeSelect = document.getElementById("time-select");
-     let datePart = '';
-     let timePart = timeSelect.value;
-
-     if (datePicker && datePicker.selectedDates.length > 0) {
-         datePart = flatpickr.formatDate(datePicker.selectedDates[0], "Y-m-d");
-     } else {
-         alert("Please select a date from the calendar.");
-         return;
-     }
-
-     showSelectedDateTime();
-
-     console.log(`Getting reservations for Barber ID: ${selectedBarberId}, Date: ${datePart}, Time: ${timePart}`);
-
-     const url = `http://127.0.0.1:8000/api/reservations?id=${selectedBarberId}&date=${datePart}&time=${timePart}`;
-
-     try {
-       const response = await fetch(url);
-
-       if (!response.ok)
-         throw new Error(`Response status: ${response.status}`)
-
-       const data = await response.json();
-       if (data)
-         console.log(data)
-         // TODO: Process the reservation data
-
-     } catch (error) {
-       console.log(error.message)
-     }
- }
-  </script>
+  </div>
 
   <script>
     const ids = new Set()
@@ -405,10 +309,271 @@
     const barbersDiv = document.getElementById("barbers");
     const barberCards = document.querySelectorAll(".card-wrapper");
     const emptyBarberDiv = document.getElementById("empty-barber-section");
+    const noServicesSelectedDiv = document.getElementById("no-services-selected-section");
     const barberButtons = document.querySelectorAll(".button-reserve-barber");
     const selectDate = document.getElementById("select-date");
-    console.log(barberCards)
-  
+    const guestToggle = document.getElementById("guestToggleSwitch");
+    const fields = {
+      first_name: '{{ request.user.first_name|escapejs }}',
+      last_name: '{{ request.user.last_name|escapejs }}',
+      email: '{{ request.user.email|escapejs }}',
+      phone: '{{ request.user.phone_number|escapejs }}',
+    };
+    const getReservationBtn = document.getElementById("get-reservation");
+
+    let selectedBarberId = null;
+    let selectedBarberName = null; 
+
+    function getOverviewDetails() {
+    selectedServiceIds = Array.from(ids);
+    const datePicker = document.getElementById("datetimepicker")?._flatpickr;
+    const timeSelect = document.getElementById("time-select");
+    selectedTimeStr = timeSelect ? timeSelect.value : "";
+
+    if (!selectedBarberId || selectedServiceIds.length === 0 || !selectedTimeStr || !datePicker || datePicker.selectedDates.length === 0) {
+        // alert("Please ensure you have selected service(s), a barber, a date, and a time before proceeding.");
+        return false;
+    }
+
+    // --- Populate Overview ---
+    document.getElementById('firstname').value = document.getElementById('guestFirstName').value;
+    document.getElementById('lastname').value = document.getElementById('guestLastName').value;
+    document.getElementById('contact').value = document.getElementById('guestContact').value;
+    document.getElementById('email').value = document.getElementById('guestEmail').value;
+
+    selectedDateStrFormatted = flatpickr.formatDate(datePicker.selectedDates[0], "F j, Y");
+    selectedDateStrYMD = flatpickr.formatDate(datePicker.selectedDates[0], "Y-m-d");
+    document.getElementById('datetime').value = `${selectedDateStrFormatted} - ${selectedTimeStr}`;
+
+
+    // --- Price & Service Calculation ---
+    selectedServiceNames = [];
+    calculatedTotalPrice = 0;
+    console.log("Starting price calculation for service IDs:", selectedServiceIds);
+
+    for (const serviceId of selectedServiceIds) {
+        console.log("Processing Service ID:", serviceId);
+        const checkboxSelector = `input.checkbox-input[value="${serviceId}"]`;
+        const checkbox = document.querySelector(checkboxSelector);
+
+        if (checkbox) {
+            const nameSpan = checkbox.closest('label')?.querySelector('.checkbox-label');
+            if (nameSpan) { selectedServiceNames.push(nameSpan.textContent.trim()); }
+            else { selectedServiceNames.push(`Service ${serviceId}`); }
+
+            const priceAttribute = checkbox.dataset.price; 
+            console.log(`  Checkbox found. data-price attribute: '${priceAttribute}'`);
+
+            if (priceAttribute !== undefined && priceAttribute !== null && priceAttribute.trim() !== '') {
+                const price = parseFloat(priceAttribute); 
+                console.log(`  Parsed price: ${price}`);
+                if (!isNaN(price)) {
+                    calculatedTotalPrice += price;
+                    console.log(`  Running total: ${calculatedTotalPrice}`);
+                } else {
+                    console.warn(`  Could not parse price '${priceAttribute}' as float.`);
+                }
+            } else {
+                console.warn(`  data-price attribute is missing or empty.`);
+            }
+        } else {
+            console.warn(`  Could not find checkbox with selector: ${checkboxSelector}`);
+        }
+    }
+    console.log("Final Calculated Price:", calculatedTotalPrice);
+
+    document.getElementById('services').value = selectedServiceNames.join(', ') || 'N/A';
+    document.getElementById('barber').value = selectedBarberName || 'N/A'; 
+    document.getElementById('overviewPrice').value = `Php ${calculatedTotalPrice.toFixed(2)}`; 
+
+    console.log("Overview details populated.");
+    return true;
+}
+
+    guestToggle.addEventListener('change', () => {
+      document.getElementById("guestFirstName").value = guestToggle.checked ? fields.first_name : '';
+      document.getElementById("guestLastName").value = guestToggle.checked ? fields.last_name : '';
+      document.getElementById("guestEmail").value = guestToggle.checked ? fields.email : '';
+      document.getElementById("guestContact").value = guestToggle.checked ? fields.phone : '';
+    }); 
+
+    function populateTimeDropdown() {
+      const select = document.getElementById("time-select");
+      select.innerHTML = "";
+      const startHour = 8;
+      const endHour = 17;
+
+      for (let hour = startHour; hour <= endHour; hour++) {
+        for (let minute of [0, 30]) {
+          let period = hour < 12 ? "AM" : "PM";
+          let displayHour = (hour === 0 || hour === 12) ? 12 : hour % 12;
+          let displayMinute = minute === 0 ? "00" : "30";
+          let timeString = `${displayHour}:${displayMinute} ${period}`;
+          let option = document.createElement("option");
+          option.value = timeString;
+          option.textContent = timeString;
+          select.appendChild(option);
+        }
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      populateTimeDropdown();
+      const timeSelect = document.getElementById("time-select");
+      const reservationButton = document.querySelector('.calendar-container button[onclick^="getBarberReservations"]');
+      if (timeSelect) timeSelect.style.display = 'block';
+      if (reservationButton) reservationButton.style.display = 'block';
+
+      flatpickr("#datetimepicker", {
+        enableTime: false,
+        time_24hr: false,
+        inline: true,
+        defaultDate: new Date(),
+        dateFormat: "Y-m-d", //F j, Y
+
+        onReady: function(selectedDates, dateStr, instance) {
+          const calendarInnerContainer = instance.calendarContainer.querySelector('.flatpickr-innerContainer');
+          if (calendarInnerContainer && timeSelect && reservationButton) {
+            const customControlsContainer = document.createElement('div');
+            customControlsContainer.classList.add('custom-flatpickr-controls');
+            customControlsContainer.appendChild(timeSelect);
+            customControlsContainer.appendChild(reservationButton);
+            calendarInnerContainer.appendChild(customControlsContainer);
+          }
+        },
+
+        onChange: function(selectedDates, dateStr, instance) {
+          if (selectedDates.length === 0) return;
+
+          const selectedDate = dateStr;
+          const barberId = selectedBarberId;
+          const serviceIds = Array.from(ids);
+
+          console.log(typeof(serviceIds))
+
+          if (!!barberId && serviceIds.length > 0) {
+            fetchAvailableTimeSlots(barberId, selectedDate, serviceIds);
+          } else {
+            console.log("Barber Id empty")
+          }
+        }
+      });
+
+      async function fetchAvailableTimeSlots(barberId, date, serviceIds) {
+        const params = new URLSearchParams({
+          barber_id: barberId,
+          date: date,
+        });
+        serviceIds.forEach(id => params.append('service_ids[]', id));
+
+        const response = await fetch(`/barbers/api/available-times/?${params}`);
+        const data = await response.json();
+
+        const select = document.getElementById("time-select");
+        select.innerHTML = '';
+        console.log(data.available_slots);
+
+        if (data.available_slots) {
+          data.available_slots.forEach(time => {
+            const option = document.createElement("option");
+            option.value = time;
+            option.textContent = time;
+            select.appendChild(option);
+          });
+        } else {
+          const option = document.createElement("option");
+          option.textContent = "No available slots";
+          option.disabled = true;
+          select.appendChild(option);
+        }
+      }
+
+      const barberReserveButtons = document.querySelectorAll('.button-reserve-barber');
+
+      barberReserveButtons.forEach(button => {
+
+        button.addEventListener('click', function(event) {
+          event.preventDefault(); 
+          const buttonId = this.id; 
+          const cardWrapper = button.closest('.card-wrapper'); 
+          const cardInfoSpan = cardWrapper?.querySelector('.card-info span');
+
+          if (buttonId && buttonId.includes('-')  && cardWrapper && cardInfoSpan) {
+            selectedBarberId = buttonId.split("-")[1];
+            const barberName = cardInfoSpan.textContent.trim(); 
+            selectedBarberName = barberName;
+            console.log("Barber selected:", selectedBarberId, "Barber name:", selectedBarberName);
+            // alert(`Barber ${selectedBarberId} ${selectedBarberName} selected. Now choose date and time.`);
+            const section = document.getElementById('select-date');
+            if (section) {
+              section.scrollIntoView({ behavior: 'smooth' });
+            }
+
+          } else {
+            console.error("Could not determine barber ID from button:", this);
+            selectedBarberId = null; 
+          }
+
+          manageDisabledButton();
+        });
+      });
+    });
+
+    function showSelectedDateTime() {
+      const datePicker = document.getElementById("datetimepicker")._flatpickr;
+      const timeSelect = document.getElementById("time-select");
+      let dateTime = "";
+
+      if (datePicker && datePicker.selectedDates.length > 0 && timeSelect.value) {
+        const dateStr = flatpickr.formatDate(datePicker.selectedDates[0], "Y-m-d"); //F j, Y
+        dateTime = `${dateStr} at ${timeSelect.value}`;
+      }
+      document.getElementById('output').textContent = dateTime
+        ? `Selected Date & Time: ${dateTime}`
+        : 'Please select a date and time.';
+    }
+
+    async function getBarberReservations(buttonInsideCalendar) {
+
+      if (!selectedBarberId) {
+        // alert("Please select a barber first by clicking 'Reserve' on their card.");
+        return;
+      }
+
+      const datePicker = document.getElementById("datetimepicker")._flatpickr;
+      const timeSelect = document.getElementById("time-select");
+      let datePart = '';
+      let timePart = timeSelect.value;
+      
+      if (datePicker && datePicker.selectedDates.length > 0) {
+        datePart = flatpickr.formatDate(datePicker.selectedDates[0], "Y-m-d"); //Y-m-d
+      } else {
+        // alert("Please select a date from the calendar.");
+        return;
+      }
+
+      showSelectedDateTime();
+
+      console.log(`Getting reservations for Barber ID: ${selectedBarberId}, Date: ${datePart}, Time: ${timePart}`);
+
+      const url = `http://127.0.0.1:8000/api/reservations?id=${selectedBarberId}&date=${datePart}&time=${timePart}`;
+
+      try {
+        const response = await fetch(url);
+
+        if (!response.ok)
+          throw new Error(`Response status: ${response.status}`)
+
+        const data = await response.json();
+
+        if (data)
+          console.log(data)
+
+      } catch (error) {
+        console.log(error.message)
+      }
+    }
+
     checkboxes.forEach(checkbox => {
       checkbox.addEventListener("change", () => handleServiceToggle(checkbox))
     });
@@ -420,7 +585,7 @@
     function handleServiceToggle(checkbox) {
       const serviceId = checkbox.value;
       const serviceName = checkbox.nextSibling.nextSibling.textContent.trim();
-  
+
       if (checkbox.checked) {
         addServicePill(serviceId, serviceName)
         ids.add(serviceId);
@@ -428,21 +593,22 @@
         removeServicePill(serviceId);
         ids.delete(serviceId);
       }
-  
+
+      manageDisabledButton();
       getBarbers();
     }
-  
+
     function addServicePill(serviceId, serviceName) {
-  
+
       const pill = document.createElement("span");
       pill.textContent = serviceName;
       pill.className = "service-pill d-inline-flex align-items-center text-uppercase";
       pill.id = `pill-${serviceId}`;
-  
+
       const icon = document.createElement("span");
       icon.textContent = "close";
       icon.className = "material-symbols-outlined ps-1";
-  
+
       icon.onclick = () => {
       const checkbox = document.querySelector(`input[type="checkbox"][value="${serviceId}"]`);
         if (checkbox) {
@@ -452,56 +618,188 @@
           getBarbers();
         }
       };
-  
+
       pill.appendChild(icon);
       selectedServicesDiv.appendChild(pill);
     }
-  
+
     function removeServicePill(serviceId) {
       const pill = document.getElementById(`pill-${serviceId}`);
       if (pill) pill.remove();
-  
     }
-  
+
     async function getBarbers() {
       if (ids.size === 0) {
-  
+
         barberCards.forEach(barberCard => {
           barberCard.classList.add("d-none");
         });
+
         emptyBarberDiv.classList.remove("d-none");
         console.log("No services selected");
         return; 
       } 
-  
+
       const url = `http://127.0.0.1:8000/api/barbers?ids=${Array.from(ids).join()}`
       try {
         const response = await fetch(url);
-  
+
         if (!response.ok) 
           throw new Error(`Response status: ${response.status}`)
-  
+
         const data = await response.json();
+
         if (data) 
+          if (data.length == 0) {
+            emptyBarberDiv.classList.remove("d-none");
+          } else {
+            emptyBarberDiv.classList.add("d-none");
+          }
           updateBarbers(data);
-  
+
       } catch (error){
         console.log(error.message)
       }
     }
-  
+
     function updateBarbers(data) {
       const barberIds = new Set(data.map(barber => barber.id));
       console.log(barberIds);
-  
-      emptyBarberDiv.classList.add("d-none");
+
       barberCards.forEach(barberCard => {
         const cardId = Number(barberCard.dataset.barberId);
-  
         barberCard.classList.toggle("d-none", !barberIds.has(cardId));
       })
     }
-  </script>
+
+    function manageDisabledButton() {
+      if (selectedBarberId == null || ids.size == 0) {
+        getReservationBtn.setAttribute("disabled", true);
+        getReservationBtn.classList.add('getReservationButtonDisabled');
+        getReservationBtn.classList.remove('getReservationButton');
+      } else {
+        getReservationBtn.removeAttribute("disabled");
+        getReservationBtn.classList.remove('getReservationButtonDisabled');
+        getReservationBtn.classList.add('getReservationButton');
+      }
+    }
 
     
+    document.getElementById("guestForm").addEventListener("submit", async function(event) {
+      event.preventDefault();
+      
+      const datePicker = document.getElementById("datetimepicker")._flatpickr;
+      const timeSelect = document.getElementById("time-select");
+      const selectedDateStrYMD = flatpickr.formatDate(datePicker.selectedDates[0], "Y-m-d");
+      const selectedTimeStr = timeSelect.value;
+      
+      const timeParts = selectedTimeStr.match(/(\d+):(\d+) (\w+)/);
+      let hours = parseInt(timeParts[1]);
+      const minutes = parseInt(timeParts[2]);
+      const period = timeParts[3];
+      
+      if (period === "PM" && hours < 12) hours += 12;
+      if (period === "AM" && hours === 12) hours = 0;
+      
+      const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:00`;
+      
+      const dateTimeStr = `${selectedDateStrYMD}T${formattedTime}`;
+      
+      // Get the selected services
+      const selectedServiceIds = Array.from(ids);
+      
+      // Guest details
+      const isReservedForSelf = document.getElementById("guestToggleSwitch").checked;
+      const firstName = document.getElementById("guestFirstName").value;
+      const lastName = document.getElementById("guestLastName").value;
+      const email = document.getElementById("guestEmail").value;
+      const phone = document.getElementById("guestContact").value;
+      
+      // Create the reservation data object
+      const reservationData = {
+        start_datetime: dateTimeStr,
+        barber_id: selectedBarberId,
+        services: selectedServiceIds,
+        is_reserved_for_self: isReservedForSelf,
+        reserved_for_first_name: isReservedForSelf ? "" : firstName,
+        reserved_for_last_name: isReservedForSelf ? "" : lastName,
+        reserved_for_email: isReservedForSelf ? "" : email,
+        reserved_for_phone: isReservedForSelf ? "" : phone
+      };
+      
+      console.log("Submitting reservation:", reservationData);
+      
+      try {
+        function getCookie(name) {
+          let cookieValue = null;
+          if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+              const cookie = cookies[i].trim();
+              if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+              }
+            }
+          }
+          return cookieValue;
+        }
+        
+        const csrftoken = getCookie('csrftoken');
+        
+        // Send request to create reservation
+        const response = await fetch('/api/reservations/create/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken
+          },
+          body: JSON.stringify(reservationData)
+        });
+        
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(`Reservation failed: ${errorData.error || response.statusText}`);
+        }
+        
+        const result = await response.json();
+        console.log("Reservation created:", result);
+        
+        const reservationModal = bootstrap.Modal.getInstance(document.getElementById('reservationOverview'));
+        reservationModal.hide();
+        
+        showNotification("Reservation successfully created!", "success");
+        
+        // Optionally redirect to a confirmation page
+        // window.location.href = `/reservations/confirmation/${result.id}/`;
+        
+      } catch (error) {
+        console.error("Error creating reservation:", error);
+        showNotification("Failed to create reservation: " + error.message, "error");
+      }
+    });
+
+    function showNotification(message, type = "info") {
+      const notification = document.createElement('div');
+      notification.className = `alert alert-${type === "error" ? "danger" : type} notification-toast`;
+      notification.textContent = message;
+      notification.style.position = 'fixed';
+      notification.style.top = '20px';
+      notification.style.right = '20px';
+      notification.style.zIndex = '9999';
+      notification.style.minWidth = '300px';
+      notification.style.padding = '15px';
+      notification.style.borderRadius = '5px';
+      notification.style.boxShadow = '0 4px 8px rgba(0,0,0,0.2)';
+      
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.style.opacity = '0';
+        notification.style.transition = 'opacity 0.5s ease';
+        setTimeout(() => document.body.removeChild(notification), 500);
+      }, 5000);
+    }
+
+</script>
 {% endblock %}

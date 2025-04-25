@@ -20,5 +20,9 @@ urlpatterns = [
     path("login/", views.customer_login, name="login"),
     path("logout/", views.customer_logout, name="logout"),
     path("signup/", views.customer_signup, name="signup"),
+    path("profile/", views.customers_profile, name="profile"),
+
+    path("customer/reservations/", views.customer_reservations, name="customer_reservations"),
+    path('cancel-reservation/<int:reservation_id>/', views.cancel_reservation, name='cancel_reservation'),
 
 ]
