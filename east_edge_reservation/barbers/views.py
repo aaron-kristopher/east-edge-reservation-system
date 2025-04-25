@@ -73,3 +73,9 @@ class AvailableTimeSlotsView(View):
             current_start += slot_interval
 
         return JsonResponse({"available_slots": all_slots})
+    
+
+def schedule(request):
+    return render(request, "barbers/schedule.html")
+
+

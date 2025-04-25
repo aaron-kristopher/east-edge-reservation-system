@@ -299,8 +299,9 @@
     border-bottom-right-radius: 15px;
   }
   
-  .card-1:hover .card-info {
+  .card-1:hover .card-info > span, .card-info > p{
     transform: translateY(-15%);
+    color: white;
   }
   
   /* .card-1:hover .image-barber {
@@ -526,6 +527,14 @@ span.flatpickr-weekday {
   background: var(--gradient-navbar-og);
   border-radius: 8px;
   color: var(--color-white);
+  transition: all 0.5s ease;
+  font-weight: 600;
+}
+.getReservationButtonDisabled{
+  background-color: var(--bs-gray);
+  border: none;
+  border-radius: 8px;
+  color: var(--color-gray);
   transition: all 0.5s ease;
   font-weight: 600;
 }

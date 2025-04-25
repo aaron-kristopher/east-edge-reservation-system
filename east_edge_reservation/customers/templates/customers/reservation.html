@@ -36,7 +36,7 @@
         <div class="collapse navbar-collapse" id="collapsibleNavbar">
           <ul class="navbar-nav" id="navbar-navlist">
             <li class="nav-item">
-              <a class="nav-link" href="#">Reservation</a>
+              <a class="nav-link" href="{% url 'customer_reservations' %}">Reservation</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="#">FAQ</a>              
@@ -136,8 +136,11 @@
       <div class="d-flex align-items-center flex-column">
         <h4>Barbers</h4>
         <div id="empty-barber-section">
-          <h6>Available barber(s) from chosen services</h6>
+          <h6>No Barbers Available. Please select a service first.</h6>
         </div>
+        <!-- <div id="no-services-selected-section">
+          <h6>No Barbers Available. Please select a service first.</h6>
+        </div> -->
       </div>
     </div>
 
@@ -145,14 +148,14 @@
     <div class="container mt-3 mb-5" id="barbers">
       <div class="row">
           {% for barber in barbers %}
-          <div class="col-12 col-sm-6 col-md-6 col-lg-3 mt-5 card-wrapper" data-barber-id="{{ barber.id }}">
+          <div class="col-12 col-sm-6 col-md-6 col-lg-3 mt-5 card-wrapper d-none" data-barber-id="{{ barber.id }}">
               <div class="card-1 p-3">
                   <div class="image-barber"></div>
                   <div class="card-info">
                       <span>{{ barber.first_name }} {{ barber.last_name }}</span>
                       <p>Lorem Ipsum</p>
                   </div>
-                  <a id="button-{{ barber.id }}" class="button-reserve-barber">Reserve</a>
+                  <a id="button-{{ barber.id }}" class="button-reserve-barber" href="#select-date">Reserve</a>
               </div>
           </div>
           {% endfor %}
@@ -164,15 +167,15 @@
 
   <section class="container-fluid py-3" id="select-date">
     <div class="row d-flex justify-content-evenly position-relative">
-      <div class="py-4 py-md-5 d-flex flex-column align-items-center justify-content-center col-sm-6 full-width-bg text-white">
+      <div class="py-4 py-md-5 d-flex flex-column align-items-center justify-content-center col-md-6 full-width-bg text-white">
         <h2 class="mt-4 pb-md-2">Select Date and Time</h2>
         <p class="mb-3"> Reserve now, and experience the haircut of your life
         <p id="output"></p>
       </div>
-      <div class="calendar-container d-flex flex-column align-items-center gap-4 col-sm-6">
+      <div class="calendar-container d-flex flex-column align-items-center gap-4 col-md-6">
         <div id="datetimepicker"></div>
         <select id="time-select" style="display: none;"></select>
-        <button onclick="getBarberReservations(this)" style="display: none;" class="getReservationButton" disabled data-bs-toggle="modal" data-bs-target="#reservationFormModal">Get Reservation</button>
+        <button id="get-reservation" disabled="true" onclick="getBarberReservations(this)" style="display: none;" class="getReservationButtonDisabled" data-bs-toggle="modal" data-bs-target="#reservationFormModal">Get Reservation</button>
         <div id="output"></div>
       </div>
     </div>
@@ -265,7 +268,7 @@
                 <div class="col-md-6">
                   <label for="email" class="form-label">Email</label>
                   <input type="text" class="form-control overview" id="email" readonly>
-                </div>
+                </div>  
               </div>
               <div class="row mb-3">
                 <div class="col-md-6">
@@ -306,6 +309,7 @@
     const barbersDiv = document.getElementById("barbers");
     const barberCards = document.querySelectorAll(".card-wrapper");
     const emptyBarberDiv = document.getElementById("empty-barber-section");
+    const noServicesSelectedDiv = document.getElementById("no-services-selected-section");
     const barberButtons = document.querySelectorAll(".button-reserve-barber");
     const selectDate = document.getElementById("select-date");
     const guestToggle = document.getElementById("guestToggleSwitch");
@@ -315,6 +319,7 @@
       email: '{{ request.user.email|escapejs }}',
       phone: '{{ request.user.phone_number|escapejs }}',
     };
+    const getReservationBtn = document.getElementById("get-reservation");
 
     let selectedBarberId = null;
     let selectedBarberName = null; 
@@ -326,7 +331,7 @@
     selectedTimeStr = timeSelect ? timeSelect.value : "";
 
     if (!selectedBarberId || selectedServiceIds.length === 0 || !selectedTimeStr || !datePicker || datePicker.selectedDates.length === 0) {
-        alert("Please ensure you have selected service(s), a barber, a date, and a time before proceeding.");
+        // alert("Please ensure you have selected service(s), a barber, a date, and a time before proceeding.");
         return false;
     }
 
@@ -498,13 +503,18 @@
             const barberName = cardInfoSpan.textContent.trim(); 
             selectedBarberName = barberName;
             console.log("Barber selected:", selectedBarberId, "Barber name:", selectedBarberName);
-            alert(`Barber ${selectedBarberId} ${selectedBarberName} selected. Now choose date and time.`);
-            
+            // alert(`Barber ${selectedBarberId} ${selectedBarberName} selected. Now choose date and time.`);
+            const section = document.getElementById('select-date');
+            if (section) {
+              section.scrollIntoView({ behavior: 'smooth' });
+            }
 
           } else {
             console.error("Could not determine barber ID from button:", this);
             selectedBarberId = null; 
           }
+
+          manageDisabledButton();
         });
       });
     });
@@ -526,7 +536,7 @@
     async function getBarberReservations(buttonInsideCalendar) {
 
       if (!selectedBarberId) {
-        alert("Please select a barber first by clicking 'Reserve' on their card.");
+        // alert("Please select a barber first by clicking 'Reserve' on their card.");
         return;
       }
 
@@ -538,7 +548,7 @@
       if (datePicker && datePicker.selectedDates.length > 0) {
         datePart = flatpickr.formatDate(datePicker.selectedDates[0], "Y-m-d"); //Y-m-d
       } else {
-        alert("Please select a date from the calendar.");
+        // alert("Please select a date from the calendar.");
         return;
       }
 
@@ -584,6 +594,7 @@
         ids.delete(serviceId);
       }
 
+      manageDisabledButton();
       getBarbers();
     }
 
@@ -639,6 +650,11 @@
         const data = await response.json();
 
         if (data) 
+          if (data.length == 0) {
+            emptyBarberDiv.classList.remove("d-none");
+          } else {
+            emptyBarberDiv.classList.add("d-none");
+          }
           updateBarbers(data);
 
       } catch (error){
@@ -649,12 +665,141 @@
     function updateBarbers(data) {
       const barberIds = new Set(data.map(barber => barber.id));
       console.log(barberIds);
-      emptyBarberDiv.classList.add("d-none");
 
       barberCards.forEach(barberCard => {
         const cardId = Number(barberCard.dataset.barberId);
         barberCard.classList.toggle("d-none", !barberIds.has(cardId));
       })
     }
+
+    function manageDisabledButton() {
+      if (selectedBarberId == null || ids.size == 0) {
+        getReservationBtn.setAttribute("disabled", true);
+        getReservationBtn.classList.add('getReservationButtonDisabled');
+        getReservationBtn.classList.remove('getReservationButton');
+      } else {
+        getReservationBtn.removeAttribute("disabled");
+        getReservationBtn.classList.remove('getReservationButtonDisabled');
+        getReservationBtn.classList.add('getReservationButton');
+      }
+    }
+
+    
+    document.getElementById("guestForm").addEventListener("submit", async function(event) {
+      event.preventDefault();
+      
+      const datePicker = document.getElementById("datetimepicker")._flatpickr;
+      const timeSelect = document.getElementById("time-select");
+      const selectedDateStrYMD = flatpickr.formatDate(datePicker.selectedDates[0], "Y-m-d");
+      const selectedTimeStr = timeSelect.value;
+      
+      const timeParts = selectedTimeStr.match(/(\d+):(\d+) (\w+)/);
+      let hours = parseInt(timeParts[1]);
+      const minutes = parseInt(timeParts[2]);
+      const period = timeParts[3];
+      
+      if (period === "PM" && hours < 12) hours += 12;
+      if (period === "AM" && hours === 12) hours = 0;
+      
+      const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:00`;
+      
+      const dateTimeStr = `${selectedDateStrYMD}T${formattedTime}`;
+      
+      // Get the selected services
+      const selectedServiceIds = Array.from(ids);
+      
+      // Guest details
+      const isReservedForSelf = document.getElementById("guestToggleSwitch").checked;
+      const firstName = document.getElementById("guestFirstName").value;
+      const lastName = document.getElementById("guestLastName").value;
+      const email = document.getElementById("guestEmail").value;
+      const phone = document.getElementById("guestContact").value;
+      
+      // Create the reservation data object
+      const reservationData = {
+        start_datetime: dateTimeStr,
+        barber_id: selectedBarberId,
+        services: selectedServiceIds,
+        is_reserved_for_self: isReservedForSelf,
+        reserved_for_first_name: isReservedForSelf ? "" : firstName,
+        reserved_for_last_name: isReservedForSelf ? "" : lastName,
+        reserved_for_email: isReservedForSelf ? "" : email,
+        reserved_for_phone: isReservedForSelf ? "" : phone
+      };
+      
+      console.log("Submitting reservation:", reservationData);
+      
+      try {
+        function getCookie(name) {
+          let cookieValue = null;
+          if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+              const cookie = cookies[i].trim();
+              if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+              }
+            }
+          }
+          return cookieValue;
+        }
+        
+        const csrftoken = getCookie('csrftoken');
+        
+        // Send request to create reservation
+        const response = await fetch('/api/reservations/create/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken
+          },
+          body: JSON.stringify(reservationData)
+        });
+        
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(`Reservation failed: ${errorData.error || response.statusText}`);
+        }
+        
+        const result = await response.json();
+        console.log("Reservation created:", result);
+        
+        const reservationModal = bootstrap.Modal.getInstance(document.getElementById('reservationOverview'));
+        reservationModal.hide();
+        
+        showNotification("Reservation successfully created!", "success");
+        
+        // Optionally redirect to a confirmation page
+        // window.location.href = `/reservations/confirmation/${result.id}/`;
+        
+      } catch (error) {
+        console.error("Error creating reservation:", error);
+        showNotification("Failed to create reservation: " + error.message, "error");
+      }
+    });
+
+    function showNotification(message, type = "info") {
+      const notification = document.createElement('div');
+      notification.className = `alert alert-${type === "error" ? "danger" : type} notification-toast`;
+      notification.textContent = message;
+      notification.style.position = 'fixed';
+      notification.style.top = '20px';
+      notification.style.right = '20px';
+      notification.style.zIndex = '9999';
+      notification.style.minWidth = '300px';
+      notification.style.padding = '15px';
+      notification.style.borderRadius = '5px';
+      notification.style.boxShadow = '0 4px 8px rgba(0,0,0,0.2)';
+      
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.style.opacity = '0';
+        notification.style.transition = 'opacity 0.5s ease';
+        setTimeout(() => document.body.removeChild(notification), 500);
+      }, 5000);
+    }
+
 </script>
 {% endblock %}

@@ -1,0 +1,61 @@
+body{
+    font-family: "Montserrat", serif;
+    min-height: 100vh;
+    color: #424242
+}
+
+.navbar{
+    background-image: linear-gradient(to right,#FF5C08 10%, #FE8F08 90%);
+    margin-bottom: 50px;    
+}
+
+.navbar-brand{
+    font-weight: bolder;
+}
+
+.nav-tabs.navbar-nav {
+    border-bottom: none;
+}
+
+.navbar-brand, .nav-link{
+    display: flex;
+    justify-content: center;
+    color: #FEFCFB;
+}
+
+.card{
+    background-color: #FEFCFB;
+    border: 2px solid #FE8F08;
+    border-radius: 0px;
+}
+
+.fas{
+    color: #FF5C08;
+    font-size: 50px;
+}
+
+.date, .service{
+    font-size: 12px;
+    font-weight: lighter;
+}
+
+button{
+    background: none;
+    border: none;
+    outline: none;
+    display: flex;
+    align-items: center;
+    
+}
+
+.fas.fa-check-circle{
+    color: green;
+    font-size: clamp(1.5rem, 2vw, 2rem);
+}
+
+.fas.fa-times-circle{
+    color:red;
+    font-size: clamp(1.5rem, 2vw, 2rem);
+}
+  
+ 

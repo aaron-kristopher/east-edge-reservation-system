@@ -12,6 +12,8 @@ from .forms import UserProfileUpdateForm, UserEmailChangeForm
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.contrib import messages
+from django.shortcuts import get_object_or_404
+
 
 # Create your views here.
 
@@ -185,3 +187,35 @@ def customers_profile(request):
 
     context = {}
     return render(request, "customers/profile.html", context)
+
+
+@login_required
+def customer_reservations(request):
+    # Get all reservations for the current user
+    reservations = Reservation.objects.filter(
+        reserved_by=request.user
+    ).order_by('-start_datetime')
+    
+    return render(request, 'customers/customer-reservations.html', {
+        'reservations': reservations
+    })
+
+def cancel_reservation(request, reservation_id):
+    reservation = get_object_or_404(Reservation, id=reservation_id, reserved_by=request.user)
+    
+    # Ensure the reservation can be canceled (not already completed or cancelled)
+    if reservation.status in ['C', 'X']:
+        messages.error(request, "This reservation cannot be cancelled.")
+    else:
+        # Update the reservation status to cancelled
+        reservation.status = 'X'
+        
+        # Store the cancellation reason if provided
+        cancel_reason = request.POST.get('cancel_reason', '')
+        # If you want to store the reason, you could add a field to your model or create a separate model
+        # For now, we'll just change the status
+        
+        reservation.save()
+        messages.success(request, "Reservation successfully cancelled.")
+    
+    return redirect('customer_reservations')

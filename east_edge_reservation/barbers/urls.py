@@ -9,4 +9,5 @@ urlpatterns = [
         views.AvailableTimeSlotsView.as_view(),
         name="available-times",
     ),
+    path("schedule/", views.schedule, name="barbers_schedule")
 ]
