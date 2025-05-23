@@ -6,7 +6,24 @@ body{
 
 .navbar{
     background-image: linear-gradient(to right,#FF5C08 10%, #FE8F08 90%);
-    margin-bottom: 50px;    
+    margin-bottom: 50px; 
+    padding-bottom: 12px;   
+}
+
+.navbar-logo{
+    color: #FEFCFB;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    margin-top: 0.25em;
+}
+
+#logo {
+    margin-right: 10px;
+    width: 50px; 
+    height: auto;
+    margin-bottom: 0.1em;
+    margin-right: 0.2em;
 }
 
 .navbar-brand{
@@ -21,6 +38,19 @@ body{
     display: flex;
     justify-content: center;
     color: #FEFCFB;
+    font-size: 14px;
+}
+
+.nav-tabs .nav-link.active {
+    background-color: transparent;
+    border-color: transparent;
+    border-bottom: 2px solid #FEFCFB;
+    color: #FEFCFB;
+    font-weight: bold;
+}
+
+.nav-tabs .nav-link:hover {
+    border-color: transparent;
 }
 
 .card{
@@ -45,7 +75,6 @@ button{
     outline: none;
     display: flex;
     align-items: center;
-    
 }
 
 .fas.fa-check-circle{
@@ -57,5 +86,64 @@ button{
     color:red;
     font-size: clamp(1.5rem, 2vw, 2rem);
 }
-  
- 
+
+/* .navbar-collapse {
+    flex-grow: 0;
+} */
+
+.profilenav {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1030; 
+}
+
+.navbar-toggler {
+    margin-right: 60px; 
+}
+
+@media (min-width: 576px) {
+    .navbar-collapse {
+        margin-left: 20px;
+    }
+}
+    
+
+@media (max-width: 576px) {
+    .navbar-collapse {
+        width: 100%;
+        margin-top: 10px; 
+        clear: both;
+    }
+    
+    .navbar-logo {
+        display: flex;
+        align-items: center;
+    }
+    
+    #logo {
+        width: 40px;
+    }
+    
+    .profilenav {
+        position: absolute;
+        right: 70px;
+        top: 12.5px;
+        transform: none; 
+    }
+    
+    .navbar-toggler {
+        position: absolute;
+        right: 15px;
+        top: 12px;
+        margin-right: 0;
+    }
+}
+
+.profilenav a i {
+    font-size: 28px;
+    color: white;
+    margin: 0.24em 0.2em;
+}
+

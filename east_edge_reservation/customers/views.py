@@ -13,11 +13,12 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
+from core.decorators import group_required
 
 
 # Create your views here.
 
-
+@group_required('Customer')
 def customers(request):
     context = {"services": Service.objects.all(), "barbers": Barber.objects.all()}
     return render(request, "customers/index.html", context)
@@ -80,6 +81,12 @@ def customer_signup(request):
                 phone_number=phone_number,
                 password=password,
             )
+            
+            # Add user to Customer group
+            from django.contrib.auth.models import Group
+            customer_group = Group.objects.get(name='Customer')
+            user.groups.add(customer_group)
+            
             user.backend = "customers.backends.EmailBackend"
             login(request, user)
             return redirect("customers")
@@ -118,12 +125,14 @@ def customer_logout(request):
 
 
 @login_required
+@group_required('Customer')
 def reservation(request):
     context = {"services": Service.objects.all(), "barbers": Barber.objects.all()}
     return render(request, "customers/reservation.html", context)
 
 
 @login_required
+@group_required('Customer')
 def customers_profile(request):
     user = request.user
 
@@ -190,6 +199,7 @@ def customers_profile(request):
 
 
 @login_required
+@group_required('Customer')
 def customer_reservations(request):
     # Get all reservations for the current user
     reservations = Reservation.objects.filter(

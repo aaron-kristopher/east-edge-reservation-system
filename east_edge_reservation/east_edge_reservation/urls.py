@@ -30,5 +30,6 @@ urlpatterns = [
     path('accounts/signup/', views.customer_signup, name="signup"),
     
     path('', include('reservations.urls')),
+    path('', include("receptionist.urls"))
 
 ]

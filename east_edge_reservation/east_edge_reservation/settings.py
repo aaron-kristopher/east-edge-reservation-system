@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     "barbers.apps.BarbersConfig",
     "customers.apps.CustomersConfig",
     "reservations.apps.ReservationsConfig",
+    "receptionist.apps.ReceptionistConfig",
     "core.apps.CoreConfig",
 ]
 

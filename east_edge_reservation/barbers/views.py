@@ -6,18 +6,19 @@ from django.utils.dateparse import parse_date
 from .models import Service, Barber
 from reservations.models import Reservation
 from django.shortcuts import render
+from core.decorators import group_required
 
 
-def barbers(request):
-    barbers = Barber.objects.all()
-    context = {"barbers": barbers}
-    return render(request, "barbers/index.html", context)
+# def barbers(request):
+#     barbers = Barber.objects.all()
+#     context = {"barbers": barbers}
+#     return render(request, "barbers/index.html", context)
 
 
-def services(request):
-    services = Service.objects.all()
-    context = {"services": services}
-    return render(request, "services/index.html", context)
+# def services(request):
+#     services = Service.objects.all()
+#     context = {"services": services}
+#     return render(request, "services/index.html", context)
 
 
 class AvailableTimeSlotsView(View):
@@ -74,8 +75,8 @@ class AvailableTimeSlotsView(View):
 
         return JsonResponse({"available_slots": all_slots})
     
-
+@group_required('Barber')
 def schedule(request):
-    return render(request, "barbers/schedule.html")
+    return render(request, "barbers/reservations.html")
 
 
