@@ -102,6 +102,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Traccar SMS Gateway Information
+TRACCAR_SMS_GATEWAY_URL = "http://192.168.170.100:8082/"
+TRACCAR_SMS_API_KEY = "142ee491-eb53-483e-b424-1b6eca59cff4"
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
