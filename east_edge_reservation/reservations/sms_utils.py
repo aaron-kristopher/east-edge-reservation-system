@@ -27,7 +27,7 @@ def send_sms_via_traccar(phone_number: str, message: str) -> bool:
     if not phone_number:
         logger.warning("Attempted to send SMS but no phone number was provided.")
         return False
-
+    phone_number = phone_number.replace("09", "+639", 1)
     payload = {"to": phone_number, "message": message}
 
     headers = {
