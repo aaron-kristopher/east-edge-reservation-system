@@ -56,12 +56,16 @@ body{
 .card.complete-container{
     background-color: #D4CBC6;
     border: none;
-    border-radius: 0px;
+    border-radius: 5px;
     color: #FEFCFB;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
 }
 
 /* ONGOING SECTION */
+
+.ongoing-container {
+    border-radius: 5px;
+}
 
 button{
     border: none;
@@ -115,7 +119,7 @@ button{
   }
   
   .cancelled-container {
-    border-radius: 10px;
+    border-radius: 5px;
     border: 1px solid rgba(240, 84, 84, 0.3);
   }
   
@@ -135,7 +139,7 @@ button{
   }
   
   .declined-container {
-    border-radius: 10px;
+    border-radius: 5px;
     border: 1px solid rgba(154, 3, 30, 0.3);
   }
   

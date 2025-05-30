@@ -37,30 +37,39 @@
               <span class="navbar-toggler-icon"></span>
             </button>
           </div>
-          <div class="profilenav dropdown dropstart">
-            <a data-bs-toggle="dropdown" style="cursor: pointer; user-select: none;">
-              <i class="bx bx-user-circle"></i>
-            </a>
-            <ul class="dropdown-menu">
-              <li><h5 class="dropdown-header">Where to {{request.user.first_name}}?</h5></li>
-              <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
-              <hr>
-              <li>
-                <form action="{% url 'logout' %}" method="POST">
-                  {% csrf_token %}
-                  <button class="dropdown-item" href="{% url 'logout' %}">Logout</button>
-                </form>
-              </li>
-            </ul>
-          </div>
           <div class="collapse navbar-collapse" id="collapsibleNavbar">
             <ul class="navbar-nav" id="navbar-navlist">
+              <li class="nav-item d-md-none">
+                <a class="nav-link" href="{% url 'profile' %}">Profile</a>
+              </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">Reservation</a>
+                <a class="nav-link" href="{% url 'reservation' %}">Reserve Now</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'customer_reservations' %}">My Appointments</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="#">FAQ</a>
-              </li> 
+              </li>
+                <div class="d-none d-md-inline profilenav dropdown dropstart">
+                  <a data-bs-toggle="dropdown" style="cursor: pointer; user-select: none;">
+                    <i class="bx bx-user-circle"></i>
+                  </a>
+                  <ul class="dropdown-menu">
+                    <li><h5 class="dropdown-header">Where to {{request.user.first_name}}?</h5></li>
+                    <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
+                    <hr>
+                    <li>
+                      <form action="{% url 'logout' %}" method="POST">
+                        {% csrf_token %}
+                        <button class="dropdown-item" href="{% url 'logout' %}">Logout</button>
+                      </form>
+                    </li>
+                  </ul>
+                </div> 
+                <li class="nav-item d-md-none">
+                  <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                </li>
             </ul>
           </div>
         </div>
@@ -80,13 +89,15 @@
         <div class="collapse navbar-collapse" id="collapsibleNavbar">
           <ul class="navbar-nav" id="navbar-navlist">
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'login' %}">Login</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Reservation</a>
+              <a class="nav-link" href="{% url 'login' %}">Reserve Now</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="#">FAQ</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'login' %}">
+                <button style="background: gray; color: white; border-radius: 4px; border: none; padding: 0 12px;"><i class="animation"></i>Log In<i class="animation"></i></button>
+              </a>
             </li> 
             <li class="nav-item">
               <a class="nav-link"href="{% url 'signup' %}">

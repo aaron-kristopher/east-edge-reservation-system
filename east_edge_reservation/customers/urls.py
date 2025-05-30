@@ -3,11 +3,11 @@ from . import views
 
 urlpatterns = [
     path("", views.customers, name="customers"),
-    path(
-        "reservation/select",
-        views.customer_reservations,
-        name="customer_reservations",
-    ),
+    # path(
+    #     "reservation/select",
+    #     views.customer_reservations,
+    #     name="customer_reservations",
+    # ),
     path(
         "reservation/schedule",
         views.reservation_schedule,
@@ -22,7 +22,7 @@ urlpatterns = [
     path("signup/", views.customer_signup, name="signup"),
     path("profile/", views.customers_profile, name="profile"),
 
-    path("customer/reservations/", views.customer_reservations, name="customer_reservations"),
+    path("reservation/my-appointments", views.customer_reservations, name="customer_reservations"),
     path('cancel-reservation/<int:reservation_id>/', views.cancel_reservation, name='cancel_reservation'),
 
 ]

@@ -18,7 +18,7 @@ from core.decorators import group_required
 
 # Create your views here.
 
-@group_required('Customer')
+# @group_required('Customer')
 def customers(request):
     context = {"services": Service.objects.all(), "barbers": Barber.objects.all()}
     return render(request, "customers/index.html", context)
