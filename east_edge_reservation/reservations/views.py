@@ -87,14 +87,14 @@ def create_reservation(request):
         ):  # Check again, ensure we have necessary info for SMS
             customer_sms_message = (
                 f"Your reservation at East K' Edge Barbershop "
-                f"with {barber.first_name} {barber.last_name} on "
+                f"with {barber.first_name.upper()} {barber.last_name.upper()} on "
                 f"{reservation.start_datetime.strftime('%B %d, %Y at %I:%M %p')} is currently pending."
                 f"We will notify you when your pending reservation has been accepted or rejected."
             )
 
             barber_sms_message = (
                 f"You have received an appointment from "
-                f"{model_reserved_for_first_name} {model_reserved_for_last_name} dated "
+                f"{model_reserved_for_first_name.upper()} {model_reserved_for_last_name.upper()} dated "
                 f"{reservation.start_datetime.strftime('%B %d, %Y at %I:%M %p')}. Please inform receptionist if you accept/decline this appointment."
             )
 
@@ -103,8 +103,8 @@ def create_reservation(request):
                 barber_phone_number=str(barber.phone_number),
                 customer_message_body=customer_sms_message,
                 barber_message_body=barber_sms_message,
-                customer_recipient_name=f"{model_reserved_for_first_name} {model_reserved_for_last_name}",
-                barber_recipient_name=barber.first_name,
+                customer_recipient_name=f"{model_reserved_for_first_name.upper()} {model_reserved_for_last_name.upper()}",
+                barber_recipient_name=barber.first_name.upper(),
                 company_sender_name="East K' Edge",
             )
 
