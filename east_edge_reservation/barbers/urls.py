@@ -9,5 +9,4 @@ urlpatterns = [
         views.AvailableTimeSlotsView.as_view(),
         name="available-times",
     ),
-    path("reservations/", views.schedule, name="barber_customer_reservations")
 ]

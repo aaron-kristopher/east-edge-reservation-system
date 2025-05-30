@@ -1,11 +1,23 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.conf import settings
 
 
 class Barber(models.Model):
+    class BarberStatus(models.TextChoices):
+        AVAILABLE = "A", _("Available")
+        UNAVAILABLE = "U", _("Unavailable")
+    
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     phone_number = models.CharField(max_length=11)
+    profile_picture = models.ImageField(upload_to='barbers/', null=True, blank=True, help_text="Barber profile image")
+    status = models.CharField(
+        max_length=1,
+        choices=BarberStatus,
+        default=BarberStatus.AVAILABLE,
+        verbose_name="Status"
+    )
     services = models.ManyToManyField(
         "Service", verbose_name="Services Offered", related_name="barbers"
     )

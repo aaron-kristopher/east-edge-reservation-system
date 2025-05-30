@@ -30,7 +30,7 @@
         <nav class="navbar navbar-expand-sm navbar-dark">
         <div class="container navbar-container">
           <div class="navbar-logo">
-            <a class="navbar-brand" href="{% url 'customers' %}"><img id="logo" src="{% static 'images/logo.png' %}" alt="logo" width="12%">EAST 'K EDGE</a>
+            <a class="navbar-brand" href="{% if user.groups.all.0.name == 'Receptionist' %}{% url 'dashboard' %}{% else %}{% url 'customers' %}{% endif %}"><img id="logo" src="{% static 'images/logo.png' %}" alt="logo" width="12%">EAST 'K EDGE</a>
           </div>
           <div class="navbar-menu-button">
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
@@ -154,8 +154,8 @@
           <div class="barber-carousel">
       {% endif %}
       
-            <div class="card">
-              <h5>{{ barber.first_name }} {{ barber.last_name }}</h5>
+            <div class="card" {% if barber.profile_picture %}style="background-image: url('{{ barber.profile_picture.url }}'); background-size: cover; background-position: center; position: relative;"{% endif %}>
+              <h5 style="position: absolute; bottom: 15px; left: 15px; color: white; text-shadow: 1px 1px 3px rgba(0,0,0,0.7);">{{ barber.first_name }} {{ barber.last_name }}</h5>
             </div>
             
       {% if forloop.counter|divisibleby:3 or forloop.last %}
@@ -180,8 +180,8 @@
     {% for barber in barbers %}
       <div class="carousel-item {% if forloop.first %}active{% endif %}">
         <div class="barber-carousel">
-          <div class="card">
-            <h5>{{ barber.first_name }} {{ barber.last_name }}</h5>
+          <div class="card" {% if barber.profile_picture %}style="background-image: url('{{ barber.profile_picture.url }}'); background-size: cover; background-position: center; position: relative;"{% endif %}>
+            <h5 style="position: absolute; bottom: 15px; left: 15px; color: white; text-shadow: 1px 1px 3px rgba(0,0,0,0.7);">{{ barber.first_name }} {{ barber.last_name }}</h5>
           </div>
         </div>
       </div>

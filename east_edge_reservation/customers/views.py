@@ -106,10 +106,17 @@ def customer_login(request):
         if user is not None:
             user.backend = "customers.backends.EmailBackend"
             login(request, user)
-            redirected_url = (
-                request.POST.get("next") or request.GET.get("next") or "reservation"
-            )
-            return redirect(redirected_url)
+            
+            # Check if user is in the Receptionist group
+            if user.groups.filter(name='Receptionist').exists():
+                # Redirect to the receptionist dashboard
+                return redirect('dashboard')
+            else:
+                # For regular customers, use the normal flow
+                redirected_url = (
+                    request.POST.get("next") or request.GET.get("next") or "reservation"
+                )
+                return redirect(redirected_url)
         else:
             error_message = "Invalid email or password."
 
@@ -119,7 +126,7 @@ def customer_login(request):
 def customer_logout(request):
     if request.method == "POST":
         logout(request)
-        return redirect("login")
+        return redirect("customers")  # Redirect to the landing page for all users
     else:
         return redirect("customers")
 
@@ -132,7 +139,7 @@ def reservation(request):
 
 
 @login_required
-@group_required('Customer')
+# Allow both customers and receptionists to access their profile
 def customers_profile(request):
     user = request.user
 

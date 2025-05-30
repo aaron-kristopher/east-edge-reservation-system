@@ -36,7 +36,7 @@
         <div class="collapse navbar-collapse" id="collapsibleNavbar">
           <ul class="navbar-nav" id="navbar-navlist">
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'customer_reservations' %}">Reservation</a>
+              <a class="nav-link" href="{% url 'customer_reservations' %}">My Appointments</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="#">FAQ</a>              
@@ -150,10 +150,10 @@
           {% for barber in barbers %}
           <div class="col-12 col-sm-6 col-md-6 col-lg-3 mt-5 card-wrapper d-none" data-barber-id="{{ barber.id }}">
               <div class="card-1 p-3">
-                  <div class="image-barber"></div>
+                  <div class="image-barber" {% if barber.profile_picture %}style="background-image: url('{{ barber.profile_picture.url }}'); background-size: cover; background-position: center;{% if barber.status == 'U' %} border-color: var(--color-danger);{% endif %}"{% elif barber.status == 'U' %}style="border-color: var(--color-danger);"{% endif %}></div>
                   <div class="card-info">
                       <span>{{ barber.first_name }} {{ barber.last_name }}</span>
-                      <p>Lorem Ipsum</p>
+                      <p>Continue to reserve with this barber?</p>
                   </div>
                   <a id="button-{{ barber.id }}" class="button-reserve-barber" href="#select-date">Reserve</a>
               </div>

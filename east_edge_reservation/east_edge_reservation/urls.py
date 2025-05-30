@@ -17,7 +17,10 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import include, path
+from django.conf import settings
+from django.conf.urls.static import static
 from customers import views
+from receptionist import views as receptionist_views
 
 urlpatterns = [
     path("", include("customers.urls")),
@@ -27,9 +30,15 @@ urlpatterns = [
     #logging in 
     path('accounts/login/', views.customer_login, name="login"),
     path('accounts/logout/', views.customer_logout, name="logout"),
+    # API endpoints
+    path('api/barber/<int:barber_id>/', receptionist_views.get_barber, name='get_barber'),
+    path('api/service/<int:service_id>/', receptionist_views.get_service, name='get_service'),
+    path('api/reservation/<int:reservation_id>/', receptionist_views.get_reservation, name='get_reservation'),
     path('accounts/signup/', views.customer_signup, name="signup"),
-    
     path('', include('reservations.urls')),
     path('', include("receptionist.urls"))
+] 
 
-]
+# Add media serving in development
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
