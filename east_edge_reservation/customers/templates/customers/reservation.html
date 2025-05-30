@@ -721,10 +721,10 @@
         barber_id: selectedBarberId,
         services: selectedServiceIds,
         is_reserved_for_self: isReservedForSelf,
-        reserved_for_first_name: isReservedForSelf ? "" : firstName,
-        reserved_for_last_name: isReservedForSelf ? "" : lastName,
-        reserved_for_email: isReservedForSelf ? "" : email,
-        reserved_for_phone: isReservedForSelf ? "" : phone
+        reserved_for_first_name: firstName,
+        reserved_for_last_name: lastName,
+        reserved_for_email: email,
+        reserved_for_phone: phone
       };
       
       console.log("Submitting reservation:", reservationData);
@@ -756,6 +756,7 @@
           },
           body: JSON.stringify(reservationData)
         });
+        console.log(JSON.stringify(reservationData))
         
         if (!response.ok) {
           const errorData = await response.json();

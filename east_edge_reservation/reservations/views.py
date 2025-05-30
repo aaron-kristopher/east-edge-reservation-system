@@ -41,6 +41,7 @@ def create_reservation(request):
             return JsonResponse({"error": "Barber not found"}, status=404)
 
         # Details for whom the reservation is made, primarily from request data
+        print(f"Debug: {data.get("is_reserved_for_first_name")}")
         is_reserved_for_self = data.get("is_reserved_for_self", False)
 
         # These will be used for the Reservation model AND for the SMS.
@@ -51,33 +52,12 @@ def create_reservation(request):
         )  # Not used in SMS message currently, but good to have
         sms_recipient_phone = data.get("reserved_for_phone")
 
-        # For populating the Reservation model accurately
-        if is_reserved_for_self:
-            # If for self, still use user's details for the model record,
-            # but SMS can use the (potentially overriding) details from the request.
-            model_reserved_for_first_name = request.user.first_name
-            model_reserved_for_last_name = request.user.last_name
-            model_reserved_for_email = request.user.email
-            # If sms_recipient_phone from data is empty AND it's for self, try to get user's phone
-            if not sms_recipient_phone:
-                try:
-                    # Replace with your actual logic to get the user's phone
-                    sms_recipient_phone = request.user.customer_profile.phone_number
-                except AttributeError:
-                    logger.warning(
-                        f"Could not retrieve phone number from user profile for self-reservation by {request.user.username}"
-                    )
-                    # sms_recipient_phone will remain None or empty if not provided in data and not on profile
-            model_reserved_for_phone = (
-                sms_recipient_phone  # Use the determined phone for the model
-            )
-        else:
-            # If not for self, model details are same as SMS recipient details from request data
-            model_reserved_for_first_name = sms_recipient_first_name
-            model_reserved_for_last_name = sms_recipient_last_name
-            model_reserved_for_email = data.get("reserved_for_email")
-            model_reserved_for_phone = sms_recipient_phone
+        model_reserved_for_first_name = sms_recipient_first_name
+        model_reserved_for_last_name = sms_recipient_last_name
+        model_reserved_for_email = data.get("reserved_for_email")
+        model_reserved_for_phone = sms_recipient_phone
 
+        print()
         # Basic validation for essential details if sending SMS
         if not sms_recipient_first_name or not sms_recipient_phone:
             logger.warning(
@@ -111,16 +91,17 @@ def create_reservation(request):
         reservation.end_datetime = reservation.calculate_end_datetime()
         reservation.save(update_fields=["end_datetime"])
 
+
         # --- Send SMS Notification ---
         if (
             sms_recipient_phone and sms_recipient_first_name
         ):  # Check again, ensure we have necessary info for SMS
-            service_names = ", ".join([s.name for s in reservation.services.all()])
             sms_message = (
-                f"Hi {sms_recipient_first_name}, your reservation #{reservation.id} at East Edge "
-                f"with {barber.name} for {service_names} on "
+                f"Hi {sms_recipient_first_name}, your reservation at East Edge "
+                f"with {barber.first_name} {barber.last_name} on "
                 f"{reservation.start_datetime.strftime('%b %d, %Y at %I:%M %p')} is booked and pending confirmation. "
             )
+
 
             sms_sent_successfully = send_sms_via_traccar(
                 sms_recipient_phone, sms_message
@@ -160,7 +141,7 @@ def create_reservation(request):
         )
     except Exception:
         logger.exception(
-            f"Unexpected error creating reservation for user {request.user.username}"
+            f"Unexpected error creating reservation for user {request.user.first_name}"
         )  # Logs full traceback
         return JsonResponse(
             {"error": "An unexpected error occurred. Please try again."}, status=500
