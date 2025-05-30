@@ -1,5 +1,3 @@
-# reservations/views.py
-
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 
@@ -11,7 +9,7 @@ from .models import Reservation
 from barbers.models import Barber, Service
 from django.contrib.auth.decorators import login_required
 
-from .sms_utils import send_sms_via_traccar
+from .sms_utils import send_reservation_sms
 import logging  # For logging errors in the view if needed
 
 logger = logging.getLogger(__name__)  # For view-specific logging
@@ -44,22 +42,14 @@ def create_reservation(request):
         print(f"Debug: {data.get("is_reserved_for_first_name")}")
         is_reserved_for_self = data.get("is_reserved_for_self", False)
 
-        # These will be used for the Reservation model AND for the SMS.
-        # Assumes frontend always sends these, or they are None/empty if not applicable.
-        sms_recipient_first_name = data.get("reserved_for_first_name")
-        sms_recipient_last_name = data.get(
-            "reserved_for_last_name"
-        )  # Not used in SMS message currently, but good to have
-        sms_recipient_phone = data.get("reserved_for_phone")
-
-        model_reserved_for_first_name = sms_recipient_first_name
-        model_reserved_for_last_name = sms_recipient_last_name
+        model_reserved_for_first_name = data.get("reserved_for_first_name")
+        model_reserved_for_last_name = data.get("reserved_for_last_name")
         model_reserved_for_email = data.get("reserved_for_email")
-        model_reserved_for_phone = sms_recipient_phone
+        model_reserved_for_phone = data.get("reserved_for_phone")
 
         print()
         # Basic validation for essential details if sending SMS
-        if not sms_recipient_first_name or not sms_recipient_phone:
+        if not model_reserved_for_first_name or not model_reserved_for_phone:
             logger.warning(
                 "Reservation created, but first name or phone for SMS recipient is missing from request data. SMS not sent."
             )
@@ -91,26 +81,39 @@ def create_reservation(request):
         reservation.end_datetime = reservation.calculate_end_datetime()
         reservation.save(update_fields=["end_datetime"])
 
-
         # --- Send SMS Notification ---
         if (
-            sms_recipient_phone and sms_recipient_first_name
+            model_reserved_for_phone and model_reserved_for_first_name
         ):  # Check again, ensure we have necessary info for SMS
-            sms_message = (
-                f"Hi {sms_recipient_first_name}, your reservation at East Edge "
+            customer_sms_message = (
+                f"Your reservation at East K' Edge Barbershop "
                 f"with {barber.first_name} {barber.last_name} on "
-                f"{reservation.start_datetime.strftime('%b %d, %Y at %I:%M %p')} is booked and pending confirmation. "
+                f"{reservation.start_datetime.strftime('%B %d, %Y at %I:%M %p')} is currently pending."
+                f"We will notify you when your pending reservation has been accepted or rejected."
             )
 
+            barber_sms_message = (
+                f"You have received an appointment from "
+                f"{model_reserved_for_first_name} {model_reserved_for_last_name} dated "
+                f"{reservation.start_datetime.strftime('%B %d, %Y at %I:%M %p')}. Please inform receptionist if you accept/decline this appointment."
+            )
 
-            sms_sent_successfully = send_sms_via_traccar(
-                sms_recipient_phone, sms_message
+            sms_sent_successfully = send_reservation_sms(
+                customer_phone_number=model_reserved_for_phone,
+                barber_phone_number=str(barber.phone_number),
+                customer_message_body=customer_sms_message,
+                barber_message_body=barber_sms_message,
+                customer_recipient_name=f"{model_reserved_for_first_name} {model_reserved_for_last_name}",
+                barber_recipient_name=barber.first_name,
+                company_sender_name="East K' Edge",
             )
 
             if not sms_sent_successfully:
                 logger.warning(
-                    f"SMS notification failed to send for reservation {reservation.id} to {sms_recipient_phone}"
+                    f"SMS notification failed to send for reservation {reservation.id}"
                 )
+            else:
+                logger.warning("SMS notification successful")
         else:
             logger.info(
                 f"Skipping SMS for reservation {reservation.id}: phone number or first name for SMS recipient not provided/found."
