@@ -16,7 +16,24 @@
             <span class="navbar-toggler-icon"></span>
           </button>
         </div>
-        <div class="profilenav dropdown dropstart">
+
+        <div class="collapse navbar-collapse me-0" id="collapsibleNavbar">
+          <ul class="navbar-nav" id="navbar-navlist">
+            <li class="d-sm-none nav-item">
+              <a class="nav-link" href="{% url 'profile' %}">Profile</a>
+            </li> 
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'customer_reservations_view' %}">My Appointments</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'faq_page' %}">FAQ</a>
+            </li> 
+            <li class="d-sm-none nav-item">
+              <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+            </li> 
+          </ul>
+        </div>
+        <div class="d-none d-sm-block profilenav dropdown dropstart ms-1">
           <a data-bs-toggle="dropdown" style="cursor: pointer; user-select: none;">
             <i class="bx bx-user-circle"></i>
           </a>
@@ -30,17 +47,6 @@
                 <button class="dropdown-item" href="{% url 'logout' %}">Logout</button>
               </form>
             </li>
-          </ul>
-        </div>
-
-        <div class="collapse navbar-collapse" id="collapsibleNavbar">
-          <ul class="navbar-nav" id="navbar-navlist">
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'customer_reservations_view' %}">My Appointments</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">FAQ</a>              
-            </li> 
           </ul>
         </div>
       </div>

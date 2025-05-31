@@ -117,7 +117,10 @@ class AvailableTimeSlotsView(View):
             barber=barber,
             start_datetime__gte=day_start_utc,
             start_datetime__lt=day_end_utc,
-            status=Reservation.ReservationStatus.ACCEPTED,
+            status__in=[
+                Reservation.ReservationStatus.ACCEPTED,
+                Reservation.ReservationStatus.REQUESTED,
+            ],
         )
         logger.debug(
             f"Barber {barber_id} on local date {target_date}: Found {accepted_reservations_utc.count()} accepted reservations (queried in UTC)."
