@@ -1,0 +1,215 @@
+{% extends "customers/base.html" %} {# Or your main base template #}
+{% load static %}
+
+{% block title %}FAQ - East 'K Edge{% endblock %}
+
+{% block landing-pg-styles %}
+{# Add any specific styles for the FAQ page if needed, or leave empty #}
+<style>
+  .faq-header {
+    background-color: #343a40;
+    /* Dark background for header */
+    color: white;
+    padding: 4rem 1.5rem;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  .faq-header h1 {
+    font-weight: 300;
+    /* Lighter font for the main title */
+  }
+
+  .accordion-button:not(.collapsed) {
+    color: #FF6B00;
+    /* Your theme orange for active accordion button */
+    background-color: #fff3e0;
+    /* A light orange background for active */
+  }
+
+  .accordion-button:focus {
+    box-shadow: 0 0 0 0.25rem rgba(255, 107, 0, 0.25);
+    /* Your theme orange focus */
+  }
+
+  .accordion-item {
+    margin-bottom: 1rem;
+    border-radius: .5rem;
+    /* Slightly more rounded accordion items */
+  }
+</style>
+{% endblock %}
+
+{% block navbar %}
+<nav class="navbar navbar-expand-sm navbar-dark">
+
+  <div class="container navbar-container">
+    <div class="navbar-logo">
+      <a class="navbar-brand" href="{% url 'customers' %}"><img id="logo" src="{% static 'images/logo.png' %}"
+          alt="logo" width="12%">EAST 'K EDGE</a>
+    </div>
+
+    <div class="navbar-menu-button">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    </div>
+
+    <div class="collapse navbar-collapse me-0" id="collapsibleNavbar">
+      <ul class="navbar-nav" id="navbar-navlist">
+        <li class="d-sm-none nav-item">
+          <a class="nav-link" href="{% url 'profile' %}">Profile</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'reservation' %}">Reserve Now</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'customer_reservations_view' %}">My Appointments</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'faq_page' %}">FAQ</a>
+        </li>
+        <li class="d-sm-none nav-item">
+          <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+        </li>
+      </ul>
+    </div>
+    <div class="d-none d-sm-block profilenav dropdown dropstart ms-1">
+      <a data-bs-toggle="dropdown" style="cursor: pointer; user-select: none;">
+        <i class="bx bx-user-circle"></i>
+      </a>
+      <ul class="dropdown-menu">
+        <li>
+          <h5 class="dropdown-header">Where to {{request.user.first_name}}?</h5>
+        </li>
+        <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
+        <hr>
+        <li>
+          <form action="{% url 'logout' %}" method="POST">
+            {% csrf_token %}
+            <button class="dropdown-item" href="{% url 'logout' %}">Logout</button>
+          </form>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+{% endblock %}
+
+{% block content %}
+<div class="faq-header">
+  <div class="container">
+    <h1>Frequently Asked Questions</h1>
+    <p class="lead">Find answers to common questions about our services and booking process.</p>
+  </div>
+</div>
+
+<div class="container mt-4 mb-5">
+  <div class="accordion" id="faqAccordion">
+
+    <!-- Question 1 (Your Required One) -->
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingOne">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
+          aria-expanded="true" aria-controls="collapseOne">
+          Q: Can I cancel my reservation?
+        </button>
+      </h2>
+      <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
+        data-bs-parent="#faqAccordion">
+        <div class="accordion-body">
+          <strong>A:</strong> Yes, you can cancel your reservation anytime as long as it is not one day before the set
+          appointment date. If you need to cancel within 24 hours of your appointment, please call us directly at
+          <strong>09091598183</strong>.
+        </div>
+      </div>
+    </div>
+
+    <!-- Question 2 -->
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingTwo">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo"
+          aria-expanded="false" aria-controls="collapseTwo">
+          Q: How do I book an appointment?
+        </button>
+      </h2>
+      <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
+        data-bs-parent="#faqAccordion">
+        <div class="accordion-body">
+          <strong>A:</strong> You can easily book an appointment through our website! Simply navigate to the "Reserve
+          Now" page, select your desired services, choose your preferred barber, pick an available date and
+          time, and confirm your details.
+        </div>
+      </div>
+    </div>
+
+    <!-- Question 3 -->
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingThree">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+          data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+          Q: What are your operating hours?
+        </button>
+      </h2>
+      <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree"
+        data-bs-parent="#faqAccordion">
+        <div class="accordion-body">
+          <strong>A:</strong> We are open Sunday to Saturday from 8:00 AM to 5:30 PM.
+        </div>
+      </div>
+    </div>
+
+    <!-- Question 4 -->
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingFour">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+          data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+          Q: What payment methods do you accept?
+        </button>
+      </h2>
+      <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour"
+        data-bs-parent="#faqAccordion">
+        <div class="accordion-body">
+          <strong>A:</strong> We currently accept cash at the salon. We currently don't have an Online Payment option,
+          however we are trying our best to expand our options.
+        </div>
+      </div>
+    </div>
+
+    <!-- Question 5 -->
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingFive">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+          data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+          Q: Do I need to create an account to book?
+        </button>
+      </h2>
+      <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive"
+        data-bs-parent="#faqAccordion">
+        <div class="accordion-body">
+          <strong>A:</strong> Yes, creating an account helps you manage your appointments, view your reservation
+          history, and allows for a quicker booking process in the future.
+        </div>
+      </div>
+    </div>
+
+    <!-- Add more questions and answers here following the same pattern -->
+    <!--
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingSix">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
+                    Q: Another Question?
+                </button>
+            </h2>
+            <div id="collapseSix" class="accordion-collapse collapse" aria-labelledby="headingSix" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                    <strong>A:</strong> Your answer here.
+                </div>
+            </div>
+        </div>
+        -->
+
+  </div>
+</div>
+{% endblock %}

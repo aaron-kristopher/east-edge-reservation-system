@@ -407,3 +407,12 @@ def reset_password_with_otp(request):
         return JsonResponse({'success': True, 'message': 'Password reset successfully.'})
 
     return JsonResponse({'success': False, 'error': 'Invalid request method.'}, status=405)
+
+def faq_page(request):
+    """
+    Renders the FAQ page.
+    """
+    # You could pass dynamic FAQ content from a database here if needed in the future
+    # For now, all content is in the template.
+    context = {}
+    return render(request, 'customers/faq.html', context)
