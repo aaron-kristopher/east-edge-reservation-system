@@ -7,21 +7,21 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> <!-- Consider removing if v6 is sufficient -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-  {% comment %} <link rel="stylesheet" href="{% static 'css/dashboard.css' %}"> {% endcomment %}
-  <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <title>Receptionist Dashboard</title>
 </head>
 <body>
   <!-- SIDEBAR -->
   <div class="sidebar" id="sidebar" style="margin: 0; padding: 0;">
     <div class="sidebar-header">
       <div class="navbar-logo">
-        <a class="navbar-brand" href="{% url 'customers' %}">
+        <a class="navbar-brand" href="{% url 'customers' %}"> {# Assuming 'customers' is the name of your landing page URL #}
           <img id="logo" src="{% static 'images/logo.png' %}" alt="logo" style="width: 35px; margin-right: 5px;">
           <span class="logo-text">EAST 'K EDGE</span>
         </a>
@@ -35,45 +35,35 @@
       <ul class="nav-list">
         <li class="nav-item active" onclick="showDashboard()">
           <a href="#" class="nav-link">
-            <i class="fas fa-sun"></i>
-            <span class="nav-text">Dashboard</span>
+            <i class="fas fa-sun"></i><span class="nav-text">Dashboard</span>
           </a>
         </li>
         <li class="nav-item" onclick="showBarbers()">
           <a href="#" class="nav-link">
-            <i class="fas fa-user"></i>
-            <span class="nav-text">Barbers</span>
+            <i class="fas fa-user"></i><span class="nav-text">Barbers</span>
           </a>
         </li>
         <li class="nav-item" onclick="showReservations()">
           <a href="#" class="nav-link">
-            <i class="fas fa-calendar"></i>
-            <span class="nav-text">Reservations</span>
+            <i class="fas fa-calendar"></i><span class="nav-text">Reservations</span>
           </a>
         </li>
         <li class="nav-item" onclick="showServices()">
           <a href="#" class="nav-link">
-            <i class="fas fa-cut"></i>
-            <span class="nav-text">Services</span>
+            <i class="fas fa-cut"></i><span class="nav-text">Services</span>
           </a>
         </li>
-        
         <li class="nav-item">
-          <a href="{% url 'profile' %}" class="nav-link">
-            <i class="fas fa-user-circle"></i>
-            <span class="nav-text">My Profile</span>
+          <a href="{% url 'profile' %}" class="nav-link"> {# Assuming 'profile' is a global or customer URL #}
+            <i class="fas fa-user-circle"></i><span class="nav-text">My Profile</span>
           </a>
         </li>
-
         <li class="nav-item">
           <a href="#" class="nav-link" onclick="confirmLogout()">
-            <i class="fas fa-sign-out-alt"></i>
-            <span class="nav-text">Logout</span>
+            <i class="fas fa-sign-out-alt"></i><span class="nav-text">Logout</span>
           </a>
         </li>
-        
-        <!-- Hidden Logout Form -->
-        <form id="logoutForm" action="{% url 'logout' %}" method="post" style="display: none;">
+        <form id="logoutForm" action="{% url 'logout' %}" method="post" style="display: none;"> {# Assuming 'logout' is a global URL #}
           {% csrf_token %}
         </form>
       </ul>
@@ -82,468 +72,216 @@
 
   <!-- MAIN CONTENT -->
   <div class="main-content" id="main-content">
-    <!-- Sidebar Toggle Button -->
     <button id="sidebar-toggler" class="sidebar-toggler" onclick="toggleSidebar()">
       <i class="fas fa-chevron-left"></i>
     </button>
     
-    <!-- HEADER -->
     <section class="topcontainer">
       <div class="container-fluid">
         <div class="d-flex justify-content-between align-items-center py-2">
-          <!-- Removed duplicate toggle button -->
           <div class="dashboard-header">
             <h4 class="m-0 fw-bold text-white" id="pageTitle">Dashboard</h4>
-            <div class="welcome-text text-white">Welcome back, Admin</div>
+            <div class="welcome-text text-white">Welcome back, {{ request.user.first_name|default:'Admin' }}</div>
           </div>
           <div style="width: 32px;"></div>
         </div>
       </div>
     </section>
 
+    <!-- Django Messages -->
+    {% if messages %}
+        <div class="container mt-3">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
     <!-- DASHBOARD VIEW -->
     <div id="dashboardView" class="content-section active">
-      <!-- STATS CARDS -->
-      <div class="stats-container">
+      <div class="stats-container p-3">
         <div class="row g-4">
-          <!-- Top Row: Larger Cards -->
-          <div class="col-xl-8 col-lg-8 col-md-12">
-            <div class="card primary-card">
-              <div class="card-body">
-                <div class="card-content">
-                  <div class="card-info">
-                    <div class="card-label" style="color: #FF6B00; font-weight: 600;">Total Reservations</div>
-                    <div class="growth-indicator" style="color: #FF6B00;">
-                      <div class="pulse-dot"></div>
-                      All time reservations
-                    </div>
-                  </div>
-                </div>
-                <div class="card-badge-container badged">
-                  <div class="card-number-container">
-                    <div class="card-number">{{ reservation_count }}</div>
-                  </div>
-                  <div class="metric-badge">Total</div>
-                  <div class="icon-container">
-                    <i class="fas fa-calendar-check"></i>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-xl-4 col-lg-4 col-md-12">
-            <div class="card secondary-card">
-              <div class="card-body">
-                <div class="card-content">
-                  <div class="card-info">
-                    <div class="card-label">Total Users</div>
-                    <div class="growth-indicator">
-                      <div class="pulse-dot"></div>
-                      Total Registered Users
-                    </div>
-                  </div>
-                </div>
-                <div class="card-badge-container">
-                  <div class="card-number-container">
-                    <div class="card-number">{{ user_count }}</div>
-                  </div>
-                  <div class="metric-badge">Total</div>
-                  <div class="icon-container">
-                    <i class="fas fa-users"></i>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Bottom Row: Smaller Cards -->
-          <div class="col-xl-6 col-lg-6 col-md-12">
-            <div class="card tertiary-card">
-              <div class="card-body">
-                <div class="card-content">
-                  <div class="card-info">
-                    <div class="card-label">Barbers</div>
-                    <div class="growth-indicator">
-                      <div class="pulse-dot"></div>
-                      Available Barbers
-                    </div>
-                  </div>
-                </div>
-                <div class="card-badge-container">
-                  <div class="card-number-container">
-                    <div class="card-number">{{ barber_count }}</div>
-                  </div>
-                  <div class="metric-badge">Available</div>
-                  <div class="icon-container">
-                    <i class="fas fa-user-tie"></i>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-xl-6 col-lg-6 col-md-12">
-            <div class="card quaternary-card">
-              <div class="card-body">
-                <div class="card-content">
-                  <div class="card-info">
-                    <div class="card-label" style="color: #FF6B00; font-weight: 600;">Services</div>
-                    <div class="growth-indicator" style="color: #FF6B00;">
-                      <div class="pulse-dot"></div>
-                      Available Services
-                    </div>
-                  </div>
-                </div>
-                <div class="card-badge-container">
-                  <div class="card-number-container">
-                    <div class="card-number">{{ service_count }}</div>
-                  </div>
-                  <div class="metric-badge">Total</div>
-                  <div class="icon-container">
-                    <i class="fas fa-cut"></i>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <div class="col-xl-8 col-lg-8 col-md-12"><div class="card primary-card"><div class="card-body"><div class="card-content"><div class="card-info"><div class="card-label" style="color: #FF6B00; font-weight: 600;">Total Reservations</div><div class="growth-indicator" style="color: #FF6B00;"><div class="pulse-dot"></div>All time reservations</div></div></div><div class="card-badge-container badged"><div class="card-number-container"><div class="card-number">{{ reservation_count }}</div></div><div class="metric-badge">Total</div><div class="icon-container"><i class="fas fa-calendar-check"></i></div></div></div></div></div>
+          <div class="col-xl-4 col-lg-4 col-md-12"><div class="card secondary-card"><div class="card-body"><div class="card-content"><div class="card-info"><div class="card-label">Total Users</div><div class="growth-indicator"><div class="pulse-dot"></div>Total Registered Users</div></div></div><div class="card-badge-container"><div class="card-number-container"><div class="card-number">{{ user_count }}</div></div><div class="metric-badge">Total</div><div class="icon-container"><i class="fas fa-users"></i></div></div></div></div></div>
+          <div class="col-xl-6 col-lg-6 col-md-12"><div class="card tertiary-card"><div class="card-body"><div class="card-content"><div class="card-info"><div class="card-label">Barbers</div><div class="growth-indicator"><div class="pulse-dot"></div>Available Barbers</div></div></div><div class="card-badge-container"><div class="card-number-container"><div class="card-number">{{ barber_count }}</div></div><div class="metric-badge">Available</div><div class="icon-container"><i class="fas fa-user-tie"></i></div></div></div></div></div>
+          <div class="col-xl-6 col-lg-6 col-md-12"><div class="card quaternary-card"><div class="card-body"><div class="card-content"><div class="card-info"><div class="card-label" style="color: #FF6B00; font-weight: 600;">Services</div><div class="growth-indicator" style="color: #FF6B00;"><div class="pulse-dot"></div>Available Services</div></div></div><div class="card-badge-container"><div class="card-number-container"><div class="card-number">{{ service_count }}</div></div><div class="metric-badge">Total</div><div class="icon-container"><i class="fas fa-cut"></i></div></div></div></div></div>
         </div>
       </div>
     </div>
 
     <!-- BARBERS VIEW -->
-    <div id="barbersView" class="content-section">
+    <div id="barbersView" class="content-section p-3">
       <div class="section-header d-flex justify-content-between align-items-center mb-4">
         <h4><i class="fa fa-scissors me-2"></i> Barbers Management</h4>
         <div>
-          <button class="btn btn-outline-secondary me-2" id="listViewBtn" onclick="toggleBarberView('list')">
-            <i class="fas fa-list"></i> List View
-          </button>
-          <button class="btn btn-outline-secondary me-2" id="gridViewBtn" onclick="toggleBarberView('grid')">
-            <i class="fas fa-th"></i> Grid View
-          </button>
-          <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#addBarberModal">
-            <i class="fas fa-plus"></i> Add Barber
-          </button>
-          <button class="btn btn-danger" id="deleteSelectedBarbersBtn" onclick="deleteSelectedBarbers()" disabled>
-            <i class="fas fa-trash"></i> Delete Selected
-          </button>
+          <button class="btn btn-outline-secondary me-2" id="listViewBtn" onclick="toggleBarberView('list')"><i class="fas fa-list"></i> List</button>
+          <button class="btn btn-outline-secondary me-2 active" id="gridViewBtn" onclick="toggleBarberView('grid')"><i class="fas fa-th"></i> Grid</button>
+          <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#addBarberModal" style="background-color: #FF6B00; border-color: #FF6B00;"><i class="fas fa-plus"></i> Add</button>
+          <button class="btn btn-danger" id="deleteSelectedBarbersBtn" onclick="deleteSelectedBarbers()" disabled><i class="fas fa-trash"></i> Delete Selected</button>
         </div>
       </div>
-      
-      <!-- Grid View -->
-      <div class="row g-4" id="barbersGridView">
-        {% for barber in barbers %}
+      <div class="row g-4" id="barbersGridView" style="display: flex;">
+        {% for barber_item in barbers %}
         <div class="col-xl-3 col-lg-4 col-md-6">
           <div class="barber-card">
             <div class="card-body text-center">
               <div class="profile-circle mx-auto mb-4">
-                {% if barber.profile_picture %}
-                <img src="{{ barber.profile_picture.url }}" alt="{{ barber.first_name }} {{ barber.last_name }}">
-                {% else %}
-                <img src="{% static 'images/avatar-1.jpg' %}" alt="{{ barber.first_name }} {{ barber.last_name }}">
-                {% endif %}
+                {% if barber_item.profile_picture %}<img src="{{ barber_item.profile_picture.url }}" alt="{{ barber_item.first_name }} {{ barber_item.last_name }}">
+                {% else %}<img src="{% static 'images/avatar-1.jpg' %}" alt="{{ barber_item.first_name }} {{ barber_item.last_name }}">{% endif %}
               </div>
-              <h5 class="card-title">{{ barber.first_name }} {{ barber.last_name }}</h5>
-              <span class="badge {% if barber.status == 'A' %}bg-success{% else %}bg-secondary{% endif %} status-badge mb-3">
-                {{ barber.get_status_display }}
-              </span>
+              <h5 class="card-title">{{ barber_item.first_name }} {{ barber_item.last_name }}</h5>
+              <span class="badge {% if barber_item.status == 'A' %}bg-success{% else %}bg-secondary{% endif %} status-badge mb-3">{{ barber_item.get_status_display }}</span>
               <div class="d-flex justify-content-center gap-2 mt-2">
-                <button class="btn btn-sm btn-outline-primary action-btn" data-bs-toggle="modal" data-bs-target="#editBarberModal" onclick="prepareEditBarber('{{ barber.id }}')">
-                  <i class="fas fa-edit"></i>
-                </button>
+                <button class="btn btn-sm btn-outline-primary action-btn" data-bs-toggle="modal" data-bs-target="#editBarberModal" onclick="prepareEditBarber('{{ barber_item.id }}')"><i class="fas fa-edit"></i></button>
                 <form action="{% url 'dashboard' %}" method="post" style="display: inline;">
-                  {% csrf_token %}
-                  <input type="hidden" name="form_type" value="delete_barber">
-                  <input type="hidden" name="barber_id" value="{{ barber.id }}">
-                  <button type="submit" class="btn btn-sm btn-outline-danger action-btn" onclick="return confirm('Are you sure you want to delete {{ barber.first_name }} {{ barber.last_name }}?')">
-                    <i class="fas fa-trash"></i>
-                  </button>
+                  {% csrf_token %}<input type="hidden" name="form_type" value="delete_barber"><input type="hidden" name="barber_id" value="{{ barber_item.id }}">
+                  <button type="submit" class="btn btn-sm btn-outline-danger action-btn" onclick="return confirm('Delete {{ barber_item.first_name }} {{ barber_item.last_name }}?')"><i class="fas fa-trash"></i></button>
                 </form>
               </div>
             </div>
           </div>
         </div>
-        {% empty %}
-        <div class="col-12 text-center">
-          <p>No barbers found</p>
-        </div>
-        {% endfor %}
+        {% empty %}<div class="col-12 text-center"><p>No barbers found</p></div>{% endfor %}
       </div>
-      
-      <!-- List View -->
       <div id="barbersListView" style="display: none;">
         <form action="{% url 'dashboard' %}" method="post" id="deleteBarberForm">
-          {% csrf_token %}
-          <input type="hidden" name="form_type" value="delete_barbers">
+          {% csrf_token %}<input type="hidden" name="form_type" value="delete_barbers">
           <div class="table-responsive">
             <table class="table table-striped">
-            <thead class="table-dark">
-              <tr>
-                <th width="5%"><input type="checkbox" class="form-check-input" id="selectAllBarbers" onclick="toggleAllBarberCheckboxes()"></th>
-                <th width="5%">#</th>
-                <th width="20%">Name</th>
-                <th width="15%">Phone</th>
-                <th width="10%">Status</th>
-                <th width="25%">Services</th>
-                <th width="20%">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for barber in barbers %}
-              <tr data-barber-id="{{ barber.id }}">
-                <td><input type="checkbox" class="form-check-input barber-checkbox" name="selected_barbers" value="{{ barber.id }}" onchange="updateDeleteBarberButton()"></td>
-                <td>{{ forloop.counter }}</td>
-                <td>{{ barber.first_name }} {{ barber.last_name }}</td>
-                <td>{{ barber.phone_number }}</td>
-                <td>
-                  <span class="badge {% if barber.status == 'A' %}bg-success{% else %}bg-secondary{% endif %}">
-                    {{ barber.get_status_display }}
-                  </span>
-                </td>
-                <td>
-                  {% with services=barber.services.all %}
-                    {% if services|length <= 2 %}
-                      {% for service in services %}
-                        {{ service.service_name }}{% if not forloop.last %}, {% endif %}
-                      {% endfor %}
-                    {% else %}
-                      {% for service in services|slice:":2" %}
-                        {{ service.service_name }}{% if not forloop.last %}, {% endif %}
-                      {% endfor %}
-                      and {{ services|length|add:"-2" }} more
-                    {% endif %}
-                  {% endwith %}
-                </td>
-                <td>
-                  <div class="d-flex gap-1">
-                    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editBarberModal" onclick="prepareEditBarber('{{ barber.id }}')">
-                      <i class="fas fa-edit"></i>
-                    </button>
-                    <form action="{% url 'dashboard' %}" method="post" style="display: inline;">
-                      {% csrf_token %}
-                      <input type="hidden" name="form_type" value="delete_barber">
-                      <input type="hidden" name="barber_id" value="{{ barber.id }}">
-                      <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to delete {{ barber.first_name }} {{ barber.last_name }}?')">
-                        <i class="fas fa-trash"></i>
-                      </button>
-                    </form>
-                  </div>
-                </td>
-              </tr>
-              {% empty %}
-              <tr>
-                <td colspan="7" class="text-center">No barbers found</td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-          </div>
-        </form>
-      </div>
+            <thead class="table-dark"><tr>
+                <th width="5%"><input type="checkbox" class="form-check-input" id="selectAllBarbers"></th>
+                <th width="5%">#</th><th width="20%">Name</th><th width="15%">Phone</th><th width="10%">Status</th><th width="25%">Services</th><th width="20%">Actions</th>
+            </tr></thead><tbody>
+              {% for barber_item in barbers %}
+              <tr data-barber-id="{{ barber_item.id }}">
+                <td><input type="checkbox" class="form-check-input barber-checkbox" name="selected_barbers" value="{{ barber_item.id }}"></td>
+                <td>{{ forloop.counter }}</td><td>{{ barber_item.first_name }} {{ barber_item.last_name }}</td><td>{{ barber_item.phone_number }}</td>
+                <td><span class="badge {% if barber_item.status == 'A' %}bg-success{% else %}bg-secondary{% endif %}">{{ barber_item.get_status_display }}</span></td>
+                <td>{% with services_offered=barber_item.services.all %}{% if services_offered|length <= 2 %}{% for service_item_loop in services_offered %}{{ service_item_loop.service_name }}{% if not forloop.last %}, {% endif %}{% endfor %}{% else %}{% for service_item_loop in services_offered|slice:":2" %}{{ service_item_loop.service_name }}{% if not forloop.last %}, {% endif %}{% endfor %} and {{ services_offered|length|add:"-2" }} more{% endif %}{% endwith %}</td>
+                <td><div class="d-flex gap-1">
+                    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editBarberModal" onclick="prepareEditBarber('{{ barber_item.id }}')"><i class="fas fa-edit"></i></button>
+                    <form action="{% url 'dashboard' %}" method="post" style="display: inline;">{% csrf_token %}<input type="hidden" name="form_type" value="delete_barber"><input type="hidden" name="barber_id" value="{{ barber_item.id }}"><button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete {{ barber_item.first_name }} {{ barber_item.last_name }}?')"><i class="fas fa-trash"></i></button></form>
+                </div></td></tr>
+              {% empty %}<tr><td colspan="7" class="text-center">No barbers found</td></tr>{% endfor %}
+            </tbody></table></div></form></div>
     </div>
 
-     <!-- SERVICES VIEW -->
-    <div id="servicesView" class="content-section">
-      <div class="container-fluid p-3">
-        <div class="section-header d-flex justify-content-between align-items-center mb-4">
+    <!-- SERVICES VIEW -->
+    <div id="servicesView" class="content-section p-3">
+      <div class="section-header d-flex justify-content-between align-items-center mb-4">
           <h4><i class="fas fa-cut me-2"></i> Services Management</h4>
-          <div>
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addServiceModal" style="background-color: #FF6B00; border-color: #FF6B00;">
-              <i class="fas fa-plus"></i> Add Service
-            </button>
-          </div>
-        </div>
-          
-        <!-- Filter Controls -->
-        <div class="filter-controls mb-3">
-          <div class="input-group" style="max-width: 250px;">
-            <span class="input-group-text"><i class="fas fa-search"></i></span>
-            <input type="text" class="form-control" id="serviceSearch" placeholder="Search services...">
-          </div>
-          
-          <div class="input-group" style="max-width: 200px;">
-            <span class="input-group-text"><i class="fas fa-tags"></i></span>
-            <select class="form-select" id="serviceCategoryFilter">
-              <option value="">All Categories</option>
-              <option value="hair services">Hair Services</option>
-              <option value="nail services">Nail Services</option>
-              <option value="grooming services">Grooming Services</option>
-            </select>
-          </div>
-        </div>
-        
-        <!-- Services Table -->
-        <div class="table-responsive">
-          <div>
-
-            <table class="table table-striped">
-              <thead class="table-dark">
-                <tr>
-                  <th width="5%">#</th>
-                  <th>Service Name</th>
-                  <th>Price</th>
-                  <th>Duration</th>
-                  <th>Category</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for service in services %}
-                <tr data-service-id="{{ service.id }}">
-                  <td>{{ forloop.counter }}</td>
-                  <td>{{ service.service_name }}</td>
-                  <td>₱{{ service.price }}</td>
-                  <td>{{ service.estimated_time }} min</td>
-                  <td>
-                    {% if service.category == 'H' %}
-                      <span class="badge bg-primary">Hair Services</span>
-                    {% elif service.category == 'N' %}
-                      <span class="badge bg-success">Nail Services</span>
-                    {% elif service.category == 'G' %}
-                      <span class="badge bg-info">Grooming Services</span>
-                    {% endif %}
-                  </td>
-                  <td>
-                    <div class="d-flex gap-1">
-                      <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editServiceModal" onclick="prepareEditService('{{ service.id }}')">
-                        <i class="fas fa-edit"></i>
-                      </button>
-                      <form action="{% url 'dashboard' %}" method="post" style="display: inline;">
-                        {% csrf_token %}
-                        <input type="hidden" name="form_type" value="delete_service">
-                        <input type="hidden" name="service_id" value="{{ service.id }}">
-                        <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to delete {{ service.service_name }}?')">
-                          <i class="fas fa-trash"></i>
-                        </button>
-                      </form>
-                    </div>
-                  </td>
-                </tr>
-                {% empty %}
-                <tr>
-                  <td colspan="6" class="text-center">No services found</td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-        </div>
+          <div><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addServiceModal" style="background-color: #FF6B00; border-color: #FF6B00;"><i class="fas fa-plus"></i> Add Service</button></div>
       </div>
-    </div>
+      <div class="filter-controls mb-3">
+          <div class="input-group" style="max-width: 250px;"><span class="input-group-text"><i class="fas fa-search"></i></span><input type="text" class="form-control" id="serviceSearchInput" placeholder="Search services..."></div>
+          <div class="input-group" style="max-width: 200px;"><span class="input-group-text"><i class="fas fa-tags"></i></span>
+              <select class="form-select" id="serviceCategorySelect">
+                  <option value="">All Categories</option><option value="H">Hair Services</option><option value="N">Nail Services</option><option value="G">Grooming Services</option>
+              </select></div></div>
+      <div class="table-responsive">
+          <table class="table table-striped">
+              <thead class="table-dark"><tr>
+                  <th width="5%">#</th><th>Service Name</th><th>Price</th><th>Duration (min)</th><th>Category</th><th>Actions</th>
+              </tr></thead>
+              <tbody id="serviceTableBody">
+              {% for service_item in services %}
+              <tr data-service-id="{{ service_item.id }}" data-category="{{ service_item.category }}">
+                  <td>{{ forloop.counter }}</td><td>{{ service_item.service_name }}</td><td>₱{{ service_item.price|floatformat:2 }}</td><td>{{ service_item.estimated_time }}</td>
+                  <td>{% if service_item.category == 'H' %}<span class="badge bg-primary">Hair</span>{% elif service_item.category == 'N' %}<span class="badge bg-success">Nail</span>{% elif service_item.category == 'G' %}<span class="badge bg-info">Grooming</span>{% endif %}</td>
+                  <td><div class="d-flex gap-1">
+                      <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editServiceModal" onclick="prepareEditService('{{ service_item.id }}')"><i class="fas fa-edit"></i></button>
+                      <form action="{% url 'dashboard' %}" method="post" style="display: inline;">{% csrf_token %}<input type="hidden" name="form_type" value="delete_service"><input type="hidden" name="service_id" value="{{ service_item.id }}"><button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete {{ service_item.service_name }}?')"><i class="fas fa-trash"></i></button></form>
+                  </div></td></tr>
+              {% empty %}<tr><td colspan="6" class="text-center">No services found</td></tr>{% endfor %}
+              </tbody></table></div></div>
 
     <!-- RESERVATIONS VIEW -->
-    <div id="reservationsView" class="content-section">
+    <div id="reservationsView" class="content-section p-3">
       <div class="section-header d-flex justify-content-between align-items-center mb-4">
         <h4><i class="fas fa-calendar-check me-2"></i> Reservations Management</h4>
-        <div>
-          <button class="btn btn-danger" id="deleteSelectedReservationsBtn" onclick="deleteSelectedReservations()" disabled>
-            <i class="fas fa-trash"></i> Delete Selected
-          </button>
-        </div>
+        <div><button class="btn btn-danger" id="deleteSelectedReservationsBtn" onclick="deleteSelectedReservations()" disabled><i class="fas fa-trash"></i> Delete Selected</button></div>
       </div>
-        
-        <!-- Filter Controls -->
         <div class="filter-controls">
-          <div class="input-group" style="max-width: 250px;">
-            <span class="input-group-text"><i class="fas fa-search"></i></span>
-            <input type="text" class="form-control" id="reservationSearch" placeholder="Search reservations...">
-          </div>
-          
-          <div class="input-group" style="max-width: 200px;">
-            <span class="input-group-text"><i class="fas fa-filter"></i></span>
-            <select class="form-select" id="reservationStatusFilter">
+          <div class="input-group" style="max-width: 250px;"><span class="input-group-text"><i class="fas fa-search"></i></span><input type="text" class="form-control" id="reservationSearchInput" placeholder="Search reservations..."></div>
+          <div class="input-group" style="max-width: 200px;"><span class="input-group-text"><i class="fas fa-filter"></i></span>
+            <select class="form-select" id="reservationStatusSelect">
               <option value="">All Status</option>
-              <option value="completed">Completed</option>
-              <option value="cancelled">Cancelled</option>
-              <option value="requested">Requested</option>
-              <option value="accepted">Accepted</option>
-              <option value="declined">Declined</option>
-            </select>
-          </div>
-          
-          <div class="input-group" style="max-width: 200px;">
-            <span class="input-group-text"><i class="fas fa-user-tie"></i></span>
-            <select class="form-select" id="reservationBarberFilter">
+              <option value="C">Completed</option><option value="X">Cancelled</option><option value="R">Requested</option><option value="A">Accepted</option><option value="D">Declined</option>
+            </select></div>
+          <div class="input-group" style="max-width: 200px;"><span class="input-group-text"><i class="fas fa-user-tie"></i></span>
+            <select class="form-select" id="reservationBarberSelect">
               <option value="">All Barbers</option>
-              {% for barber in barbers %}
-              <option value="{{ barber.id }}">{{ barber.first_name }} {{ barber.last_name }}</option>
-              {% endfor %}
-            </select>
-          </div>
-        </div>
-        
-        <!-- Reservations Table -->
+              {% for barber_item in barbers %}<option value="{{ barber_item.id }}">{{ barber_item.first_name }} {{ barber_item.last_name }}</option>{% endfor %}
+            </select></div></div>
         <div class="table-responsive">
           <table class="table table-striped">
-            <thead class="table-dark">
-              <tr>
+            <thead class="table-dark"><tr>
                 <th width="5%"><input type="checkbox" class="form-check-input" id="selectAllReservations"></th>
-                <th>Barber</th>
-                <th>Reserved By</th>
-                <th>Services</th>
-                <th>Date</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for reservation in reservations %}
-              <tr data-reservation-id="{{ reservation.id }}" data-barber-id="{{ reservation.barber.id }}">
-                <td><input type="checkbox" class="form-check-input reservation-checkbox"></td>
-                <td>{{ reservation.barber.first_name }} {{ reservation.barber.last_name }}</td>
-                <td>{{ reservation.reserved_by.first_name }} {{ reservation.reserved_by.last_name }}</td>
+                <th>Barber</th><th>Reserved By</th><th>Services</th><th>Date</th><th>Status</th><th>Actions</th>
+            </tr></thead>
+            <tbody id="reservationTableBody">
+              {% for reservation_item in reservations %}
+              <tr data-reservation-id="{{ reservation_item.id }}" data-barber-id="{{ reservation_item.barber.id }}" data-status="{{ reservation_item.status }}">
+                <td><input type="checkbox" class="form-check-input reservation-checkbox" name="selected_reservations" value="{{ reservation_item.id }}"></td>
+                <td>{{ reservation_item.barber.first_name }} {{ reservation_item.barber.last_name }}</td>
+                <td>{{ reservation_item.reserved_by.first_name }} {{ reservation_item.reserved_by.last_name }}</td>
+                <td>{% for service_item_loop in reservation_item.services.all %}{{ service_item_loop.service_name }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+                <td>{{ reservation_item.start_datetime|date:"M d, Y, h:i A" }}</td>
                 <td>
-                  {% for service in reservation.services.all %}
-                  {{ service.service_name }}{% if not forloop.last %}, {% endif %}
-                  {% endfor %}
-                </td>
-                <td>{{ reservation.start_datetime|date:"M d, Y, g a" }}</td>
-                <td>
-                  {% if reservation.status == 'C' %}
-                  <span class="badge bg-success">COMPLETED</span>
-                  {% elif reservation.status == 'X' %}
-                  <span class="badge bg-danger">CANCELLED</span>
-                  {% elif reservation.status == 'R' %}
-                  <span class="badge bg-warning text-dark">REQUESTED</span>
-                  {% elif reservation.status == 'A' %}
-                  <span class="badge bg-primary">ACCEPTED</span>
-                  {% elif reservation.status == 'D' %}
-                  <span class="badge bg-secondary">DECLINED</span>
-                  {% endif %}
+                  {% if reservation_item.status == 'C' %}<span class="badge bg-success">COMPLETED</span>
+                  {% elif reservation_item.status == 'X' %}<span class="badge bg-danger">CANCELLED</span>
+                  {% elif reservation_item.status == 'R' %}<span class="badge bg-warning text-dark">REQUESTED</span>
+                  {% elif reservation_item.status == 'A' %}<span class="badge bg-primary">ACCEPTED</span>
+                  {% elif reservation_item.status == 'D' %}<span class="badge bg-secondary">DECLINED</span>{% endif %}
                 </td>
                 <td>
-                  <div class="d-flex gap-1">
-                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editReservationModal" onclick="prepareEditReservation('{{ reservation.id }}')">
-                      <i class="fas fa-edit"></i>
-                    </button>
-                    {% if reservation.status != 'X' %}
-                    <button class="btn btn-sm btn-outline-danger" onclick="showCancelReservationModal('{{ reservation.id }}')">
-                      <i class="fas fa-times"></i> Cancel
-                    </button>
-                    {% endif %}
-                  </div>
+                    <div class="d-flex gap-1">
+                        {% if reservation_item.status == 'R' %} {# REQUESTED #}
+                            <button class="btn btn-sm btn-success" onclick="showQuickStatusUpdateModal('{{ reservation_item.id }}', 'A', '{{ reservation_item.reserved_for_name|escapejs }}')">
+                                <i class="fas fa-check"></i> Accept
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="showQuickStatusUpdateModal('{{ reservation_item.id }}', 'D', '{{ reservation_item.reserved_for_name|escapejs }}')">
+                                <i class="fas fa-times"></i> Decline
+                            </button>
+                        {% elif reservation_item.status == 'A' %} {# ACCEPTED #}
+                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editReservationModal" onclick="prepareEditReservation('{{ reservation_item.id }}')">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="showCancelReservationModal('{{ reservation_item.id }}', '{{ reservation_item.reserved_for_name|escapejs }}')">
+                                <i class="fas fa-times-circle"></i> Cancel
+                            </button>
+                        {% elif reservation_item.status == 'D' %} {# DECLINED #}
+                            <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#editReservationModal" onclick="prepareEditReservation('{{ reservation_item.id }}')">
+                                <i class="fas fa-edit"></i> Re-evaluate
+                            </button>
+                        {% elif reservation_item.status == 'X' or reservation_item.status == 'C' %} {# CANCELLED or COMPLETED #}
+                            <span class="text-muted fst-italic">No actions</span>
+                        {% else %}
+                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editReservationModal" onclick="prepareEditReservation('{{ reservation_item.id }}')">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                        {% endif %}
+                    </div>
                 </td>
               </tr>
-              {% empty %}
-              <tr>
-                <td colspan="7" class="text-center">No reservations found</td>
-              </tr>
-              {% endfor %}
+              {% empty %}<tr><td colspan="7" class="text-center">No reservations found</td></tr>{% endfor %}
             </tbody>
           </table>
         </div>
-      </div>
-    </div>
-  </div>
+    </div> <!-- End of reservationsView -->
+
+  </div> <!-- End of main-content -->
 
   <!-- MODALS -->
   <!-- Edit Reservation Modal -->
-  <div class="modal fade" id="editReservationModal" tabindex="-1" aria-hidden="true">
+  <div class="modal fade" id="editReservationModal" tabindex="-1" aria-labelledby="editReservationModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header" style="background-color: #FF6B00; color: white;">
-          <h5 class="modal-title">Edit Reservation</h5>
+          <h5 class="modal-title" id="editReservationModalLabel">Edit Reservation</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -554,876 +292,109 @@
             <div class="row">
               <div class="col-md-6">
                 <div class="mb-3">
-                  <label for="reservationBarber" class="form-label">Barber</label>
-                  <select class="form-select" id="reservationBarber" name="barber_id" required>
+                  <label for="modalReservationBarber" class="form-label">Barber <span class="text-danger">*</span></label>
+                  <select class="form-select" id="modalReservationBarber" name="barber_id" required>
                     <option value="">Select Barber</option>
-                    {% for barber in barbers %}
-                    <option value="{{ barber.id }}">{{ barber.first_name }} {{ barber.last_name }}</option>
-                    {% endfor %}
-                  </select>
-                </div>
-                
+                    {% for barber_item_modal in barbers %}<option value="{{ barber_item_modal.id }}">{{ barber_item_modal.first_name }} {{ barber_item_modal.last_name }}</option>{% endfor %}
+                  </select></div>
                 <div class="mb-3">
-                  <label for="reservationReservedBy" class="form-label">Reserved By</label>
-                  <select class="form-select" id="reservationReservedBy" name="reserved_by_id" required>
+                  <label for="modalReservationReservedBy" class="form-label">Reserved By <span class="text-danger">*</span></label>
+                  <select class="form-select" id="modalReservationReservedBy" name="reserved_by_id" required>
                     <option value="">Select User</option>
-                    {% for user in users %}
-                    <option value="{{ user.id }}">{{ user.first_name }} {{ user.last_name }}</option>
-                    {% endfor %}
-                  </select>
-                </div>
-                
+                    {% for user_item_modal in users %}<option value="{{ user_item_modal.id }}">{{ user_item_modal.first_name }} {{ user_item_modal.last_name }}</option>{% endfor %}
+                  </select></div>
                 <div class="mb-3">
-                  <label for="reservationFirstName" class="form-label">Reserved for first name</label>
-                  <input type="text" class="form-control" id="reservationFirstName" name="reserved_for_first_name">
-                </div>
-                
+                  <label for="modalReservationFirstName" class="form-label">Reserved for first name</label>
+                  <input type="text" class="form-control" id="modalReservationFirstName" name="reserved_for_first_name"></div>
                 <div class="mb-3">
-                  <label for="reservationLastName" class="form-label">Reserved for last name</label>
-                  <input type="text" class="form-control" id="reservationLastName" name="reserved_for_last_name">
-                </div>
-              </div>
-              
+                  <label for="modalReservationLastName" class="form-label">Reserved for last name</label>
+                  <input type="text" class="form-control" id="modalReservationLastName" name="reserved_for_last_name"></div></div>
               <div class="col-md-6">
                 <div class="mb-3">
-                  <label for="reservationEmail" class="form-label">Reserved for email</label>
-                  <input type="email" class="form-control" id="reservationEmail" name="reserved_for_email">
-                </div>
-                
+                  <label for="modalReservationEmail" class="form-label">Reserved for email</label>
+                  <input type="email" class="form-control" id="modalReservationEmail" name="reserved_for_email"></div>
                 <div class="mb-3">
-                  <label for="reservationPhone" class="form-label">Reserved for phone</label>
-                  <input type="tel" class="form-control" id="reservationPhone" name="reserved_for_phone">
-                </div>
-                
+                  <label for="modalReservationPhone" class="form-label">Reserved for phone</label>
+                  <input type="tel" class="form-control" id="modalReservationPhone" name="reserved_for_phone"></div>
                 <div class="mb-3">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="reservationIsSelf" name="is_reserved_for_self" value="true">
-                    <label class="form-check-label" for="reservationIsSelf">Is reserved for self</label>
-                  </div>
-                </div>
-                
+                  <div class="form-check"><input class="form-check-input" type="checkbox" id="modalReservationIsSelf" name="is_reserved_for_self" value="true"><label class="form-check-label" for="modalReservationIsSelf">Is reserved for self</label></div></div>
                 <div class="mb-3">
-                  <label for="reservationServices" class="form-label">Services</label>
-                  <select class="form-select" id="reservationServices" name="services" multiple required>
-                    {% for service in services %}
-                    <option value="{{ service.id }}">{{ service.service_name }} - {{ service.price }} PHP ({{ service.duration }} mins)</option>
-                    {% endfor %}
-                  </select>
-                </div>
-                
+                  <label for="modalReservationServices" class="form-label">Services <span class="text-danger">*</span></label>
+                  <select class="form-select" id="modalReservationServices" name="services" multiple required></select>
+                  <small class="text-muted">Hold Ctrl/Cmd to select multiple services</small></div>
                 <div class="mb-3">
-                  <label class="form-label">Start datetime</label>
-                  <div class="row">
+                  <label class="form-label">Start datetime <span class="text-danger">*</span></label>
+                  <div class="row"><div class="col-md-6">
+                      <label for="modalReservationDate" class="form-label">Date:</label>
+                      <input type="date" class="form-control" id="modalReservationDate" name="date" required></div>
                     <div class="col-md-6">
-                      <label for="reservationDate" class="form-label">Date:</label>
-                      <input type="date" class="form-control" id="reservationDate" name="date" required>
-                    </div>
-                    <div class="col-md-6">
-                      <label for="reservationTime" class="form-label">Time:</label>
-                      <input type="time" class="form-control" id="reservationTime" name="time" required>
-                    </div>
-                  </div>
-                </div>
-                
+                      <label for="modalReservationTime" class="form-label">Time:</label>
+                      <input type="time" class="form-control" id="modalReservationTime" name="time" required></div></div></div>
                 <div class="mb-3">
-                  <label for="reservationStatus" class="form-label">Status</label>
-                  <select class="form-select" id="reservationStatus" name="status" required>
-                    <option value="R">REQUESTED</option>
-                    <option value="A">ACCEPTED</option>
-                    <option value="D">DECLINED</option>
-                    <option value="C">COMPLETED</option>
-                    <option value="X">CANCELLED</option>
-                  </select>
-                </div>
-              </div>
-            </div>
+                  <label for="modalReservationStatus" class="form-label">Status <span class="text-danger">*</span></label>
+                  <select class="form-select" id="modalReservationStatus" name="status" required>
+                    <option value="R">REQUESTED</option><option value="A">ACCEPTED</option><option value="D">DECLINED</option><option value="C">COMPLETED</option><option value="X">CANCELLED</option>
+                  </select></div></div></div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
               <button type="submit" class="btn" style="background-color: #FF6B00; border-color: #FF6B00; color: white;">Save Changes</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
+            </div></form></div></div></div></div>
 
-  <!-- Service Details Modal removed -->
-
-  <!-- JavaScript -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    // Toggle Sidebar
-    function toggleSidebar() {
-      const sidebar = document.getElementById('sidebar');
-      const mainContent = document.getElementById('main-content');
-      const sidebarToggler = document.getElementById('sidebar-toggler');
-      
-      sidebar.classList.toggle('collapsed');
-      mainContent.classList.toggle('expanded');
-      
-      if (sidebar.classList.contains('collapsed')) {
-        // If sidebar is collapsed
-        sidebarToggler.innerHTML = '<i class="fas fa-chevron-right"></i>';
-        // Hide all text in nav links
-        const navTexts = document.querySelectorAll('.nav-text');
-        navTexts.forEach(text => {
-          text.style.display = 'none';
-        });
-      } else {
-        // If sidebar is expanded
-        sidebarToggler.innerHTML = '<i class="fas fa-chevron-left"></i>';
-        // Show all text in nav links
-        const navTexts = document.querySelectorAll('.nav-text');
-        navTexts.forEach(text => {
-          text.style.display = 'inline';
-        });
-      }
-    }
-    
-    // Navigation Functions
-    function hideAllViews() {
-      const views = document.querySelectorAll('.content-section');
-      views.forEach(view => {
-        view.classList.remove('active');
-      });
-    }
-    
-    function setActiveNav(index) {
-      const navItems = document.querySelectorAll('.nav-item');
-      navItems.forEach((item, i) => {
-        if (i === index) {
-          item.classList.add('active');
-        } else {
-          item.classList.remove('active');
-        }
-      });
-    }
-    
-    function showDashboard() {
-      hideAllViews();
-      document.getElementById('dashboardView').classList.add('active');
-      document.getElementById('pageTitle').textContent = 'Dashboard';
-      setActiveNav(0);
-    }
-    
-    function showBarbers() {
-      hideAllViews();
-      document.getElementById('barbersView').classList.add('active');
-      document.getElementById('pageTitle').textContent = 'Barbers';
-      setActiveNav(1);
-    }
-    
-    function showReservations() {
-      hideAllViews();
-      document.getElementById('reservationsView').classList.add('active');
-      document.getElementById('pageTitle').textContent = 'Reservations';
-      setActiveNav(2);
-    }
-    
-    function showServices() {
-      hideAllViews();
-      document.getElementById('servicesView').classList.add('active');
-      document.getElementById('pageTitle').textContent = 'Services';
-      setActiveNav(3);
-    }
-
-    
-    // Modal Functions
-    // Reservation details function removed
-    
-    // Service details function removed
-    
-    // Barber View Functions
-    function toggleBarberView(viewType) {
-      const gridView = document.getElementById('barbersGridView');
-      const listView = document.getElementById('barbersListView');
-      const gridViewBtn = document.getElementById('gridViewBtn');
-      const listViewBtn = document.getElementById('listViewBtn');
-      
-      if (viewType === 'grid') {
-        gridView.style.display = 'flex';
-        listView.style.display = 'none';
-        gridViewBtn.classList.add('active');
-        listViewBtn.classList.remove('active');
-      } else {
-        gridView.style.display = 'none';
-        listView.style.display = 'block';
-        listViewBtn.classList.add('active');
-        gridViewBtn.classList.remove('active');
-      }
-    }
-    
-    function showAddBarber() {
-      alert('Add Barber functionality will be implemented here');
-    }
-    
-    // View barber function removed
-    
-    function editBarber(event, name) {
-      if (event) {
-        event.stopPropagation();
-      }
-      alert(`Edit barber: ${name}`);
-    }
-    
-    function deleteBarber(event, name) {
-      if (event) {
-        event.stopPropagation();
-      }
-      if (confirm(`Are you sure you want to delete barber: ${name}?`)) {
-        alert(`Barber ${name} deleted successfully`);
-      }
-    }
-    
-    function showAddReservation() {
-      alert('Add Reservation functionality will be implemented here');
-    }
-    
-    function editReservation(customer) {
-      alert(`Edit reservation for customer: ${customer}`);
-    }
-    
-    // Function to show the cancel reservation modal
-    function showCancelReservationModal(customer) {
-      // Set the customer name in the modal
-      document.getElementById('cancelCustomerName').textContent = customer;
-      
-      // Clear any previous reason
-      document.getElementById('cancellationReason').value = '';
-      
-      // Show the modal
-      const modal = new bootstrap.Modal(document.getElementById('cancelReservationModal'));
-      modal.show();
-    }
-    
-    // Function to confirm cancellation of reservation
-    function confirmCancelReservation() {
-      // Get the customer name and reason
-      const customer = document.getElementById('cancelCustomerName').textContent;
-      const reason = document.getElementById('cancellationReason').value;
-      
-      // Validate the reason
-      if (!reason.trim()) {
-        alert('Please provide a reason for cancellation');
-        return;
-      }
-      
-      // In a real application, you would send this data to the server
-      console.log('Cancelling reservation for:', customer, 'Reason:', reason);
-      
-      // Close the modal
-      const modal = bootstrap.Modal.getInstance(document.getElementById('cancelReservationModal'));
-      modal.hide();
-      
-      // Show success message
-      alert(`Reservation for ${customer} has been cancelled successfully`);
-    }
-    
-    function showAddService() {
-      alert('Add Service functionality will be implemented here');
-    }
-    
-    function editService(name) {
-      // Set values in the form based on the service name
-      document.getElementById('serviceName').value = name;
-      
-      // Set default values based on the service name
-      if (name === 'Haircut') {
-        document.getElementById('servicePrice').value = '200.0';
-        document.getElementById('serviceDuration').value = '30';
-        document.getElementById('serviceCategory').value = 'Hair';
-      } else if (name === 'Shave') {
-        document.getElementById('servicePrice').value = '150.0';
-        document.getElementById('serviceDuration').value = '20';
-        document.getElementById('serviceCategory').value = 'Grooming';
-      } else if (name === 'Styling') {
-        document.getElementById('servicePrice').value = '250.0';
-        document.getElementById('serviceDuration').value = '45';
-        document.getElementById('serviceCategory').value = 'Hair';
-      } else if (name === 'Waxing') {
-        document.getElementById('servicePrice').value = '200.0';
-        document.getElementById('serviceDuration').value = '30';
-        document.getElementById('serviceCategory').value = 'Grooming Services';
-      }
-      
-      // Show the modal
-      const modal = new bootstrap.Modal(document.getElementById('editServiceModal'));
-      modal.show();
-    }
-    
-    function saveServiceChanges() {
-      // Get form values
-      const name = document.getElementById('serviceName').value;
-      const price = document.getElementById('servicePrice').value;
-      const duration = document.getElementById('serviceDuration').value;
-      const category = document.getElementById('serviceCategory').value;
-      
-      // Validate form
-      if (!name || !price || !duration || !category) {
-        alert('Please fill in all required fields');
-        return;
-      }
-      
-      // In a real application, you would send this data to the server
-      console.log('Saving service:', name, price, duration, category);
-      
-      // Close the modal
-      const modal = bootstrap.Modal.getInstance(document.getElementById('editServiceModal'));
-      modal.hide();
-      
-      // Show success message
-      alert(`Service ${name} updated successfully`);
-    }
-    
-    function deleteService(name) {
-      if (confirm(`Are you sure you want to delete service: ${name}?`)) {
-        alert(`Service ${name} deleted successfully`);
-      }
-    }
-    
-    // Function to handle delete selected barbers
-    function deleteSelectedBarbers() {
-      const selectedBarbers = document.querySelectorAll('.barber-checkbox:checked');
-      if (selectedBarbers.length === 0) {
-        alert('Please select at least one barber to delete');
-        return;
-      }
-      
-      if (confirm(`Are you sure you want to delete ${selectedBarbers.length} selected barber(s)?`)) {
-        // Submit the form
-        document.getElementById('deleteBarberForm').submit();
-      }
-    }
-    
-    // Function to handle delete selected reservations
-    function deleteSelectedReservations() {
-      const selectedReservations = document.querySelectorAll('.reservation-checkbox:checked');
-      if (selectedReservations.length === 0) {
-        alert('Please select at least one reservation to delete');
-        return;
-      }
-      
-      if (confirm(`Are you sure you want to delete ${selectedReservations.length} selected reservations?`)) {
-        // Get all selected reservation IDs
-        const reservationIds = [];
-        selectedReservations.forEach(checkbox => {
-          const row = checkbox.closest('tr');
-          const reservationId = row.getAttribute('data-reservation-id');
-          if (reservationId) {
-            reservationIds.push(reservationId);
-          }
-        });
-        
-        // Create a form to submit the deletion request
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '{% url "dashboard" %}';
-        form.style.display = 'none';
-        
-        // Add CSRF token
-        const csrfToken = document.createElement('input');
-        csrfToken.type = 'hidden';
-        csrfToken.name = 'csrfmiddlewaretoken';
-        csrfToken.value = '{{ csrf_token }}';
-        form.appendChild(csrfToken);
-        
-        // Add form type
-        const formType = document.createElement('input');
-        formType.type = 'hidden';
-        formType.name = 'form_type';
-        formType.value = 'delete_reservations';
-        form.appendChild(formType);
-        
-        // Add reservation IDs
-        reservationIds.forEach(id => {
-          const input = document.createElement('input');
-          input.type = 'hidden';
-          input.name = 'reservation_ids';
-          input.value = id;
-          form.appendChild(input);
-        });
-        
-        // Append form to body and submit
-        document.body.appendChild(form);
-        form.submit();
-      }
-    }
-    
-    function prepareEditReservation(reservationId) {
-      console.log('Preparing edit for reservation ID:', reservationId);
-      
-      // Get data from the table row
-      const row = document.querySelector(`tr[data-reservation-id="${reservationId}"]`);
-      if (!row) {
-        console.error('Row not found for reservation ID:', reservationId);
-        return;
-      }
-      
-      // Extract basic data from the row
-      const barberText = row.querySelector('td:nth-child(2)').textContent.trim();
-      const reservedByText = row.querySelector('td:nth-child(3)').textContent.trim();
-      const servicesText = row.querySelector('td:nth-child(4)').textContent.trim().split(', ');
-      const dateTimeText = row.querySelector('td:nth-child(5)').textContent.trim();
-      const statusText = row.querySelector('td:nth-child(6) .badge').textContent.trim();
-      
-      // Set the reservation ID in the hidden field
-      document.getElementById('edit_reservation_id').value = reservationId;
-      
-      // Find barber ID by name
-      const barberSelect = document.getElementById('reservationBarber');
-      for (let i = 0; i <barberSelect.options.length; i++) {
-        if (barberSelect.options[i].text === barberText) {
-          barberSelect.selectedIndex = i;
-          break;
-        }
-      }
-      
-      // Find reserved by ID by name
-      const reservedBySelect = document.getElementById('reservationReservedBy');
-      for (let i = 0; i < reservedBySelect.options.length; i++) {
-        if (reservedBySelect.options[i].text === reservedByText) {
-          reservedBySelect.selectedIndex = i;
-          break;
-        }
-      }
-      
-      // Parse date and time from dateTimeText
-      // Example format: May 31, 2025, 8 AM
-      const dateParts = dateTimeText.split(',');
-      let dateStr = ''; // Will be in YYYY-MM-DD format
-      let timeStr = ''; // Will be in HH:MM format
-      
-      // Try to parse the date
-      try {
-        // For demo purposes, we'll use a fixed date in the correct format
-        const today = new Date();
-        dateStr = today.toISOString().split('T')[0]; // Format: YYYY-MM-DD
-        timeStr = '08:00'; // Format: HH:MM
-      } catch (e) {
-        console.error('Error parsing date:', e);
-      }
-      
-      // Set date and time inputs
-      document.getElementById('reservationDate').value = dateStr;
-      document.getElementById('reservationTime').value = timeStr;
-      
-      // Set services
-      const servicesSelect = document.getElementById('reservationServices');
-      // Clear previous selections
-      for (let i = 0; i < servicesSelect.options.length; i++) {
-        servicesSelect.options[i].selected = false;
-      }
-      
-      // Select services based on text
-      for (let i = 0; i < servicesSelect.options.length; i++) {
-        const optionText = servicesSelect.options[i].text.split(' - ')[0];
-        if (servicesText.includes(optionText)) {
-          servicesSelect.options[i].selected = true;
-        }
-      }
-      
-      // Set status
-      const statusSelect = document.getElementById('reservationStatus');
-      switch (statusText) {
-        case 'COMPLETED':
-          statusSelect.value = 'C';
-          break;
-        case 'CANCELLED':
-          statusSelect.value = 'X';
-          break;
-        case 'REQUESTED':
-          statusSelect.value = 'R';
-          break;
-        case 'ACCEPTED':
-          statusSelect.value = 'A';
-          break;
-        case 'DECLINED':
-          statusSelect.value = 'D';
-          break;
-        default:
-          statusSelect.value = 'R';
-      }
-    }
-    
-    // Form submission is handled by Django, no JavaScript needed
-    
-    // Function to update the reservation row in the table
-    function updateReservationRow(reservationId, formData) {
-      const row = document.querySelector(`tr[data-reservation-id="${reservationId}"]`);
-      if (!row) return;
-      
-      // Get form values
-      const barber = document.getElementById('reservationBarber');
-      const reservedBy = document.getElementById('reservationReservedBy');
-      const date = document.getElementById('reservationDate').value;
-      const time = document.getElementById('reservationTime').value;
-      const status = document.getElementById('reservationStatus').value;
-      const services = document.getElementById('reservationServices');
-      
-      // Get the barber and reserved by text
-      const barberText = barber.options[barber.selectedIndex].text;
-      const reservedByText = reservedBy.options[reservedBy.selectedIndex].text;
-      
-      // Get the services text
-      const servicesText = Array.from(services.selectedOptions)
-        .map(option => option.text.split(' - ')[0])
-        .join(', ');
-      
-      // Get the status text and badge class
-      let statusText, badgeClass;
-      switch (status) {
-        case 'C':
-          statusText = 'COMPLETED';
-          badgeClass = 'bg-success';
-          break;
-        case 'X':
-          statusText = 'CANCELLED';
-          badgeClass = 'bg-danger';
-          break;
-        case 'R':
-          statusText = 'REQUESTED';
-          badgeClass = 'bg-warning text-dark';
-          break;
-        case 'A':
-          statusText = 'ACCEPTED';
-          badgeClass = 'bg-primary';
-          break;
-        case 'D':
-          statusText = 'DECLINED';
-          badgeClass = 'bg-secondary';
-          break;
-      }
-      
-      // Update the row
-      row.querySelector('td:nth-child(2)').textContent = barberText;
-      row.querySelector('td:nth-child(3)').textContent = reservedByText;
-      row.querySelector('td:nth-child(4)').textContent = servicesText;
-      row.querySelector('td:nth-child(5)').textContent = `${date.replace(/-/g, '/')} ${time}`;
-      row.querySelector('td:nth-child(6)').innerHTML = `<span class="badge ${badgeClass}">${statusText}</span>`;
-    }
-    
-    // Function to get CSRF token from cookies
-    function getCookie(name) {
-      let cookieValue = null;
-      if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-          const cookie = cookies[i].trim();
-          if (cookie.substring(0, name.length + 1) === (name + '=')) {
-            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-            break;
-          }
-        }
-      }
-      return cookieValue;
-    }
-  </script>
-
-  <!-- Edit Reservation Modal -->
-  <div class="modal fade" id="editReservationModal" tabindex="-1" aria-labelledby="editReservationModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header" style="background-color: #FF6B00; color: white;">
-          <h5 class="modal-title" id="editReservationModalLabel">Edit Reservation</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <form id="editReservationForm">
-            <div class="row">
-              <div class="col-md-6">
-                <div class="mb-3">
-                  <label class="form-label">Start datetime <span class="text-danger">*</span></label>
-                  <div class="d-flex gap-2">
-                    <div class="flex-grow-1">
-                      <label for="reservationDate" class="form-label">Date:</label>
-                      <input type="date" class="form-control" id="reservationDate" required>
-                    </div>
-                    <div class="flex-grow-1">
-                      <label for="reservationTime" class="form-label">Time:</label>
-                      <input type="time" class="form-control" id="reservationTime" required>
-                    </div>
-                  </div>
-                </div>
-                
-                <div class="mb-3">
-                  <label for="reservationBarber" class="form-label">Barber <span class="text-danger">*</span></label>
-                  <select class="form-select" id="reservationBarber" required>
-                    <option value="">Select Barber</option>
-                    {% for barber in barbers %}
-                    <option value="{{ barber.id }}">{{ barber.first_name }} {{ barber.last_name }}</option>
-                    {% endfor %}
-                  </select>
-                </div>
-                
-                <div class="mb-3">
-                  <label for="reservationReservedBy" class="form-label">Reserved By <span class="text-danger">*</span></label>
-                  <select class="form-select" id="reservationReservedBy" required>
-                    <option value="">Select Customer</option>
-                    {% for user in users %}
-                    <option value="{{ user.id }}">{{ user.first_name }} {{ user.last_name }}</option>
-                    {% endfor %}
-                  </select>
-                </div>
-                
-                <div class="mb-3">
-                  <label for="reservationFirstName" class="form-label">Reserved for first name</label>
-                  <input type="text" class="form-control" id="reservationFirstName">
-                </div>
-                
-                <div class="mb-3">
-                  <label for="reservationLastName" class="form-label">Reserved for last name</label>
-                  <input type="text" class="form-control" id="reservationLastName">
-                </div>
+  <!-- Quick Status Update Modal (Accept/Decline) -->
+  <div class="modal fade" id="quickStatusUpdateModal" tabindex="-1" aria-labelledby="quickStatusUpdateModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="quickStatusUpdateModalLabel">Confirm Action</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
-              
-              <div class="col-md-6">
-                <div class="mb-3">
-                  <label for="reservationEmail" class="form-label">Reserved for email</label>
-                  <input type="email" class="form-control" id="reservationEmail">
-                </div>
-                
-                <div class="mb-3">
-                  <label for="reservationPhone" class="form-label">Reserved for phone</label>
-                  <input type="tel" class="form-control" id="reservationPhone" name="reserved_for_phone">
-                </div>
-                
-                <div class="mb-3">
-                  <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="reservationIsSelf" name="is_reserved_for_self" checked>
-                    <label class="form-check-label" for="reservationIsSelf">Is reserved for self</label>
+              <form id="quickStatusUpdateForm" method="post" action="{% url 'dashboard' %}">
+                  {% csrf_token %}
+                  <input type="hidden" name="form_type" value="quick_update_status">
+                  <input type="hidden" name="reservation_id" id="quickUpdateReservationId">
+                  <input type="hidden" name="new_status" id="quickUpdateNewStatus">
+                  <div class="modal-body">
+                      <p>Are you sure you want to <strong id="quickUpdateActionText"></strong> the reservation for <strong id="quickUpdateCustomerName"></strong>?</p>
+                      <div id="declineReasonGroup" class="mb-3" style="display: none;">
+                          <label for="quickDeclineReason" class="form-label">Reason for Declining (Optional)</label>
+                          <textarea class="form-control" id="quickDeclineReason" name="decline_reason" rows="3"></textarea>
+                      </div>
                   </div>
-                </div>
-                
-                <div class="mb-3">
-                  <label for="reservationServices" class="form-label">Services <span class="text-danger">*</span></label>
-                  <select class="form-select" id="reservationServices" name="services" multiple required>
-                    {% for service in services %}
-                    <option value="{{ service.id }}">{{ service.service_name }} - {{ service.price }} PHP ({{ service.estimated_time }} mins)</option>
-                    {% endfor %}
-                  </select>
-                  <small class="text-muted">Hold Ctrl/Cmd to select multiple services</small>
-                </div>
-                
-                <div class="mb-3">
-                  <label for="reservationStatus" class="form-label">Status <span class="text-danger">*</span></label>
-                  <select class="form-select" id="reservationStatus" name="status" required>
-                    <option value="R">Requested</option>
-                    <option value="A">Accepted</option>
-                    <option value="D">Declined</option>
-                    <option value="C">Completed</option>
-                    <option value="X">Cancelled</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" form="editReservationForm" class="btn btn-primary" style="background-color: #FF6B00; border-color: #FF6B00; color: white;">Save Changes</button>
-        </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                      <button type="submit" class="btn btn-primary" id="quickUpdateConfirmBtn">Confirm</button>
+                  </div>
+              </form>
+          </div>
       </div>
-    </div>
   </div>
 
   <!-- Cancel Reservation Modal -->
   <div class="modal fade" id="cancelReservationModal" tabindex="-1" aria-labelledby="cancelReservationModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header" style="background-color: #6c757d; color: white;">
-          <h5 class="modal-title" id="cancelReservationModalLabel">Cancel Reservation</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <p>You are about to cancel the reservation for <strong id="cancelCustomerName">John Doe</strong>.</p>
-          <form id="cancelReservationForm">
-            <div class="mb-3">
-              <label for="cancellationReason" class="form-label">Reason for Cancellation</label>
-              <textarea class="form-control" id="cancellationReason" rows="4" placeholder="Please provide a reason for cancellation..." required></textarea>
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-danger" onclick="confirmCancelReservation()">Confirm Cancellation</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Service Edit Modal -->
-  <div class="modal fade" id="editServiceModal" tabindex="-1" aria-labelledby="editServiceModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header" style="background-color: #FF6B00; color: white;">
-          <h5 class="modal-title" id="editServiceModalLabel">Edit Service</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <form id="editServiceForm">
-            <div class="mb-3">
-              <label for="serviceName" class="form-label">Service Name</label>
-              <input type="text" class="form-control" id="serviceName" required>
-            </div>
-            <div class="mb-3">
-              <label for="servicePrice" class="form-label">Price (₱)</label>
-              <input type="number" class="form-control" id="servicePrice" min="0" step="0.01" required>
-            </div>
-            <div class="mb-3">
-              <label for="serviceDuration" class="form-label">Estimated Time (minutes)</label>
-              <input type="number" class="form-control" id="serviceDuration" min="1" required>
-            </div>
-            <div class="mb-3">
-              <label for="serviceCategory" class="form-label">Category</label>
-              <select class="form-select" id="serviceCategory" required>
-                <option value="">Select Category</option>
-                <option value="Hair">Hair</option>
-                <option value="Facial">Facial</option>
-                <option value="Grooming">Grooming</option>
-                <option value="Grooming Services">Grooming Services</option>
-                <option value="Massage">Massage</option>
-              </select>
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-primary" onclick="saveServiceChanges()">Save Changes</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Reservation Edit Modal -->
-  <div class="modal fade" id="editReservationModal" tabindex="-1" aria-labelledby="editReservationModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header" style="background-color: #FF6B00; color: white;">
-          <h5 class="modal-title" id="editReservationModalLabel">Edit Reservation</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <form id="editReservationForm">
-            <div class="mb-3">
-              <label for="reservationCustomer" class="form-label">Customer</label>
-              <select class="form-select" id="reservationCustomer" required>
-                <option value="John Doe">John Doe</option>
-                <option value="Jane Smith">Jane Smith</option>
-                <option value="Robert Johnson">Robert Johnson</option>
-              </select>
-            </div>
-            <div class="mb-3">
-              <label for="reservationService" class="form-label">Service</label>
-              <select class="form-select" id="reservationService" required>
-                <option value="Haircut">Haircut</option>
-                <option value="Shave">Shave</option>
-                <option value="Styling">Styling</option>
-                <option value="Coloring">Coloring</option>
-                <option value="Facial">Facial</option>
-              </select>
-            </div>
-            <div class="mb-3">
-              <label for="reservationBarber" class="form-label">Barber</label>
-              <select class="form-select" id="reservationBarber" required>
-                <option value="Mike Smith">Mike Smith</option>
-                <option value="Sarah Johnson">Sarah Johnson</option>
-                <option value="David Lee">David Lee</option>
-              </select>
-            </div>
-            <div class="mb-3">
-              <label for="reservationDate" class="form-label">Date</label>
-              <input type="date" class="form-control" id="reservationDate" required>
-            </div>
-            <div class="mb-3">
-              <label for="reservationTime" class="form-label">Time</label>
-              <input type="time" class="form-control" id="reservationTime" required>
-            </div>
-            <div class="mb-3">
-              <label for="reservationStatus" class="form-label">Status</label>
-              <select class="form-select" id="reservationStatus" required>
-                <option value="Confirmed">Confirmed</option>
-                <option value="Pending">Pending</option>
-                <option value="Cancelled">Cancelled</option>
-              </select>
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-primary" style="background-color: #FF6B00; border-color: #FF6B00;" onclick="saveServiceChanges()">Save Changes</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Barber View Modal removed -->
-
-  <!-- Barber Edit Modal -->
-  <div class="modal fade" id="editBarberModal" tabindex="-1" aria-labelledby="editBarberModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header" style="background-color: #FF6B00; color: white;">
-          <h5 class="modal-title" id="editBarberModalLabel">Edit Barber</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <form id="editBarberForm" action="{% url 'dashboard' %}" method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            <input type="hidden" name="form_type" value="edit_barber">
-            <input type="hidden" name="barber_id" id="edit_barber_id">
-            <div class="mb-3">
-              <label for="barberFirstName" class="form-label">First Name</label>
-              <input type="text" class="form-control" id="barberFirstName" name="first_name" required>
-            </div>
-            <div class="mb-3">
-              <label for="barberLastName" class="form-label">Last Name</label>
-              <input type="text" class="form-control" id="barberLastName" name="last_name" required>
-            </div>
-            <div class="mb-3">
-              <label for="barberPhone" class="form-label">Phone Number</label>
-              <input type="tel" class="form-control" id="barberPhone" name="phone_number" required>
-            </div>
-            <div class="mb-3">
-              <label for="barberStatus" class="form-label">Status</label>
-              <select class="form-select" id="barberStatus" name="status" required>
-                <option value="A">Available</option>
-                <option value="U">Unavailable</option>
-              </select>
-            </div>
-            <div class="mb-3">
-              <label for="barberServices" class="form-label">Services Offered</label>
-              <select class="form-select" id="barberServices" name="services" multiple required>
-                {% for service in services %}
-                <option value="{{ service.id }}">{{ service.service_name }} - {{ service.price }} PHP ({{ service.estimated_time }} mins)</option>
-                {% endfor %}
-              </select>
-              <small class="text-muted">Hold Ctrl/Cmd to select multiple services</small>
-            </div>
-            <div class="mb-3">
-              <label for="barberPhoto" class="form-label">Profile Picture</label>
-              <div class="d-flex align-items-center gap-3">
-                <div class="profile-preview" style="width: 80px; height: 80px; border-radius: 50%; overflow: hidden; background-color: #f0f0f0;">
-                  <img id="photoPreview" src="{% static 'images/avatar-1.jpg' %}" alt="Profile Preview" style="width: 100%; height: 100%; object-fit: cover;">
-                </div>
-                <div class="d-flex flex-column gap-2" style="width: 100%;">
-                  <input type="file" class="form-control" id="barberPhoto" name="profile_picture" accept="image/*" onchange="previewProfileImage(this)">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="removeProfilePicture" name="remove_profile_picture">
-                    <label class="form-check-label" for="removeProfilePicture">
-                      Remove current image
-                    </label>
-                  </div>
-                </div>
+      <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+              <div class="modal-header bg-danger text-white">
+                  <h5 class="modal-title" id="cancelReservationModalLabel">Confirm Cancellation</h5>
+                  <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-              <button type="submit" class="btn" style="background-color: #FF6B00; border-color: #FF6B00; color: white;">Save Changes</button>
-            </div>
-          </form>
-        </div>
+              <form id="confirmCancelReservationForm" method="post" action="{% url 'dashboard' %}">
+                  {% csrf_token %}
+                  <input type="hidden" name="form_type" value="cancel_reservation_admin">
+                  <input type="hidden" name="reservation_id_to_cancel" id="reservationIdToCancelInput">
+                  <div class="modal-body">
+                      <p>Are you sure you want to cancel the reservation for <strong id="cancelReservationCustomerName"></strong>?</p>
+                      <div class="mb-3">
+                          <label for="adminCancellationReason" class="form-label">Reason for Cancellation (Optional)</label>
+                          <textarea class="form-control" id="adminCancellationReason" name="cancel_reason" rows="3"></textarea>
+                      </div>
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                      <button type="submit" class="btn btn-danger">Yes, Cancel Reservation</button>
+                  </div>
+              </form>
+          </div>
       </div>
-    </div>
   </div>
   
   <!-- Add Barber Modal -->
@@ -1436,100 +407,36 @@
         </div>
         <div class="modal-body">
           <form id="addBarberForm" action="{% url 'dashboard' %}" method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            <input type="hidden" name="form_type" value="add_barber">
-            <div class="mb-3">
-              <label for="newBarberFirstName" class="form-label">First Name</label>
-              <input type="text" class="form-control" id="newBarberFirstName" name="first_name" required>
-            </div>
-            <div class="mb-3">
-              <label for="newBarberLastName" class="form-label">Last Name</label>
-              <input type="text" class="form-control" id="newBarberLastName" name="last_name" required>
-            </div>
-            <div class="mb-3">
-              <label for="newBarberPhone" class="form-label">Phone Number</label>
-              <input type="tel" class="form-control" id="newBarberPhone" name="phone_number" required>
-            </div>
-            <div class="mb-3">
-              <label for="newBarberStatus" class="form-label">Status</label>
-              <select class="form-select" id="newBarberStatus" name="status" required>
-                <option value="A">Available</option>
-                <option value="U">Unavailable</option>
-              </select>
-            </div>
-            <div class="mb-3">
-              <label for="newBarberServices" class="form-label">Services Offered</label>
-              <select class="form-select" id="newBarberServices" name="services" multiple required>
-                {% for service in services %}
-                <option value="{{ service.id }}">{{ service.service_name }} - {{ service.price }} PHP ({{ service.estimated_time }} mins)</option>
-                {% endfor %}
-              </select>
-              <small class="text-muted">Hold Ctrl/Cmd to select multiple services</small>
-            </div>
-            <div class="mb-3">
-              <label for="newBarberPhoto" class="form-label">Profile Picture</label>
-              <div class="d-flex align-items-center gap-3">
-                <div class="profile-preview" style="width: 80px; height: 80px; border-radius: 50%; overflow: hidden; background-color: #f0f0f0;">
-                  <img id="newPhotoPreview" src="{% static 'images/avatar-1.jpg' %}" alt="Profile Preview" style="width: 100%; height: 100%; object-fit: cover;">
-                </div>
-                <div>
-                  <input type="file" class="form-control" id="newBarberPhoto" name="profile_picture" accept="image/*" onchange="previewNewProfileImage(this)">
-                </div>
-              </div>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-              <button type="submit" class="btn" style="background-color: #FF6B00; border-color: #FF6B00; color: white;">Add Barber</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Edit Service Modal -->
-  <div class="modal fade" id="editServiceModal" tabindex="-1" aria-labelledby="editServiceModalLabel" aria-hidden="true">
+            {% csrf_token %}<input type="hidden" name="form_type" value="add_barber">
+            <div class="mb-3"><label for="newBarberFirstName" class="form-label">First Name</label><input type="text" class="form-control" id="newBarberFirstName" name="first_name" required></div>
+            <div class="mb-3"><label for="newBarberLastName" class="form-label">Last Name</label><input type="text" class="form-control" id="newBarberLastName" name="last_name" required></div>
+            <div class="mb-3"><label for="newBarberPhone" class="form-label">Phone Number</label><input type="tel" class="form-control" id="newBarberPhone" name="phone_number" required></div>
+            <div class="mb-3"><label for="newBarberStatus" class="form-label">Status</label><select class="form-select" id="newBarberStatus" name="status" required><option value="A">Available</option><option value="U">Unavailable</option></select></div>
+            <div class="mb-3"><label for="newBarberServices" class="form-label">Services Offered</label><select class="form-select" id="newBarberServices" name="services" multiple required>{% for service_item_modal in services %}<option value="{{ service_item_modal.id }}">{{ service_item_modal.service_name }}</option>{% endfor %}</select><small class="text-muted">Hold Ctrl/Cmd to select multiple</small></div>
+            <div class="mb-3"><label for="newBarberPhoto" class="form-label">Profile Picture</label><div class="d-flex align-items-center gap-3"><div class="profile-preview" style="width: 80px; height: 80px; border-radius: 50%; overflow: hidden; background-color: #f0f0f0;"><img id="newPhotoPreview" src="{% static 'images/avatar-1.jpg' %}" alt="Preview" style="width: 100%; height: 100%; object-fit: cover;"></div><div><input type="file" class="form-control" id="newBarberPhoto" name="profile_picture" accept="image/*" onchange="previewNewProfileImage(this)"></div></div></div>
+            <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn" style="background-color: #FF6B00; border-color: #FF6B00; color: white;">Add Barber</button></div>
+          </form></div></div></div></div>
+
+  <!-- Edit Barber Modal -->
+  <div class="modal fade" id="editBarberModal" tabindex="-1" aria-labelledby="editBarberModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header" style="background-color: #FF6B00; color: white;">
-          <h5 class="modal-title" id="editServiceModalLabel">Edit Service</h5>
+          <h5 class="modal-title" id="editBarberModalLabel">Edit Barber</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form id="editServiceForm" action="{% url 'dashboard' %}" method="post">
-            {% csrf_token %}
-            <input type="hidden" name="form_type" value="edit_service">
-            <input type="hidden" name="service_id" id="edit_service_id">
-            <div class="mb-3">
-              <label for="serviceName" class="form-label">Service Name</label>
-              <input type="text" class="form-control" id="serviceName" name="service_name" required>
-            </div>
-            <div class="mb-3">
-              <label for="servicePrice" class="form-label">Price (PHP)</label>
-              <input type="number" step="0.01" class="form-control" id="servicePrice" name="price" required>
-            </div>
-            <div class="mb-3">
-              <label for="serviceDuration" class="form-label">Duration (minutes)</label>
-              <input type="number" class="form-control" id="serviceDuration" name="estimated_time" required>
-            </div>
-            <div class="mb-3">
-              <label for="serviceCategory" class="form-label">Category</label>
-              <select class="form-select" id="serviceCategory" name="category" required>
-                <option value="H">Hair Services</option>
-                <option value="N">Nail Services</option>
-                <option value="G">Grooming Services</option>
-              </select>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-              <button type="submit" class="btn" style="background-color: #FF6B00; border-color: #FF6B00; color: white;">Save Changes</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-  
+          <form id="editBarberForm" action="{% url 'dashboard' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}<input type="hidden" name="form_type" value="edit_barber"><input type="hidden" name="barber_id" id="edit_barber_id">
+            <div class="mb-3"><label for="modalBarberFirstName" class="form-label">First Name</label><input type="text" class="form-control" id="modalBarberFirstName" name="first_name" required></div>
+            <div class="mb-3"><label for="modalBarberLastName" class="form-label">Last Name</label><input type="text" class="form-control" id="modalBarberLastName" name="last_name" required></div>
+            <div class="mb-3"><label for="modalBarberPhone" class="form-label">Phone Number</label><input type="tel" class="form-control" id="modalBarberPhone" name="phone_number" required></div>
+            <div class="mb-3"><label for="modalBarberStatus" class="form-label">Status</label><select class="form-select" id="modalBarberStatus" name="status" required><option value="A">Available</option><option value="U">Unavailable</option></select></div>
+            <div class="mb-3"><label for="modalBarberServices" class="form-label">Services Offered</label><select class="form-select" id="modalBarberServices" name="services" multiple required>{% for service_item_modal in services %}<option value="{{ service_item_modal.id }}">{{ service_item_modal.service_name }}</option>{% endfor %}</select><small class="text-muted">Hold Ctrl/Cmd to select multiple</small></div>
+            <div class="mb-3"><label for="modalBarberPhoto" class="form-label">Profile Picture</label><div class="d-flex align-items-center gap-3"><div class="profile-preview" style="width: 80px; height: 80px; border-radius: 50%; overflow: hidden; background-color: #f0f0f0;"><img id="photoPreview" src="{% static 'images/avatar-1.jpg' %}" alt="Preview" style="width: 100%; height: 100%; object-fit: cover;"></div><div class="d-flex flex-column gap-2" style="width: 100%;"><input type="file" class="form-control" id="modalBarberPhoto" name="profile_picture" accept="image/*" onchange="previewProfileImage(this)"><div class="form-check"><input class="form-check-input" type="checkbox" id="removeProfilePicture" name="remove_profile_picture"><label class="form-check-label" for="removeProfilePicture">Remove current image</label></div></div></div></div>
+            <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn" style="background-color: #FF6B00; border-color: #FF6B00; color: white;">Save Changes</button></div>
+          </form></div></div></div></div>
+
   <!-- Add Service Modal -->
   <div class="modal fade" id="addServiceModal" tabindex="-1" aria-labelledby="addServiceModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -1540,489 +447,311 @@
         </div>
         <div class="modal-body">
           <form id="addServiceForm" action="{% url 'dashboard' %}" method="post">
-            {% csrf_token %}
-            <input type="hidden" name="form_type" value="add_service">
-            <div class="mb-3">
-              <label for="newServiceName" class="form-label">Service Name</label>
-              <input type="text" class="form-control" id="newServiceName" name="service_name" required>
-            </div>
-            <div class="mb-3">
-              <label for="newServicePrice" class="form-label">Price (PHP)</label>
-              <input type="number" step="0.01" class="form-control" id="newServicePrice" name="price" required>
-            </div>
-            <div class="mb-3">
-              <label for="newServiceDuration" class="form-label">Duration (minutes)</label>
-              <input type="number" class="form-control" id="newServiceDuration" name="estimated_time" required>
-            </div>
-            <div class="mb-3">
-              <label for="newServiceCategory" class="form-label">Category</label>
-              <select class="form-select" id="newServiceCategory" name="category" required>
-                <option value="H">Hair Services</option>
-                <option value="N">Nail Services</option>
-                <option value="G">Grooming Services</option>
-              </select>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-              <button type="submit" class="btn" style="background-color: #FF6B00; border-color: #FF6B00; color: white;">Add Service</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    // Function to handle barber editing
-    function viewBarber(event, barberId) {
-      event.preventDefault();
-      
-      // In a real implementation, you would fetch the barber data from the server
-      // For now, we'll simulate this with placeholder data
-      const barber = {
-        id: barberId,
-        firstName: document.querySelector(`tr[data-barber-id="${barberId}"] td:nth-child(3)`).textContent.split(' ')[0],
-        lastName: document.querySelector(`tr[data-barber-id="${barberId}"] td:nth-child(3)`).textContent.split(' ')[1],
-        phone: document.querySelector(`tr[data-barber-id="${barberId}"] td:nth-child(4)`).textContent,
-        status: document.querySelector(`tr[data-barber-id="${barberId}"] td:nth-child(5)`).textContent === 'Available' ? 'A' : 'U',
-        services: document.querySelector(`tr[data-barber-id="${barberId}"] td:nth-child(6)`).textContent.split(', '),
-        profilePicture: '{% static "images/barbers/default.jpg" %}'
-      };
-      
-      // Populate the view modal
-      document.getElementById('viewBarberFirstName').textContent = barber.firstName;
-      document.getElementById('viewBarberLastName').textContent = barber.lastName;
-      document.getElementById('viewBarberPhone').textContent = barber.phone;
-      document.getElementById('viewBarberStatus').textContent = barber.status === 'A' ? 'Available' : 'Unavailable';
-      document.getElementById('viewBarberServices').textContent = barber.services.join(', ');
-      
-      // Set profile picture if available
-      const photoElement = document.getElementById('viewBarberPhoto');
-      if (barber.profilePicture) {
-        photoElement.src = barber.profilePicture;
-        photoElement.style.display = 'block';
-      } else {
-        photoElement.style.display = 'none';
-      }
-      
-      // Store the barber ID for the edit button
-      document.getElementById('viewBarberModal').setAttribute('data-barber-id', barberId);
-      
-      // Show the modal
-      const viewModal = new bootstrap.Modal(document.getElementById('viewBarberModal'));
-      viewModal.show();
-    }
-    
-    // Function to prepare the edit barber modal with data from the selected barber
-    function prepareEditBarber(barberId) {
-      // Set the barber ID in the hidden field
-      document.getElementById('edit_barber_id').value = barberId;
-      
-      // Use the API endpoint to get barber data
-      fetch(`{% url 'get_barber' barber_id=0 %}`.replace('0', barberId))
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          return response.json();
-        })
-        .then(data => {
-          if (data.status === 'success') {
-            const barber = data.barber;
-            
-            // Set values in the form
-            document.getElementById('barberFirstName').value = barber.first_name;
-            document.getElementById('barberLastName').value = barber.last_name;
-            document.getElementById('barberPhone').value = barber.phone_number;
-            document.getElementById('barberStatus').value = barber.status;
-            
-            // Pre-select services
-            const servicesSelect = document.getElementById('barberServices');
-            // Clear all selections first
-            for (let i = 0; i < servicesSelect.options.length; i++) {
-              servicesSelect.options[i].selected = false;
-            }
-            
-            // Select the services that the barber offers
-            barber.services.forEach(serviceId => {
-              for (let i = 0; i < servicesSelect.options.length; i++) {
-                if (servicesSelect.options[i].value == serviceId) {
-                  servicesSelect.options[i].selected = true;
-                }
-              }
-            });
-            
-            // Set profile picture if available
-            if (barber.profile_picture) {
-              // The API returns the full path to the image
-              document.getElementById('photoPreview').src = barber.profile_picture;
-            } else {
-              document.getElementById('photoPreview').src = "{% static 'images/avatar-1.jpg' %}";
-            }
-          } else {
-            console.error('Error fetching barber data:', data.message);
-          }
-        })
-        .catch(error => {
-          console.error('Error fetching barber data:', error);
-        });
-    }
-    
-    // Function to toggle all barber checkboxes
-    function toggleAllBarberCheckboxes() {
-      const selectAllCheckbox = document.getElementById('selectAllBarbers');
-      const barberCheckboxes = document.querySelectorAll('.barber-checkbox');
-      
-      barberCheckboxes.forEach(checkbox => {
-        checkbox.checked = selectAllCheckbox.checked;
-      });
-      
-      updateDeleteBarberButton();
-    }
-    
-    // Function to update the delete selected barbers button
-    function updateDeleteBarberButton() {
-      const selectedBarbers = document.querySelectorAll('.barber-checkbox:checked');
-      const deleteButton = document.getElementById('deleteSelectedBarbersBtn');
-      
-      if (selectedBarbers.length > 0) {
-        deleteButton.disabled = false;
-      } else {
-        deleteButton.disabled = true;
-      }
-    }
-    
-    // Function to preview profile image when a file is selected
-    function previewProfileImage(input) {
-      if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        
-        reader.onload = function(e) {
-          document.getElementById('photoPreview').src = e.target.result;
-        }
-        
-        reader.readAsDataURL(input.files[0]);
-        
-        // Uncheck the remove image checkbox if a new image is selected
-        document.getElementById('removeProfilePicture').checked = false;
-      }
-    }
-    
-    // Function to handle the remove image checkbox
-    function handleRemoveImageCheckbox() {
-      const removeCheckbox = document.getElementById('removeProfilePicture');
-      const fileInput = document.getElementById('barberPhoto');
-      
-      if (removeCheckbox.checked) {
-        // Disable the file input if remove is checked
-        fileInput.disabled = true;
-        // Reset the file input
-        fileInput.value = '';
-        // Set the preview to the default image
-        document.getElementById('photoPreview').src = "{% static 'images/avatar-1.jpg' %}";
-      } else {
-        // Enable the file input if remove is unchecked
-        fileInput.disabled = false;
-      }
-    }
-    
-    // Add event listener to the remove image checkbox
-    document.addEventListener('DOMContentLoaded', function() {
-      const removeCheckbox = document.getElementById('removeProfilePicture');
-      if (removeCheckbox) {
-        removeCheckbox.addEventListener('change', handleRemoveImageCheckbox);
-      }
-    });
-    
-    // Function to preview profile image for new barber
-    function previewNewProfileImage(input) {
-      if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        
-        reader.onload = function(e) {
-          document.getElementById('newPhotoPreview').src = e.target.result;
-        }
-        
-        reader.readAsDataURL(input.files[0]);
-      }
-    }
-    
-    // Service Functions
-    
-    // Function to prepare the edit service modal with data from the selected service
-    function prepareEditService(serviceId) {
-      // Set the service ID in the hidden field
-      document.getElementById('edit_service_id').value = serviceId;
-      
-      // Use the API endpoint to get service data
-      fetch(`{% url 'get_service' service_id=0 %}`.replace('0', serviceId))
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          return response.json();
-        })
-        .then(data => {
-          if (data.status === 'success') {
-            const service = data.service;
-            
-            // Set values in the form
-            document.getElementById('serviceName').value = service.service_name;
-            document.getElementById('servicePrice').value = service.price;
-            document.getElementById('serviceDuration').value = service.estimated_time;
-            document.getElementById('serviceCategory').value = service.category;
-          } else {
-            console.error('Error fetching service data:', data.message);
-          }
-        })
-        .catch(error => {
-          console.error('Error fetching service data:', error);
-        });
-    }
-    
-    // Service checkbox functions removed
-    
-    // Event listeners for service deletion removed
-    
-    // Function is removed to reduce file size
-    
-    // Initialize checkbox functionality
-    document.addEventListener('DOMContentLoaded', function() {
-      // Add event listeners for select all checkboxes - consolidated for all types
-      const selectAllMap = {
-        'selectAllBarbers': { checkboxClass: '.barber-checkbox', buttonId: 'deleteSelectedBarbersBtn' },
-        'selectAllReservations': { checkboxClass: '.reservation-checkbox', buttonId: 'deleteSelectedReservationsBtn' },
-        // Service selection removed
-      };
-      
-      // Set up event listeners for all select-all checkboxes
-      Object.entries(selectAllMap).forEach(([selectAllId, config]) => {
-        const selectAllElement = document.getElementById(selectAllId);
-        if (selectAllElement) {
-          selectAllElement.addEventListener('change', function() {
-            const checkboxes = document.querySelectorAll(config.checkboxClass);
-            checkboxes.forEach(checkbox => checkbox.checked = this.checked);
-            
-            // Update delete button state
-            const deleteButton = document.getElementById(config.buttonId);
-            if (deleteButton) {
-              deleteButton.disabled = !this.checked || checkboxes.length === 0;
-            }
-          });
-        }
-      });
-      
-      // Use event delegation for all checkbox changes
-      document.addEventListener('change', function(e) {
-        // Handle individual checkbox changes for all types
-        const checkboxTypes = {
-          'barber-checkbox': 'deleteSelectedBarbersBtn',
-          'reservation-checkbox': 'deleteSelectedReservationsBtn',
-          'service-checkbox': 'deleteSelectedServicesBtn'
-        };
-        
-        // Check if the changed element is one of our checkboxes
-        Object.entries(checkboxTypes).forEach(([className, buttonId]) => {
-          if (e.target.classList.contains(className)) {
-            const checked = document.querySelectorAll(`.${className}:checked`).length > 0;
-            const deleteButton = document.getElementById(buttonId);
-            if (deleteButton) {
-              deleteButton.disabled = !checked;
-            }
-          }
-        });
-      });
-      
-      // Show dashboard by default
-      showDashboard();
-    });
-  </script>
-  
-  <!-- Add Service Modal -->
-  <div class="modal fade" id="addServiceModal" tabindex="-1" aria-labelledby="addServiceModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header" style="background-color: #FF6B00; color: white;">
-          <h5 class="modal-title" id="addServiceModalLabel">Add New Service</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <form action="{% url 'dashboard' %}" method="post" id="addServiceForm">
-            {% csrf_token %}
-            <input type="hidden" name="form_type" value="add_service">
-            <div class="mb-3">
-              <label for="service_name" class="form-label">Service Name</label>
-              <input type="text" class="form-control" id="service_name" name="service_name" required>
-            </div>
-            <div class="mb-3">
-              <label for="price" class="form-label">Price (₱)</label>
-              <input type="number" step="0.01" class="form-control" id="price" name="price" required>
-            </div>
-            <div class="mb-3">
-              <label for="estimated_time" class="form-label">Duration (minutes)</label>
-              <input type="number" class="form-control" id="estimated_time" name="estimated_time" required>
-            </div>
-            <div class="mb-3">
-              <label for="category" class="form-label">Category</label>
-              <select class="form-select" id="category" name="category" required>
-                <option value="H">Hair Services</option>
-                <option value="N">Nail Services</option>
-                <option value="G">Grooming Services</option>
-              </select>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-              <button type="submit" class="btn btn-primary" style="background-color: #FF6B00; border-color: #FF6B00;">Add Service</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
+            {% csrf_token %}<input type="hidden" name="form_type" value="add_service">
+            <div class="mb-3"><label for="newServiceName" class="form-label">Service Name</label><input type="text" class="form-control" id="newServiceName" name="service_name" required></div>
+            <div class="mb-3"><label for="newServicePrice" class="form-label">Price (PHP)</label><input type="number" step="0.01" class="form-control" id="newServicePrice" name="price" required></div>
+            <div class="mb-3"><label for="newServiceDuration" class="form-label">Duration (minutes)</label><input type="number" class="form-control" id="newServiceDuration" name="estimated_time" required></div>
+            <div class="mb-3"><label for="newServiceCategory" class="form-label">Category</label><select class="form-select" id="newServiceCategory" name="category" required><option value="H">Hair Services</option><option value="N">Nail Services</option><option value="G">Grooming Services</option></select></div>
+            <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn" style="background-color: #FF6B00; border-color: #FF6B00; color: white;">Add Service</button></div>
+          </form></div></div></div></div>
 
   <!-- Edit Service Modal -->
   <div class="modal fade" id="editServiceModal" tabindex="-1" aria-labelledby="editServiceModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header" style="background-color: #FF6B00; color: white;">
           <h5 class="modal-title" id="editServiceModalLabel">Edit Service</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form action="{% url 'dashboard' %}" method="post" id="editServiceForm">
-            {% csrf_token %}
-            <input type="hidden" name="form_type" value="edit_service">
-            <input type="hidden" name="service_id" id="edit_service_id">
-            <div class="mb-3">
-              <label for="serviceName" class="form-label">Service Name</label>
-              <input type="text" class="form-control" id="serviceName" name="service_name" required>
-            </div>
-            <div class="mb-3">
-              <label for="servicePrice" class="form-label">Price (₱)</label>
-              <input type="number" step="0.01" class="form-control" id="servicePrice" name="price" required>
-            </div>
-            <div class="mb-3">
-              <label for="serviceDuration" class="form-label">Duration (minutes)</label>
-              <input type="number" class="form-control" id="serviceDuration" name="estimated_time" required>
-            </div>
-            <div class="mb-3">
-              <label for="serviceCategory" class="form-label">Category</label>
-              <select class="form-select" id="serviceCategory" name="category" required>
-                <option value="H">Hair Services</option>
-                <option value="N">Nail Services</option>
-                <option value="G">Grooming Services</option>
-              </select>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-              <button type="submit" class="btn btn-primary" style="background-color: #FF6B00; border-color: #FF6B00;">Save Changes</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
+          <form id="editServiceForm" action="{% url 'dashboard' %}" method="post">
+            {% csrf_token %}<input type="hidden" name="form_type" value="edit_service"><input type="hidden" name="service_id" id="edit_service_id">
+            <div class="mb-3"><label for="modalServiceName" class="form-label">Service Name</label><input type="text" class="form-control" id="modalServiceName" name="service_name" required></div>
+            <div class="mb-3"><label for="modalServicePrice" class="form-label">Price (PHP)</label><input type="number" step="0.01" class="form-control" id="modalServicePrice" name="price" required></div>
+            <div class="mb-3"><label for="modalServiceDuration" class="form-label">Duration (minutes)</label><input type="number" class="form-control" id="modalServiceDuration" name="estimated_time" required></div>
+            <div class="mb-3"><label for="modalServiceCategory" class="form-label">Category</label><select class="form-select" id="modalServiceCategory" name="category" required><option value="H">Hair Services</option><option value="N">Nail Services</option><option value="G">Grooming Services</option></select></div>
+            <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn" style="background-color: #FF6B00; border-color: #FF6B00; color: white;">Save Changes</button></div>
+          </form></div></div></div></div>
 
-  <!-- Filter Functionality Script -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      // Reservation Filters
-      const reservationSearch = document.getElementById('reservationSearch');
-      const reservationStatusFilter = document.getElementById('reservationStatusFilter');
-      const reservationBarberFilter = document.getElementById('reservationBarberFilter');
-      const reservationRows = document.querySelectorAll('#reservationsView table tbody tr');
 
-      // Service Filters
-      const serviceSearch = document.getElementById('serviceSearch');
-      const serviceCategoryFilter = document.getElementById('serviceCategoryFilter');
-      const serviceRows = document.querySelectorAll('#servicesView table tbody tr');
+<script>
+    // Store all services data when the page loads - make sure 'services' context variable is available
+    const allServicesData = [
+        {% for service_item_global in services %}
+        { id: "{{ service_item_global.id }}", name: "{{ service_item_global.service_name|escapejs }}", price: "{{ service_item_global.price }}", duration: "{{ service_item_global.estimated_time }}" },
+        {% endfor %}
+    ];
 
-      // Function to filter reservations
-      function filterReservations() {
-        const searchTerm = reservationSearch.value.toLowerCase();
-        const statusFilter = reservationStatusFilter.value.toLowerCase();
-        const barberFilter = reservationBarberFilter.value.toLowerCase();
-
-        reservationRows.forEach(row => {
-          const barberText = row.querySelector('td:nth-child(2)')?.textContent.toLowerCase() || '';
-          const reservedByText = row.querySelector('td:nth-child(3)')?.textContent.toLowerCase() || '';
-          const servicesText = row.querySelector('td:nth-child(4)')?.textContent.toLowerCase() || '';
-          const dateText = row.querySelector('td:nth-child(5)')?.textContent.toLowerCase() || '';
-          const statusText = row.querySelector('td:nth-child(6)')?.textContent.toLowerCase() || '';
-          
-          // Search across all fields
-          const matchesSearch = searchTerm === '' || 
-                               barberText.includes(searchTerm) || 
-                               reservedByText.includes(searchTerm) || 
-                               servicesText.includes(searchTerm) || 
-                               dateText.includes(searchTerm) || 
-                               statusText.includes(searchTerm);
-          
-          // Match exact status
-          const matchesStatus = statusFilter === '' || 
-                               (statusFilter && statusText.toLowerCase() === statusFilter.toLowerCase());
-          
-          // Match barber by ID
-          const barberId = row.getAttribute('data-barber-id') || '';
-          const matchesBarber = barberFilter === '' || 
-                               (barberFilter && barberId === barberFilter);
-
-          row.style.display = (matchesSearch && matchesStatus && matchesBarber) ? '' : 'none';
-        });
-      }
-
-      // Function to filter services
-      function filterServices() {
-        const searchTerm = serviceSearch.value.toLowerCase();
-        const categoryFilter = serviceCategoryFilter.value.toLowerCase();
-
-        serviceRows.forEach(row => {
-          const nameText = row.querySelector('td:nth-child(2)')?.textContent.toLowerCase() || '';
-          const priceText = row.querySelector('td:nth-child(3)')?.textContent.toLowerCase() || '';
-          const durationText = row.querySelector('td:nth-child(4)')?.textContent.toLowerCase() || '';
-          const categoryText = row.querySelector('td:nth-child(5)')?.textContent.toLowerCase() || '';
-          
-          const matchesSearch = searchTerm === '' || 
-                               nameText.includes(searchTerm) || 
-                               priceText.includes(searchTerm) || 
-                               durationText.includes(searchTerm) || 
-                               categoryText.includes(searchTerm);
-          
-          const matchesCategory = categoryFilter === '' || 
-                                 (categoryFilter && categoryText.toLowerCase() === categoryFilter.toLowerCase());
-
-          row.style.display = (matchesSearch && matchesCategory) ? '' : 'none';
-        });
-      }
-
-      // Add event listeners for reservation filters
-      if (reservationSearch) {
-        reservationSearch.addEventListener('input', filterReservations);
-      }
-      if (reservationStatusFilter) {
-        reservationStatusFilter.addEventListener('change', filterReservations);
-      }
-      if (reservationBarberFilter) {
-        reservationBarberFilter.addEventListener('change', filterReservations);
-      }
-
-      // Add event listeners for service filters
-      if (serviceSearch) {
-        serviceSearch.addEventListener('input', filterServices);
-      }
-      if (serviceCategoryFilter) {
-        serviceCategoryFilter.addEventListener('change', filterServices);
-      }
-    });
-  </script>
-
-  <!-- Logout Confirmation Script -->
-  <script>
-    function confirmLogout() {
-      if (confirm('Are you sure you want to logout?')) {
-        document.getElementById('logoutForm').submit();
-      }
+    // --- Navigation and UI Functions ---
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('main-content');
+        const sidebarToggler = document.getElementById('sidebar-toggler');
+        sidebar.classList.toggle('collapsed');
+        mainContent.classList.toggle('expanded');
+        sidebarToggler.innerHTML = sidebar.classList.contains('collapsed') ? '<i class="fas fa-chevron-right"></i>' : '<i class="fas fa-chevron-left"></i>';
+        const navTexts = document.querySelectorAll('.nav-text');
+        navTexts.forEach(text => { text.style.display = sidebar.classList.contains('collapsed') ? 'none' : 'inline'; });
     }
-  </script>
+    function hideAllViews() { document.querySelectorAll('.content-section').forEach(view => view.classList.remove('active')); }
+    function setActiveNav(index) { document.querySelectorAll('.nav-item').forEach((item, i) => item.classList.toggle('active', i === index));}
+    function showDashboard() { hideAllViews(); document.getElementById('dashboardView').classList.add('active'); document.getElementById('pageTitle').textContent = 'Dashboard'; setActiveNav(0); }
+    function showBarbers() { hideAllViews(); document.getElementById('barbersView').classList.add('active'); document.getElementById('pageTitle').textContent = 'Barbers'; setActiveNav(1); }
+    function showReservations() { hideAllViews(); document.getElementById('reservationsView').classList.add('active'); document.getElementById('pageTitle').textContent = 'Reservations'; setActiveNav(2); }
+    function showServices() { hideAllViews(); document.getElementById('servicesView').classList.add('active'); document.getElementById('pageTitle').textContent = 'Services'; setActiveNav(3); }
+    function toggleBarberView(viewType) {
+        document.getElementById('barbersGridView').style.display = viewType === 'grid' ? 'flex' : 'none';
+        document.getElementById('barbersListView').style.display = viewType === 'list' ? 'block' : 'none';
+        document.getElementById('gridViewBtn').classList.toggle('active', viewType === 'grid');
+        document.getElementById('listViewBtn').classList.toggle('active', viewType === 'list');
+    }
+    function confirmLogout() { if (confirm('Are you sure you want to logout?')) { document.getElementById('logoutForm').submit(); } }
+
+    // --- Delete Selected Functions ---
+    function deleteSelectedBarbers() {
+        if (document.querySelectorAll('.barber-checkbox:checked').length === 0) { alert('Please select barbers to delete.'); return; }
+        if (confirm('Are you sure you want to delete selected barbers?')) { document.getElementById('deleteBarberForm').submit(); }
+    }
+    function deleteSelectedReservations() {
+        const selectedCheckboxes = document.querySelectorAll('#reservationTableBody .reservation-checkbox:checked');
+        if (selectedCheckboxes.length === 0) { alert('Please select reservations to delete.'); return; }
+        if (confirm(`Are you sure you want to delete ${selectedCheckboxes.length} selected reservation(s)?`)) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '{% url "dashboard" %}';
+            form.style.display = 'none';
+            const csrf = document.createElement('input'); csrf.type = 'hidden'; csrf.name = 'csrfmiddlewaretoken'; csrf.value = '{{ csrf_token }}'; form.appendChild(csrf);
+            const formTypeInput = document.createElement('input'); formTypeInput.type = 'hidden'; formTypeInput.name = 'form_type'; formTypeInput.value = 'delete_reservations'; form.appendChild(formTypeInput);
+            selectedCheckboxes.forEach(checkbox => {
+                const idInput = document.createElement('input'); idInput.type = 'hidden'; idInput.name = 'reservation_ids'; idInput.value = checkbox.value; form.appendChild(idInput);
+            });
+            document.body.appendChild(form);
+            form.submit();
+        }
+    }
+
+    // --- Prepare Edit Modals & Dynamic Services ---
+    function prepareEditBarber(barberId) {
+        document.getElementById('edit_barber_id').value = barberId;
+        fetch(`{% url 'get_barber' barber_id=0 %}`.replace('0', barberId)) // Use direct URL name
+            .then(response => response.json()).then(data => {
+            if (data.status === 'success') {
+                const barber = data.barber;
+                document.getElementById('modalBarberFirstName').value = barber.first_name;
+                document.getElementById('modalBarberLastName').value = barber.last_name;
+                document.getElementById('modalBarberPhone').value = barber.phone_number;
+                document.getElementById('modalBarberStatus').value = barber.status;
+                const servicesSelect = document.getElementById('modalBarberServices');
+                Array.from(servicesSelect.options).forEach(opt => opt.selected = false);
+                if (barber.services) {
+                    barber.services.forEach(sId => { const opt = servicesSelect.querySelector(`option[value="${sId}"]`); if (opt) opt.selected = true; });
+                }
+                document.getElementById('photoPreview').src = barber.profile_picture || "{% static 'images/avatar-1.jpg' %}";
+            } else { console.error('Error fetching barber:', data.message); }
+        }).catch(err => console.error('Fetch error for barber:', err));
+    }
+
+    function prepareEditService(serviceId) {
+        document.getElementById('edit_service_id').value = serviceId;
+        fetch(`{% url 'get_service' service_id=0 %}`.replace('0', serviceId)) // Use direct URL name
+            .then(response => response.json()).then(data => {
+            if (data.status === 'success') {
+                const service = data.service;
+                document.getElementById('modalServiceName').value = service.service_name;
+                document.getElementById('modalServicePrice').value = service.price;
+                document.getElementById('modalServiceDuration').value = service.estimated_time;
+                document.getElementById('modalServiceCategory').value = service.category;
+            } else { console.error('Error fetching service:', data.message); }
+        }).catch(err => console.error('Fetch error for service:', err));
+    }
+
+    function updateServicesForBarber(barberId, preSelectedServiceIds = []) {
+        const servicesSelect = document.getElementById('modalReservationServices');
+        if (!servicesSelect) { console.error("modalReservationServices select not found"); return; }
+        servicesSelect.innerHTML = '';
+
+        if (!barberId) {
+            const defaultOption = document.createElement('option'); defaultOption.textContent = "Select a barber to see services";
+            servicesSelect.appendChild(defaultOption); servicesSelect.disabled = true; return;
+        }
+
+        servicesSelect.disabled = false;
+        const apiUrl = `{% url 'get_barber' barber_id=0 %}`.replace('0', barberId); // Use direct URL name
+        fetch(apiUrl)
+            .then(response => { if (!response.ok) throw new Error('Failed to fetch barber details'); return response.json(); })
+            .then(data => {
+                if (data.status === 'success' && data.barber && data.barber.services) {
+                    const offeredServiceIdsByBarber = data.barber.services.map(id => String(id));
+                    const offeredServicesDetails = allServicesData.filter(service => offeredServiceIdsByBarber.includes(String(service.id)));
+                    if (offeredServicesDetails.length === 0) {
+                        const noServiceOption = document.createElement('option'); noServiceOption.value = ""; noServiceOption.textContent = "This barber offers no services";
+                        servicesSelect.appendChild(noServiceOption); servicesSelect.disabled = true;
+                    } else {
+                        offeredServicesDetails.forEach(service => {
+                            const option = document.createElement('option'); option.value = service.id;
+                            option.textContent = `${service.name} - ${service.price} PHP (${service.duration} mins)`;
+                            if (preSelectedServiceIds.includes(String(service.id))) { option.selected = true; }
+                            servicesSelect.appendChild(option);
+                        });
+                    }
+                } else { servicesSelect.innerHTML = '<option>Error loading services</option>'; servicesSelect.disabled = true; console.error("Failed to get barber's services:", data.message); }
+            })
+            .catch(error => { servicesSelect.innerHTML = '<option>Error loading services</option>'; servicesSelect.disabled = true; console.error("Error in updateServicesForBarber:", error); });
+    }
+
+    function prepareEditReservation(reservationId) {
+        document.getElementById('edit_reservation_id').value = reservationId;
+        const apiUrl = `{% url 'get_reservation' reservation_id=0 %}`.replace('0', reservationId); // Use direct URL name
+        fetch(apiUrl)
+            .then(response => { if (!response.ok) { console.error("API Response not OK for get_reservation:", response.status, response.statusText); return response.text().then(text => { throw new Error(`HTTP error! status: ${response.status}, body: ${text}`); }); } return response.json(); })
+            .then(data => {
+                if (data.status === 'success' && data.reservation) {
+                    const reservation = data.reservation;
+                    document.getElementById('modalReservationBarber').value = reservation.barber_id;
+                    const currentReservationServiceIds = reservation.services.map(s => String(s.id));
+                    updateServicesForBarber(reservation.barber_id, currentReservationServiceIds);
+                    document.getElementById('modalReservationReservedBy').value = reservation.reserved_by_id;
+                    document.getElementById('modalReservationFirstName').value = reservation.reserved_for_first_name || '';
+                    document.getElementById('modalReservationLastName').value = reservation.reserved_for_last_name || '';
+                    document.getElementById('modalReservationEmail').value = reservation.reserved_for_email || '';
+                    document.getElementById('modalReservationPhone').value = reservation.reserved_for_phone || '';
+                    document.getElementById('modalReservationIsSelf').checked = reservation.is_reserved_for_self;
+                    if (reservation.start_datetime) {
+                        const [datePart, timePartFull] = reservation.start_datetime.split('T');
+                        const timePart = timePartFull.substring(0,5);
+                        document.getElementById('modalReservationDate').value = datePart;
+                        document.getElementById('modalReservationTime').value = timePart;
+                    } else { document.getElementById('modalReservationDate').value = ''; document.getElementById('modalReservationTime').value = ''; }
+                    document.getElementById('modalReservationStatus').value = reservation.status;
+                } else { console.error('API Error or Bad Data for reservation:', data.message); alert('Error: Could not load reservation details.'); }
+            })
+            .catch(error => { console.error('Fetch Error for reservation details:', error); alert(`Error fetching details: ${error.message}`); });
+    }
+    
+    const modalBarberSelectForEdit = document.getElementById('modalReservationBarber');
+    if(modalBarberSelectForEdit) {
+        modalBarberSelectForEdit.addEventListener('change', function() { updateServicesForBarber(this.value); });
+    }
+
+    // --- Quick Status Update Modal Function ---
+    function showQuickStatusUpdateModal(reservationId, newStatus, customerName) {
+        const modalElement = document.getElementById('quickStatusUpdateModal');
+        if (!modalElement) { console.error('quickStatusUpdateModal not found!'); return; }
+        const modal = new bootstrap.Modal(modalElement);
+        document.getElementById('quickUpdateReservationId').value = reservationId;
+        document.getElementById('quickUpdateNewStatus').value = newStatus; 
+        document.getElementById('quickUpdateCustomerName').textContent = customerName;
+        const actionTextElement = document.getElementById('quickUpdateActionText');
+        const confirmBtn = document.getElementById('quickUpdateConfirmBtn');
+        const declineReasonGroup = document.getElementById('declineReasonGroup');
+        const declineReasonInput = document.getElementById('quickDeclineReason');
+        declineReasonInput.value = ''; 
+        if (newStatus === 'A') { actionTextElement.textContent = 'ACCEPT'; confirmBtn.textContent = 'Yes, Accept'; confirmBtn.className = 'btn btn-success'; declineReasonGroup.style.display = 'none'; }
+        else if (newStatus === 'D') { actionTextElement.textContent = 'DECLINE'; confirmBtn.textContent = 'Yes, Decline'; confirmBtn.className = 'btn btn-danger'; declineReasonGroup.style.display = 'block'; }
+        else { actionTextElement.textContent = 'UPDATE STATUS'; confirmBtn.textContent = 'Confirm'; confirmBtn.className = 'btn btn-primary'; declineReasonGroup.style.display = 'none';}
+        modal.show();
+    }
+
+    // --- Cancel Reservation Modal Helper ---
+    function showCancelReservationModal(reservationId, customerName) {
+        document.getElementById('reservationIdToCancelInput').value = reservationId;
+        document.getElementById('cancelReservationCustomerName').textContent = customerName;
+        document.getElementById('adminCancellationReason').value = ''; 
+        const cancelModalEl = document.getElementById('cancelReservationModal');
+        if (cancelModalEl) { const cancelModal = new bootstrap.Modal(cancelModalEl); cancelModal.show(); const form = document.getElementById('confirmCancelReservationForm'); if (form) form.action = "{% url 'dashboard' %}"; }
+        else { console.error("cancelReservationModal element not found!"); }
+    }
+
+    // --- Client-side Filtering & DOMContentLoaded Setup ---
+    document.addEventListener('DOMContentLoaded', function() {
+        const reservationSearchInput = document.getElementById('reservationSearchInput');
+        const reservationStatusSelect = document.getElementById('reservationStatusSelect');
+        const reservationBarberSelect = document.getElementById('reservationBarberSelect');
+        const reservationTableRows = document.querySelectorAll('#reservationTableBody tr');
+        const serviceSearchInput = document.getElementById('serviceSearchInput');
+        const serviceCategorySelect = document.getElementById('serviceCategorySelect');
+        const serviceTableRows = document.querySelectorAll('#serviceTableBody tr');
+
+        function filterReservations() {
+            const searchTerm = reservationSearchInput.value.toLowerCase().trim();
+            const statusFilter = reservationStatusSelect.value; 
+            const barberFilter = reservationBarberSelect.value;
+            reservationTableRows.forEach(row => {
+                const rowBarberName = (row.cells[1]?.textContent || '').toLowerCase();
+                const rowReservedByName = (row.cells[2]?.textContent || '').toLowerCase();
+                const rowServices = (row.cells[3]?.textContent || '').toLowerCase();
+                const rowDate = (row.cells[4]?.textContent || '').toLowerCase();
+                const rowStatusData = (row.dataset.status || '').toUpperCase();
+                const rowBarberIdData = row.dataset.barberId || '';
+                const matchesSearch = searchTerm === '' || rowBarberName.includes(searchTerm) || rowReservedByName.includes(searchTerm) || rowServices.includes(searchTerm) || rowDate.includes(searchTerm);
+                const matchesStatus = statusFilter === '' || rowStatusData === statusFilter;
+                const matchesBarber = barberFilter === '' || rowBarberIdData === barberFilter;
+                row.style.display = (matchesSearch && matchesStatus && matchesBarber) ? '' : 'none';
+            });
+        }
+        function filterServices() {
+            const searchTerm = serviceSearchInput.value.toLowerCase().trim();
+            const categoryFilter = serviceCategorySelect.value;
+            serviceTableRows.forEach(row => {
+                const rowServiceName = (row.cells[1]?.textContent || '').toLowerCase();
+                const rowCategoryData = (row.dataset.category || '').toUpperCase();
+                const matchesSearch = searchTerm === '' || rowServiceName.includes(searchTerm);
+                const matchesCategory = categoryFilter === '' || rowCategoryData === categoryFilter;
+                row.style.display = (matchesSearch && matchesCategory) ? '' : 'none';
+            });
+        }
+
+        if (reservationSearchInput) reservationSearchInput.addEventListener('input', filterReservations);
+        if (reservationStatusSelect) reservationStatusSelect.addEventListener('change', filterReservations);
+        if (reservationBarberSelect) reservationBarberSelect.addEventListener('change', filterReservations);
+        if (serviceSearchInput) serviceSearchInput.addEventListener('input', filterServices);
+        if (serviceCategorySelect) serviceCategorySelect.addEventListener('change', filterServices);
+        
+        // Checkbox select all functionality
+        function setupSelectAll(selectAllId, checkboxClass, deleteButtonId) {
+            const selectAllCheckbox = document.getElementById(selectAllId);
+            const itemCheckboxes = document.querySelectorAll(`.${checkboxClass}`);
+            const deleteButton = document.getElementById(deleteButtonId);
+            if (selectAllCheckbox) {
+                selectAllCheckbox.addEventListener('change', function() {
+                    itemCheckboxes.forEach(checkbox => { checkbox.checked = this.checked; });
+                    if (deleteButton) deleteButton.disabled = !this.checked && itemCheckboxes.length > 0; // Corrected logic
+                });
+            }
+            itemCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const anyChecked = document.querySelectorAll(`.${checkboxClass}:checked`).length > 0;
+                    if (deleteButton) deleteButton.disabled = !anyChecked;
+                    if (selectAllCheckbox) {
+                        selectAllCheckbox.checked = document.querySelectorAll(`.${checkboxClass}:checked`).length === itemCheckboxes.length && itemCheckboxes.length > 0;
+                    }
+                });
+            });
+        }
+        setupSelectAll('selectAllBarbers', 'barber-checkbox', 'deleteSelectedBarbersBtn');
+        setupSelectAll('selectAllReservations', 'reservation-checkbox', 'deleteSelectedReservationsBtn');
+
+        showDashboard(); 
+        if (document.getElementById('barbersGridView')) { toggleBarberView('grid'); }
+    });
+
+    // Image Preview Functions
+    function previewProfileImage(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) { document.getElementById('photoPreview').src = e.target.result; }
+            reader.readAsDataURL(input.files[0]);
+            const removeCheckbox = document.getElementById('removeProfilePicture');
+            if (removeCheckbox) removeCheckbox.checked = false;
+        }
+    }
+    function previewNewProfileImage(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) { document.getElementById('newPhotoPreview').src = e.target.result; }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>
 </body>
 </html>
