@@ -199,11 +199,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const passwordInput = document.getElementById('loginPassword'); // ID for login password
 
     if (togglePasswordButton && passwordInput) {
-        togglePasswordButton.addEventListener('click', function () {
+        togglePasswordButton.addEventListener('click', function() {
+            // Toggle the type attribute between password and text
             const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordInput.setAttribute('type', type);
-            this.querySelector('i').classList.toggle('fa-eye-slash');
-            this.querySelector('i').classList.toggle('fa-eye');
+            
+            // Toggle the eye icon between eye and eye-slash
+            const icon = this.querySelector('i');
+            icon.classList.toggle('fa-eye-slash');
+            icon.classList.toggle('fa-eye');
         });
     }
 

@@ -107,19 +107,24 @@ def get_barber_reservations(request): # API for barber's existing reservations
         return JsonResponse({'error': str(e)}, status=500)
 
 def customer_signup(request):
-    # ... (Your existing signup logic - seems fine) ...
     if request.method == "POST":
         form = SignUpForm(request.POST)
         if form.is_valid():
-            # ... (user creation and group assignment) ...
-            user = form.save() # If SignUpForm is a ModelForm for UserModel
+            # Create user but don't save to database yet
+            user = form.save(commit=False)
+            # Set the password with proper hashing
+            password = form.cleaned_data.get('password')
+            user.set_password(password)
+            # Now save the user with hashed password
+            user.save()
+            
+            # Add user to Customer group
             from django.contrib.auth.models import Group
             try:
                 customer_group = Group.objects.get(name="Customer")
                 user.groups.add(customer_group)
             except Group.DoesNotExist:
                 messages.error(request, "Customer group not found. Please contact admin.")
-                # Decide if you want to proceed or stop user creation
             
             user.backend = "django.contrib.auth.backends.ModelBackend" # Or your custom EmailBackend
             login(request, user)
@@ -166,11 +171,63 @@ def reservation(request): # This is likely the main reservation creation page
 
 @login_required
 def customers_profile(request):
-    # ... (Your existing profile logic - seems fine) ...
     user = request.user
     if request.method == "POST":
-        # ... your form handling ...
-        pass # Placeholder for brevity
+        form_type = request.POST.get('form_type')
+        
+        # Handle profile update form
+        if form_type == 'profile_update':
+            profile_form = UserProfileUpdateForm(request.POST, instance=user)
+            if profile_form.is_valid():
+                profile_form.save()
+                messages.success(request, "Profile updated successfully.")
+                return redirect('profile')
+            else:
+                messages.error(request, "Please correct the errors below.")
+        
+        # Handle email change form
+        elif form_type == 'email_change':
+            email_form = UserEmailChangeForm(request.POST, instance=user)
+            if email_form.is_valid():
+                email_form.save()
+                messages.success(request, "Email updated successfully.")
+                return redirect('profile')
+            else:
+                messages.error(request, "Please correct the errors below.")
+        
+        # Handle password change form
+        elif form_type == 'password_change':
+            old_password = request.POST.get('old_password')
+            new_password1 = request.POST.get('new_password1')
+            new_password2 = request.POST.get('new_password2')
+            
+            # Validate passwords
+            if not user.check_password(old_password):
+                messages.error(request, "Current password is incorrect.")
+            elif new_password1 != new_password2:
+                messages.error(request, "New passwords do not match.")
+            elif len(new_password1) < 8:
+                messages.error(request, "Password must be at least 8 characters long.")
+            else:
+                # Set the new password with proper hashing
+                user.set_password(new_password1)
+                user.save()
+                # Update the session to prevent logout
+                from django.contrib.auth import update_session_auth_hash
+                update_session_auth_hash(request, user)
+                messages.success(request, "Password changed successfully.")
+                return redirect('profile')
+        
+        # Handle account deletion
+        elif form_type == 'delete_account':
+            # Optional: Add additional verification here if needed
+            user.is_active = False
+            user.save()
+            logout(request)
+            messages.success(request, "Your account has been deleted.")
+            return redirect('customers')
+    
+    # Prepare forms for GET request
     profile_form = UserProfileUpdateForm(instance=user)
     email_form = UserEmailChangeForm(instance=user)
     password_form = PasswordChangeForm(user=user)

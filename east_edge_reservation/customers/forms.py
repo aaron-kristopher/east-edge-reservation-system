@@ -25,8 +25,6 @@ class SignUpForm(forms.ModelForm):
             "last_name",
             "phone_number",
             "email",
-            "password",
-            "password_confirm",
         ]
 
     def clean_email(self):
