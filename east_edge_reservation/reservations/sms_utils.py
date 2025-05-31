@@ -496,7 +496,7 @@ def send_reservation_sms(
     barber_recipient_name: str,
     company_sender_name: str,
 ):
-    customer_success = True
+    customer_success = False
     if customer_phone_number and customer_message_body.strip():
         logger.info(f"Sending reservation SMS to customer {customer_phone_number}")
         customer_success = send_sms(
@@ -509,7 +509,7 @@ def send_reservation_sms(
     else:
         logger.debug("Skipping customer SMS: No phone or message body.")
 
-    barber_success = True
+    barber_success = False
     if barber_phone_number and barber_message_body.strip():
         logger.info(f"Sending reservation SMS to barber {barber_phone_number}")
         barber_success = send_sms(
@@ -522,3 +522,25 @@ def send_reservation_sms(
     else:
         logger.debug("Skipping barber SMS: No phone or message body.")
     return customer_success and barber_success
+
+def send_cancellation_sms(
+        phone_number: str,
+        message_body: str,
+        recipient_name: str,
+        sender_name: str
+):
+    cancellation_sms_success = False
+
+    if phone_number and message_body.strip():
+        logger.info(f"Sending reservation SMS to customer {phone_number}")
+        cancellation_sms_success = send_sms(
+            phone_number,
+            message_body,
+            recipient_name,
+            sender_name,
+            use_formal_segmenter=True,
+        )
+    else:
+        logger.debug("Skipping customer SMS: No phone or message body.")
+
+    return cancellation_sms_success

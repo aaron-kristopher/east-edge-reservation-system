@@ -1,4 +1,4 @@
-body{
+body {
     overflow-x: hidden;
     height: 100vh;
     margin: 0;
@@ -10,31 +10,29 @@ body{
 
 }
 
-h1{
+h1 {
     font-weight: 600;
 }
-.navbar{
+
+.navbar {
     background-image: linear-gradient(to right, #FF5C08, #FE8F08);
 }
-.navbar-brand{
+
+.navbar-brand {
     font-weight: 700;
 }
 
-#img{
+#img {
     margin-left: 1.5em;
     margin-top: 1em;
 }
 
 @media only screen and (max-width: 425px) {
-    #img{
+    #img {
         margin-top: -12%;
     }
-  }
-
-.p-5{
-    margin-top: 4%;
 }
 
-
-
-
+.p-5 {
+    margin-top: 4%;
+}

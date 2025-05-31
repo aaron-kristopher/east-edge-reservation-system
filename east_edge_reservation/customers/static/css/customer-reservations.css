@@ -1,59 +1,63 @@
-body{
+body {
     background-color: #FEFCFB;
     font-family: "Montserrat", serif;
     min-height: 100vh;
     color: #424242
 }
 
-.page-title{
+.page-title {
     font-weight: bolder;
     color: #FEFCFB;
 }
 
-.topcontainer{
-    background-image: linear-gradient(to right,#FF5C08 10%, #FE8F08 90%);
+.topcontainer {
+    background-image: linear-gradient(to right, #FF5C08 10%, #FE8F08 90%);
     height: 60px;
     width: 100%;
     position: relative;
-    margin-bottom: 50px;    
+    margin-bottom: 50px;
 }
 
-#nav-btn{
+#nav-btn {
     border-color: none;
     background-color: transparent;
     border: none;
 }
 
-.material-icons{
+.material-icons {
     color: #FEFCFB;
 }
 
-.date{
+.date {
     font-weight: 700;
 }
 
-.completed-icon, .ongoing-icon{
+.completed-icon,
+.ongoing-icon {
     font-size: clamp(1.2rem, 2vw, 2.5rem);
 }
 
-.completed-title, .completed-reservation,
-.ongoing-title, .ongoing-reservation,
-.reason-input{
+.completed-title,
+.completed-reservation,
+.ongoing-title,
+.ongoing-reservation,
+.reason-input {
     font-size: clamp(1rem, 1vw, 1.5rem);
-    font-weight: 500;
+    font-weight: 600;
 }
 
 /* COMPLETED SECTION */
 
-.completed-title{
+.completed-title {
     color: rgba(30, 30, 30, .50);
 }
 
-.completed-reservation, .completed-icon{
+.completed-reservation,
+.completed-icon {
     color: #424242;
 }
 
-.card.complete-container{
+.card.complete-container {
     background-color: #D4CBC6;
     border: none;
     border-radius: 5px;
@@ -67,38 +71,38 @@ body{
     border-radius: 5px;
 }
 
-button{
+button {
     border: none;
     outline: none;
     background-color: #FEFCFB;
     color: #424242;
 }
 
-.card#accordion{
+.card#accordion {
     background-color: rgba(254, 252, 251, 1);
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
     border-radius: 0px;
 }
 
-.form-control{
+.form-control {
     background: #FF9966;
     outline: none;
     box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.15);
     color: #FEFCFB;
 }
 
-.form-control::placeholder{
+.form-control::placeholder {
     color: #FEFCFB;
 }
 
-.form-control:focus{
+.form-control:focus {
     background: #FF9966;
     border: 1px solid #FF5C08;
     outline: none;
     box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.15);
 }
 
-.confirm-btn{
+.confirm-btn {
     background: linear-gradient(to right, #FF5C08 40%, #FE8F08 90%);
     color: #FEFCFB;
     border: none;
@@ -107,52 +111,54 @@ button{
 }
 
 #accordion .btn:focus,
-#accordion .btn:active{
+#accordion .btn:active {
     outline: none !important;
     box-shadow: none !important;
     border: none;
 }
-  
+
 .cancelled-title {
     font-weight: 600;
     color: #F05454;
-  }
-  
-  .cancelled-container {
+}
+
+.cancelled-container {
     border-radius: 5px;
     border: 1px solid rgba(240, 84, 84, 0.3);
-  }
-  
-  .cancelled-reservation {
+}
+
+.cancelled-reservation,
+.declined-reservation,
+.ongoing-reservation {
     font-weight: 600;
     color: #5A5A5A;
     margin-bottom: 0;
-  }
-  
-  .cancelled-icon {
+}
+
+.cancelled-icon {
     color: #F05454;
-  }
-  
-  .declined-title {
+}
+
+.declined-title {
     font-weight: 600;
     color: #9A031E;
-  }
-  
-  .declined-container {
+}
+
+.declined-container {
     border-radius: 5px;
     border: 1px solid rgba(154, 3, 30, 0.3);
-  }
-  
-  .declined-reservation {
+}
+
+.declined-reservation {
     font-weight: 600;
     color: #5A5A5A;
     margin-bottom: 0;
-  }
-  
-  .declined-icon {
+}
+
+.declined-icon {
     color: #9A031E;
-  }
-  
-  .month-section {
+}
+
+.month-section {
     margin-bottom: 30px;
-  }
+}

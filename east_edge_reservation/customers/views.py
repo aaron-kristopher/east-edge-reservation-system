@@ -1,22 +1,23 @@
 from django.db.models import Q, Count
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
-from barbers.models import Barber, Service
-from reservations.models import Reservation
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from .forms import SignUpForm
-from .models import UserModel
-
-from .forms import UserProfileUpdateForm, UserEmailChangeForm
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from core.decorators import group_required
 
+from barbers.models import Barber, Service
+from .forms import UserProfileUpdateForm, UserEmailChangeForm
+from .forms import SignUpForm
+from .models import UserModel
+from reservations.models import Reservation
+from reservations.sms_utils import send_cancellation_sms
 
 # Create your views here.
+
 
 # @group_required('Customer')
 def customers(request):
@@ -24,9 +25,9 @@ def customers(request):
     return render(request, "customers/index.html", context)
 
 
-def customer_reservations(request):
-    context = {"services": Service.objects.all(), "barbers": Barber.objects.all()}
-    return render(request, "customers/reservation_select.html", context)
+# def customer_reservations(request):
+#     context = {"services": Service.objects.all(), "barbers": Barber.objects.all()}
+#     return render(request, "customers/reservation_select.html", context)
 
 
 def barbers(request):
@@ -81,12 +82,13 @@ def customer_signup(request):
                 phone_number=phone_number,
                 password=password,
             )
-            
+
             # Add user to Customer group
             from django.contrib.auth.models import Group
-            customer_group = Group.objects.get(name='Customer')
+
+            customer_group = Group.objects.get(name="Customer")
             user.groups.add(customer_group)
-            
+
             user.backend = "customers.backends.EmailBackend"
             login(request, user)
             return redirect("customers")
@@ -106,11 +108,11 @@ def customer_login(request):
         if user is not None:
             user.backend = "customers.backends.EmailBackend"
             login(request, user)
-            
+
             # Check if user is in the Receptionist group
-            if user.groups.filter(name='Receptionist').exists():
+            if user.groups.filter(name="Receptionist").exists():
                 # Redirect to the receptionist dashboard
-                return redirect('dashboard')
+                return redirect("dashboard")
             else:
                 # For regular customers, use the normal flow
                 redirected_url = (
@@ -132,7 +134,7 @@ def customer_logout(request):
 
 
 @login_required
-@group_required('Customer')
+@group_required("Customer")
 def reservation(request):
     context = {"services": Service.objects.all(), "barbers": Barber.objects.all()}
     return render(request, "customers/reservation.html", context)
@@ -205,34 +207,81 @@ def customers_profile(request):
     return render(request, "customers/profile.html", context)
 
 
-@login_required
-@group_required('Customer')
-def customer_reservations(request):
-    # Get all reservations for the current user
-    reservations = Reservation.objects.filter(
-        reserved_by=request.user
-    ).order_by('-start_datetime')
-    
-    return render(request, 'customers/customer-reservations.html', {
-        'reservations': reservations
-    })
-
 def cancel_reservation(request, reservation_id):
-    reservation = get_object_or_404(Reservation, id=reservation_id, reserved_by=request.user)
-    
+    reservation = get_object_or_404(
+        Reservation, id=reservation_id, reserved_by=request.user
+    )
+
     # Ensure the reservation can be canceled (not already completed or cancelled)
-    if reservation.status in ['C', 'X']:
+    if reservation.status in ["C", "X"]:
         messages.error(request, "This reservation cannot be cancelled.")
     else:
         # Update the reservation status to cancelled
-        reservation.status = 'X'
-        
+        reservation.status = "X"
+
         # Store the cancellation reason if provided
-        cancel_reason = request.POST.get('cancel_reason', '')
-        # If you want to store the reason, you could add a field to your model or create a separate model
-        # For now, we'll just change the status
-        
+        cancel_reason = request.POST.get("cancel_reason", "")
+
+        customer_cancellation_message = (
+            f"We have recieved your cancellation notice for reservation with "
+            f"{reservation.barber.first_name.upper()} {reservation.barber.last_name.upper()} dated "
+            f"{reservation.start_datetime.strftime('%B %d, %Y at %I:%M %p')}. "
+            f'The reason you stated:\n"{cancel_reason}"\n\n'
+            f"We will notify our team to update your reservation status."
+        )
+
+        barber_cancellation_message = (
+            f"Kindly be informed that a customer has cancelled their reservation with you. The reservation with "
+            f"{reservation.reserved_for_first_name.upper()} {reservation.reserved_for_last_name.upper()} dated "
+            f"{reservation.start_datetime.strftime('%B %d, %Y at %I:%M %p')} has been cancelled. "
+            f'The reason they stated:\n"{cancel_reason}"\n\n'
+            f"We will notify our team to update your reservation status."
+        )
+
+        sms_sent_successfully = send_cancellation_sms(
+            phone_number=reservation.reserved_for_phone,
+            message_body=customer_cancellation_message,
+            recipient_name=f"{reservation.reserved_for_first_name.upper()} {reservation.reserved_for_last_name.upper()}",
+            sender_name="East K' Edge",
+        )
+
+        sms_sent_successfully = sms_sent_successfully and send_cancellation_sms(
+            phone_number=reservation.barber.phone_number,
+            message_body=barber_cancellation_message,
+            recipient_name=f"{reservation.barber.first_name.upper()} {reservation.barber.last_name.upper()}",
+            sender_name="East K' Edge",
+        )
+
+        if not sms_sent_successfully:
+            print(f"SMS notification failed to send for reservation {reservation.id}")
+        else:
+            print("SMS notification successful")
+
         reservation.save()
         messages.success(request, "Reservation successfully cancelled.")
-    
-    return redirect('customer_reservations')
+
+    return redirect("customer_reservations")
+
+
+@login_required
+@group_required("Customer")
+def customer_reservations_view(request):
+    reservations_qs = Reservation.objects.filter(reserved_by=request.user).order_by('-start_datetime')
+    current_status_filter = request.GET.get('status_filter', '') # This will be "C", "X", "A,R", etc. from the form
+
+    if current_status_filter:
+        if current_status_filter == 'A,R': # Keep this as 'A,R' since it's the value from the select option
+            reservations_qs = reservations_qs.filter(status__in=[
+                Reservation.ReservationStatus.ACCEPTED,
+                Reservation.ReservationStatus.REQUESTED
+            ])
+        # For single statuses, the current_status_filter will be 'C', 'X', or 'D'
+        # These match the values of your ReservationStatus enum members
+        elif current_status_filter in Reservation.ReservationStatus.values: # .values gives ['C', 'X', 'R', 'A', 'D']
+            reservations_qs = reservations_qs.filter(status=current_status_filter)
+
+    context = {
+        'reservations': list(reservations_qs),
+        'current_status_filter': current_status_filter,
+    }
+    return render(request, 'customers/customer-reservations.html', context)

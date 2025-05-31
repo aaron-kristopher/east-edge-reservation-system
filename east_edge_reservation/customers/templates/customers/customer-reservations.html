@@ -1,4 +1,4 @@
-{%load static%}
+{% load static %}
 {% load reservation_filters %}
 <!DOCTYPE html>
 <html lang="en">
@@ -10,6 +10,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="{% static 'css/customer-reservations.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- Font Awesome 4.7.0 is older, consider if you need both or just 6.x -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,31 +24,56 @@
         <div class="col-12 d-flex justify-content-between align-items-center px-3 py-2">
             <button id="nav-btn"><a href="{% url 'reservation' %}"><i class="fas fa-chevron-left ms-1" style="color: #FEFCFB; font-size: 27px;"></i></a></button>
             <h3 class="page-title m-0">Reservations</h3>
-            <div style="width: 30px;"></div>
+            <div style="width: 30px;"></div> <!-- Spacer -->
         </div>
       </div>
     </div>
 
-    {% regroup reservations by start_datetime|date:"F Y" as reservations_by_month %}
-    
-    <!-- Month dropdown selector -->
+    <!-- Filter Form: Month selector AND Status Filter -->
     <div class="container mx-auto mt-3 mb-4">
       <div class="row">
         <div class="col-lg-2"></div>
         <div class="col-lg-8">
-          <select id="monthSelector" class="form-select" onchange="scrollToMonth(this.value)">
-            <option value="">Select Month</option>
-            {% for month_group in reservations_by_month %}
-              <option value="month-{{ forloop.counter }}">{{ month_group.grouper }}</option>
-            {% endfor %}
-          </select>
+          <form method="GET" action="{% url 'customer_reservations_view' %}" id="filterForm"> <!-- CHANGE 'customer_reservations_view' to your actual view URL name -->
+            <div class="row g-2">
+              <div class="col-md">
+                <label for="monthSelector" class="form-label visually-hidden">Select Month to View</label>
+                <select id="monthSelector" class="form-select" onchange="scrollToMonth(this.value)">
+                  <option value="">Scroll to Month</option>
+                  {% regroup reservations by start_datetime|date:"F Y" as temp_reservations_by_month_for_select %}
+                  {% for month_group_select in temp_reservations_by_month_for_select %}
+                    <option value="month-{{ month_group_select.grouper|slugify }}">{{ month_group_select.grouper }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="col-md">
+                <label for="statusFilterSelector" class="form-label visually-hidden">Filter by Status</label>
+                <select id="statusFilterSelector" name="status_filter" class="form-select" onchange="document.getElementById('filterForm').submit();">
+                  <option value="" {% if not current_status_filter %}selected{% endif %}>All Statuses</option>
+                  <option value="A,R" {% if current_status_filter == "A,R" %}selected{% endif %}>Ongoing</option>
+                  <option value="C" {% if current_status_filter == "C" %}selected{% endif %}>Completed</option>
+                  <option value="X" {% if current_status_filter == "X" %}selected{% endif %}>Cancelled</option>
+                  <option value="D" {% if current_status_filter == "D" %}selected{% endif %}>Declined</option>
+                  <!--
+                  Alternatively, if you pass status_choices from your view:
+                  {% for value, display_name in status_choices %}
+                    <option value="{{ value }}" {% if current_status_filter == value %}selected{% endif %}>{{ display_name }}</option>
+                  {% endfor %}
+                  And for "Ongoing", you'd handle 'A' and 'R' as a combined option manually or in the view.
+                  -->
+                </select>
+              </div>
+            </div>
+          </form>
         </div>
         <div class="col-lg-2"></div>
       </div>
     </div>
-    
+
+    {% regroup reservations by start_datetime|date:"F Y" as reservations_by_month %}
+
     {% for month_group in reservations_by_month %}
-    <div id="month-{{ forloop.counter }}" class="month-section">
+    <div id="month-{{ month_group.grouper|slugify }}" class="month-section">
       <div class="container mx-auto mb-3">
         <div class="row">
           <div class="col-lg-2"></div>
@@ -68,29 +94,26 @@
             <div class="container mx-auto mt-0">
               <p class="completed-title mb-2">Completed</p>
             </div>
-            
             {% for reservation in completed_reservations %}
-            <div class="card complete-container w-100"> 
-              <div class="card-body py-1 my-1"> 
-                <!-- ROW 1 -->
+            <div class="card complete-container w-100 mb-2">
+              <div class="card-body py-1 my-1">
                 <div class="row">
                   <div class="col">
                     <p class="completed-reservation">{{ reservation.barber.first_name }} {{ reservation.barber.last_name }}</p>
                   </div>
-                  <div class="col">
+                  <div class="col text-end">
                     <p class="completed-reservation">{{ reservation.start_datetime|date:"F j" }} | {{ reservation.start_datetime|date:"g:i A" }}</p>
                   </div>
                 </div>
-                <!-- ROW 2 -->
-                <div class="row mb-0"> 
-                  <div class="col-1"> 
-                    <i class="fas fa-users completed-icon"></i> 
+                <div class="row mb-0">
+                  <div class="col-1">
+                    <i class="fas fa-users completed-icon"></i>
                   </div>
                   <div class="col-5">
                     <p class="completed-reservation">{{ reservation.reserved_for_name }}</p>
                   </div>
-                  <div class="col-1"> 
-                    <i class="fas fa-tags completed-icon"></i> 
+                  <div class="col-1">
+                    <i class="fas fa-tags completed-icon"></i>
                   </div>
                   <div class="col-5">
                     <p class="completed-reservation">
@@ -119,34 +142,31 @@
       <div class="container mx-auto mb-5">
         <div class="row">
           <div class="col-lg-2"></div>
-          <div class="col-lg-8">
+          <div class="col-lg-8" id="accordion-ongoing-{{ month_group.grouper|slugify }}"> <!-- Unique ID for this month's ongoing accordion group -->
             <div class="container mx-auto mt-0">
               <p class="ongoing-title mb-2">Ongoing</p>
             </div>
-            
             {% for reservation in ongoing_reservations %}
-            <div class="card ongoing-container w-100" id="accordion-ongoing"> 
-              <div class="card-body py-1 my-1"> 
-                <button class="p-0 w-100 text-start" data-bs-toggle="collapse" href="#collapse-{{ reservation.id }}">
-                  <!-- ROW 1 -->
+            <div class="card ongoing-container w-100 mb-2"> <!-- Removed id="accordion-ongoing" from here -->
+              <div class="card-body py-1 my-1">
+                <button class="btn btn-link p-0 w-100 text-start text-decoration-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ reservation.id }}" aria-expanded="false" aria-controls="collapse-{{ reservation.id }}">
                   <div class="row">
                     <div class="col">
                       <p class="ongoing-reservation">{{ reservation.barber.first_name }} {{ reservation.barber.last_name }}</p>
                     </div>
-                    <div class="col">
+                    <div class="col text-end">
                       <p class="ongoing-reservation">{{ reservation.start_datetime|date:"F j" }} | {{ reservation.start_datetime|date:"g:i A" }}</p>
                     </div>
                   </div>
-                  <!-- ROW 2 -->
-                  <div class="row mb-0"> 
-                    <div class="col-1"> 
-                      <i class="fas fa-users ongoing-icon"></i> 
+                  <div class="row mb-0">
+                    <div class="col-1">
+                      <i class="fas fa-users ongoing-icon"></i>
                     </div>
                     <div class="col-5">
                       <p class="ongoing-reservation">{{ reservation.reserved_for_name }}</p>
                     </div>
-                    <div class="col-1"> 
-                      <i class="fas fa-tags ongoing-icon"></i> 
+                    <div class="col-1">
+                      <i class="fas fa-tags ongoing-icon"></i>
                     </div>
                     <div class="col-5">
                       <p class="ongoing-reservation">
@@ -159,31 +179,37 @@
                       </p>
                     </div>
                   </div>
-                  <!-- Status indicator -->
                   <div class="row mt-1">
                     <div class="col">
-                      <span class="badge {% if reservation.status == 'A' %}bg-success{% else %}bg-warning text-dark{% endif %}">
+                      <span class="badge {% if reservation.status == 'A' %}bg-success{% elif reservation.status == 'R' %}bg-warning text-dark{% else %}bg-secondary{% endif %}">
                         {{ reservation.get_status_display }}
                       </span>
                     </div>
                   </div>
                 </button>
               </div>
-              <!-- COLLAPSE -->
-              <div id="collapse-{{ reservation.id }}" class="collapse" data-bs-parent="#accordion-ongoing">
-                <div class="card-body mt-1 pt-1">
-                  <form action="{% url 'cancel_reservation' reservation.id %}" method="POST">
-                    {% csrf_token %}
-                    <div class="mb-3 mt-0">
-                      <label for="comment" class="reason-input">Would you like to cancel this reservation schedule? State your reason.</label>
-                      <textarea class="form-control" rows="5" id="comment" name="cancel_reason" placeholder="State your reason"></textarea>
+              <!-- COLLAPSE CONTENT -->
+              <div id="collapse-{{ reservation.id }}" class="collapse" data-bs-parent="#accordion-ongoing-{{ month_group.grouper|slugify }}">
+                <div class="card-body mt-1 pt-1 border-top">
+                  {% if reservation.start_datetime|is_past_cancellation_window %}
+                    <div class="alert alert-warning" role="alert">
+                      <small><strong>Notice:</strong> You may not cancel your reservation one day before the appointed date.
+                      Please call this number if you must cancel your reservation: <strong>09091598183</strong>.</small>
                     </div>
-                    <button type="submit" class="confirm-btn d-flex mx-auto p-2 justify-content-center">Confirm</button>
-                  </form>
+                    <button type="button" class="confirm-btn d-flex mx-auto p-2 justify-content-center" disabled>Confirm Cancellation</button>
+                  {% else %}
+                    <form action="{% url 'cancel_reservation' reservation.id %}" method="POST">
+                      {% csrf_token %}
+                      <div class="mb-3 mt-0">
+                        <label for="comment-{{ reservation.id }}" class="reason-input form-label"><small>Would you like to cancel this reservation schedule? State your reason.</small></label>
+                        <textarea class="form-control form-control-sm" rows="3" id="comment-{{ reservation.id }}" name="cancel_reason" placeholder="State your reason"></textarea>
+                      </div>
+                      <button type="submit" class="confirm-btn d-flex mx-auto p-2 justify-content-center">Confirm Cancellation</button>
+                    </form>
+                  {% endif %}
                 </div>
               </div>
             </div>
-            <br>
             {% endfor %}
           </div>
           <div class="col-lg-2"></div>
@@ -202,29 +228,26 @@
             <div class="container mx-auto mt-0">
               <p class="cancelled-title mb-2">Cancelled</p>
             </div>
-            
             {% for reservation in cancelled_reservations %}
-            <div class="card cancelled-container w-100"> 
-              <div class="card-body py-1 my-1"> 
-                <!-- ROW 1 -->
+            <div class="card cancelled-container w-100 mb-2">
+              <div class="card-body py-1 my-1">
                 <div class="row">
                   <div class="col">
                     <p class="cancelled-reservation">{{ reservation.barber.first_name }} {{ reservation.barber.last_name }}</p>
                   </div>
-                  <div class="col">
+                  <div class="col text-end">
                     <p class="cancelled-reservation">{{ reservation.start_datetime|date:"F j" }} | {{ reservation.start_datetime|date:"g:i A" }}</p>
                   </div>
                 </div>
-                <!-- ROW 2 -->
-                <div class="row mb-0"> 
-                  <div class="col-1"> 
-                    <i class="fas fa-users cancelled-icon"></i> 
+                <div class="row mb-0">
+                  <div class="col-1">
+                    <i class="fas fa-users cancelled-icon"></i>
                   </div>
                   <div class="col-5">
                     <p class="cancelled-reservation">{{ reservation.reserved_for_name }}</p>
                   </div>
-                  <div class="col-1"> 
-                    <i class="fas fa-tags cancelled-icon"></i> 
+                  <div class="col-1">
+                    <i class="fas fa-tags cancelled-icon"></i>
                   </div>
                   <div class="col-5">
                     <p class="cancelled-reservation">
@@ -237,9 +260,15 @@
                     </p>
                   </div>
                 </div>
+                 {% if reservation.cancel_reason %} <!-- Assuming you store cancel reason -->
+                <div class="row mt-1">
+                    <div class="col">
+                        <small class="text-muted">Reason: {{ reservation.cancel_reason }}</small>
+                    </div>
+                </div>
+                {% endif %}
               </div>
             </div>
-            <br>
             {% endfor %}
           </div>
           <div class="col-lg-2"></div>
@@ -258,29 +287,26 @@
             <div class="container mx-auto mt-0">
               <p class="declined-title mb-2">Declined</p>
             </div>
-            
             {% for reservation in declined_reservations %}
-            <div class="card declined-container w-100"> 
-              <div class="card-body py-1 my-1"> 
-                <!-- ROW 1 -->
+            <div class="card declined-container w-100 mb-2">
+              <div class="card-body py-1 my-1">
                 <div class="row">
                   <div class="col">
                     <p class="declined-reservation">{{ reservation.barber.first_name }} {{ reservation.barber.last_name }}</p>
                   </div>
-                  <div class="col">
+                  <div class="col text-end">
                     <p class="declined-reservation">{{ reservation.start_datetime|date:"F j" }} | {{ reservation.start_datetime|date:"g:i A" }}</p>
                   </div>
                 </div>
-                <!-- ROW 2 -->
-                <div class="row mb-0"> 
-                  <div class="col-1"> 
-                    <i class="fas fa-users declined-icon"></i> 
+                <div class="row mb-0">
+                  <div class="col-1">
+                    <i class="fas fa-users declined-icon"></i>
                   </div>
                   <div class="col-5">
                     <p class="declined-reservation">{{ reservation.reserved_for_name }}</p>
                   </div>
-                  <div class="col-1"> 
-                    <i class="fas fa-tags declined-icon"></i> 
+                  <div class="col-1">
+                    <i class="fas fa-tags declined-icon"></i>
                   </div>
                   <div class="col-5">
                     <p class="declined-reservation">
@@ -293,6 +319,13 @@
                     </p>
                   </div>
                 </div>
+                {% if reservation.decline_reason %} <!-- Assuming you store decline reason -->
+                <div class="row mt-1">
+                    <div class="col">
+                        <small class="text-muted">Reason: {{ reservation.decline_reason }}</small>
+                    </div>
+                </div>
+                {% endif %}
               </div>
             </div>
             {% endfor %}
@@ -302,25 +335,46 @@
       </div>
       {% endif %}
       {% endwith %}
-    </div>
+    </div> <!-- end month-section -->
+    {% empty %}
+      <!-- This specific 'empty' for the month_group loop might not be hit if reservations are filtered to none before regrouping -->
     {% endfor %}
 
     {% if not reservations %}
     <div class="container mx-auto text-center my-5">
-      <h4>You have no reservations yet.</h4>
-      <p>Make a reservation to get started!</p>
-      <a href="{% url 'reservation' %}" class="btn btn-warning">Make Reservation</a>
+      <h4>
+        {% if current_status_filter %}
+          You have no reservations matching the current filter criteria.
+        {% else %}
+          You have no reservations yet.
+        {% endif %}
+      </h4>
+      {% if not current_status_filter %}
+        <p>Make a reservation to get started!</p>
+        <a href="{% url 'reservation' %}" class="btn btn-warning">Make Reservation</a>
+      {% else %}
+        <p><a href="{% url 'customer_reservations_view' %}" class="btn btn-outline-secondary btn-sm">Clear Filter</a></p> <!-- CHANGE 'customer_reservations_view' -->
+      {% endif %}
     </div>
     {% endif %}
 
     <script>
-      function scrollToMonth(monthId) {
-        if (monthId) {
-          document.getElementById(monthId).scrollIntoView({behavior: 'smooth'});
+      function scrollToMonth(monthIdSlug) {
+        if (monthIdSlug) {
+          const element = document.getElementById(monthIdSlug); // monthIdSlug should match the id set on month-section div
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
         }
       }
-    </script>
 
-    {% load reservation_filters %}
+      // Ensure DOM is loaded before trying to access elements for month selector,
+      // especially if this script block is in <head>
+      document.addEventListener('DOMContentLoaded', function() {
+        // If you want to pre-select the month selector if a filter is active (though it only scrolls)
+        // This is a bit more complex as monthSelector's options are based on full list,
+        // but the scroll still needs to work. The current setup is simpler: it just scrolls.
+      });
+    </script>
   </body>
 </html>
