@@ -25,4 +25,19 @@ urlpatterns = [
         views.cancel_reservation,
         name="cancel_reservation",
     ),
+    path(
+        "password-reset/send-otp/",
+        views.send_password_reset_otp,
+        name="send_password_reset_otp",
+    ),
+    path(
+        "password-reset/verify-otp/",
+        views.verify_password_reset_otp,
+        name="verify_password_reset_otp",
+    ),
+    path(
+        "password-reset/set-new-password/",
+        views.reset_password_with_otp,
+        name="reset_password_with_otp",
+    ),
 ]
