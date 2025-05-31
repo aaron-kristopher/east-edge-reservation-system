@@ -260,7 +260,7 @@ def cancel_reservation(request, reservation_id):
         reservation.save()
         messages.success(request, "Reservation successfully cancelled.")
 
-    return redirect("customer_reservations")
+    return redirect("customer_reservations_view")
 
 
 @login_required

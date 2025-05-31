@@ -36,7 +36,7 @@
         <div class="collapse navbar-collapse" id="collapsibleNavbar">
           <ul class="navbar-nav" id="navbar-navlist">
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'customer_reservations' %}">My Appointments</a>
+              <a class="nav-link" href="{% url 'customer_reservations_view' %}">My Appointments</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="#">FAQ</a>              
@@ -417,7 +417,7 @@
       }
     }
 
-    document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", () => {
       populateTimeDropdown();
       const timeSelect = document.getElementById("time-select");
       const reservationButton = document.querySelector('.calendar-container button[onclick^="getBarberReservations"]');
@@ -426,10 +426,27 @@
 
       flatpickr("#datetimepicker", {
         enableTime: false,
-        time_24hr: false,
+        // time_24hr: false, // Not needed if enableTime is false
         inline: true,
-        defaultDate: new Date(),
-        dateFormat: "Y-m-d", //F j, Y
+        // defaultDate: new Date(), // Keep or remove based on preference
+        dateFormat: "Y-m-d", 
+
+        // --- ADD THIS PART ---
+        minDate: "today", // Prevents selection of past dates
+        disable: [
+            function(date) {
+                // Disable today. Flatpickr's "today" for minDate means "start of today",
+                // so a selected date on "today" is allowed.
+                // We need to explicitly disable today if same-day is not allowed.
+                const today = new Date();
+                today.setHours(0, 0, 0, 0); // Normalize today to start of day
+
+                const currentDate = new Date(date);
+                currentDate.setHours(0, 0, 0, 0); // Normalize selected date to start of day
+
+                return currentDate.getTime() === today.getTime();
+            }
+        ],
 
         onReady: function(selectedDates, dateStr, instance) {
           const calendarInnerContainer = instance.calendarContainer.querySelector('.flatpickr-innerContainer');

@@ -40,7 +40,6 @@ body {
 .completed-title,
 .completed-reservation,
 .ongoing-title,
-.ongoing-reservation,
 .reason-input {
     font-size: clamp(1rem, 1vw, 1.5rem);
     font-weight: 600;
@@ -147,12 +146,6 @@ button {
 .declined-container {
     border-radius: 5px;
     border: 1px solid rgba(154, 3, 30, 0.3);
-}
-
-.declined-reservation {
-    font-weight: 600;
-    color: #5A5A5A;
-    margin-bottom: 0;
 }
 
 .declined-icon {
