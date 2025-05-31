@@ -15,6 +15,43 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
     <title>Receptionist Dashboard</title>
+    <style>
+      /* Consistent Table Header Style for all content sections */
+      .content-section .table thead th {
+        background-color: #FF6B00;
+        color: white;
+        border-color: #FF6B00; /* Optional: if you want borders to match */
+      }
+
+      /* Scoped overflow for specific tables if needed, or make it general */
+      .table-responsive { /* General table responsiveness */
+        overflow-x: auto;
+      }
+      
+      /* Button styles - these were specific to schedule actions, kept them specific */
+      .btn-primary.schedule-action-button {
+        background-color: #FF6B00;
+        border-color: #FF6B00;
+      }
+      .btn-primary.schedule-action-button:hover {
+        background-color: #e05e00;
+        border-color: #e05e00;
+      }
+      .btn-outline-primary.schedule-action-button {
+        color: #FF6B00;
+        border-color: #FF6B00;
+      }
+      .btn-outline-primary.schedule-action-button:hover {
+        background-color: #FF6B00;
+        color: white;
+      }
+
+      /* Specific card header for schedules section if still needed, or generalize */
+      .schedules-content .card-header { 
+        background: linear-gradient(to right, #FF6B00, #FF8F40);
+        color: white;
+      }
+    </style>
 </head>
 <body>
   <!-- SIDEBAR -->
@@ -33,7 +70,7 @@
     
     <nav class="sidebar-nav">
       <ul class="nav-list">
-        <li class="nav-item active" onclick="showDashboard()">
+        <li class="nav-item" onclick="showDashboard()">
           <a href="#" class="nav-link">
             <i class="fas fa-sun"></i><span class="nav-text">Dashboard</span>
           </a>
@@ -51,6 +88,11 @@
         <li class="nav-item" onclick="showServices()">
           <a href="#" class="nav-link">
             <i class="fas fa-cut"></i><span class="nav-text">Services</span>
+          </a>
+        </li>
+        <li class="nav-item" onclick="showSchedules()">
+          <a href="#" class="nav-link">
+            <i class="fas fa-calendar-alt"></i><span class="nav-text">Schedules</span>
           </a>
         </li>
         <li class="nav-item">
@@ -92,7 +134,7 @@
     {% if messages %}
         <div class="container mt-3">
             {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
                     {{ message }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
@@ -151,10 +193,13 @@
           {% csrf_token %}<input type="hidden" name="form_type" value="delete_barbers">
           <div class="table-responsive">
             <table class="table table-striped">
-            <thead class="table-dark"><tr>
-                <th width="5%"><input type="checkbox" class="form-check-input" id="selectAllBarbers"></th>
-                <th width="5%">#</th><th width="20%">Name</th><th width="15%">Phone</th><th width="10%">Status</th><th width="25%">Services</th><th width="20%">Actions</th>
-            </tr></thead><tbody>
+            <thead> <!-- Removed table-dark -->
+                <tr>
+                    <th width="5%"><input type="checkbox" class="form-check-input" id="selectAllBarbers"></th>
+                    <th width="5%">#</th><th width="20%">Name</th><th width="15%">Phone</th><th width="10%">Status</th><th width="25%">Services</th><th width="20%">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
               {% for barber_item in barbers %}
               <tr data-barber-id="{{ barber_item.id }}">
                 <td><input type="checkbox" class="form-check-input barber-checkbox" name="selected_barbers" value="{{ barber_item.id }}"></td>
@@ -183,9 +228,11 @@
               </select></div></div>
       <div class="table-responsive">
           <table class="table table-striped">
-              <thead class="table-dark"><tr>
-                  <th width="5%">#</th><th>Service Name</th><th>Price</th><th>Duration (min)</th><th>Category</th><th>Actions</th>
-              </tr></thead>
+              <thead> <!-- Removed table-dark -->
+                  <tr>
+                      <th width="5%">#</th><th>Service Name</th><th>Price</th><th>Duration (min)</th><th>Category</th><th>Actions</th>
+                  </tr>
+              </thead>
               <tbody id="serviceTableBody">
               {% for service_item in services %}
               <tr data-service-id="{{ service_item.id }}" data-category="{{ service_item.category }}">
@@ -196,7 +243,8 @@
                       <form action="{% url 'dashboard' %}" method="post" style="display: inline;">{% csrf_token %}<input type="hidden" name="form_type" value="delete_service"><input type="hidden" name="service_id" value="{{ service_item.id }}"><button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete {{ service_item.service_name }}?')"><i class="fas fa-trash"></i></button></form>
                   </div></td></tr>
               {% empty %}<tr><td colspan="6" class="text-center">No services found</td></tr>{% endfor %}
-              </tbody></table></div></div>
+              </tbody></table></div>
+    </div>
 
     <!-- RESERVATIONS VIEW -->
     <div id="reservationsView" class="content-section p-3">
@@ -218,10 +266,12 @@
             </select></div></div>
         <div class="table-responsive">
           <table class="table table-striped">
-            <thead class="table-dark"><tr>
-                <th width="5%"><input type="checkbox" class="form-check-input" id="selectAllReservations"></th>
-                <th>Barber</th><th>Reserved By</th><th>Services</th><th>Date</th><th>Status</th><th>Actions</th>
-            </tr></thead>
+            <thead> <!-- Removed table-dark -->
+                <tr>
+                    <th width="5%"><input type="checkbox" class="form-check-input" id="selectAllReservations"></th>
+                    <th>Barber</th><th>Reserved By</th><th>Services</th><th>Date</th><th>Status</th><th>Actions</th>
+                </tr>
+            </thead>
             <tbody id="reservationTableBody">
               {% for reservation_item in reservations %}
               <tr data-reservation-id="{{ reservation_item.id }}" data-barber-id="{{ reservation_item.barber.id }}" data-status="{{ reservation_item.status }}">
@@ -253,30 +303,80 @@
                             <button class="btn btn-sm btn-outline-danger" onclick="showCancelReservationModal('{{ reservation_item.id }}', '{{ reservation_item.reserved_for_name|escapejs }}')">
                                 <i class="fas fa-times-circle"></i> Cancel
                             </button>
-                        {% elif reservation_item.status == 'D' %} {# DECLINED #}
-                            <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#editReservationModal" onclick="prepareEditReservation('{{ reservation_item.id }}')">
-                                <i class="fas fa-edit"></i> Re-evaluate
-                            </button>
-                        {% elif reservation_item.status == 'X' or reservation_item.status == 'C' %} {# CANCELLED or COMPLETED #}
-                            <span class="text-muted fst-italic">No actions</span>
-                        {% else %}
-                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editReservationModal" onclick="prepareEditReservation('{{ reservation_item.id }}')">
-                                <i class="fas fa-edit"></i> Edit
-                            </button>
                         {% endif %}
                     </div>
                 </td>
               </tr>
-              {% empty %}<tr><td colspan="7" class="text-center">No reservations found</td></tr>{% endfor %}
-            </tbody>
-          </table>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SCHEDULES VIEW -->
+    <div id="schedulesView" class="content-section p-3 schedules-content"> <!-- schedules-content class might still be useful for other specific styles -->
+        <div class="section-header d-flex justify-content-between align-items-center mb-4">
+            <h4><i class="fas fa-calendar-alt me-2"></i> Barber Schedules</h4>
+            <div>
+                <button type="button" class="btn btn-primary schedule-action-button me-2" data-bs-toggle="modal" data-bs-target="#generateSchedulesModal">
+                    <i class="fas fa-calendar-plus"></i> Generate Schedules
+                </button>
+                <button class="btn btn-danger" id="deleteSelectedSchedulesBtn" onclick="deleteSelectedSchedules()" disabled>
+                    <i class="fas fa-trash"></i> Delete Selected (0)
+                </button>
+            </div>
         </div>
-    </div> <!-- End of reservationsView -->
+        <!-- Schedules Table -->
+        <div class="card shadow-sm mb-4">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead> <!-- This will now use the general .content-section .table thead th style -->
+                        <tr>
+                            <th width="5%"><input type="checkbox" class="form-check-input" id="selectAllSchedules" onclick="toggleAllScheduleCheckboxes()"></th>
+                            <th>Barber</th>
+                            <th>Start Date & Time</th>
+                            <th>End Date & Time</th>
+                            <th>Day</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="scheduleTableBody">
+                        {% if schedules %}
+                            {% for schedule in schedules %}
+                            <tr data-schedule-id="{{ schedule.id }}" data-barber-id="{{ schedule.barber.id }}">
+                                <td><input type="checkbox" class="form-check-input schedule-checkbox" name="selected_schedules" value="{{ schedule.id }}" onchange="updateDeleteSelectedButtonState()"></td>
+                                <td>{{ schedule.barber.first_name }} {{ schedule.barber.last_name }}</td>
+                                <td>{{ schedule.start_datetime|date:"M d, Y, h:i A" }}</td>
+                                <td>{{ schedule.end_datetime|date:"M d, Y, h:i A" }}</td>
+                                <td>{{ schedule.start_datetime|date:"l" }}</td>
+                                <td>
+                                    <div class="d-flex gap-1">
+                                        <button class="btn btn-sm btn-outline-primary schedule-action-button" data-bs-toggle="modal" data-bs-target="#editScheduleModal" onclick="prepareEditScheduleModal('{{ schedule.id }}')">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger" onclick="deleteSingleSchedule('{{ schedule.id }}')">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="6" class="text-center">No schedules found</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
-  </div> <!-- End of main-content -->
+  </div> <!-- End Main Content -->
 
-  <!-- MODALS -->
-  <!-- Edit Reservation Modal -->
+  <!-- MODALS (Keep all modals together at the end for clarity) -->
+
+  <!-- EDIT RESERVATION MODAL -->
   <div class="modal fade" id="editReservationModal" tabindex="-1" aria-labelledby="editReservationModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
@@ -472,6 +572,140 @@
             <div class="mb-3"><label for="modalServiceCategory" class="form-label">Category</label><select class="form-select" id="modalServiceCategory" name="category" required><option value="H">Hair Services</option><option value="N">Nail Services</option><option value="G">Grooming Services</option></select></div>
             <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn" style="background-color: #FF6B00; border-color: #FF6B00; color: white;">Save Changes</button></div>
           </form></div></div></div></div>
+    
+  <!-- Generate Schedules Modal (from schedules.html) -->
+  <div class="modal fade" id="generateSchedulesModal" tabindex="-1" aria-labelledby="generateSchedulesModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header" style="background-color: #FF6B00; color: white;">
+          <h5 class="modal-title" id="generateSchedulesModalLabel">Generate Weekly Schedules</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="generateSchedulesForm" action="{% url 'dashboard' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="form_type" value="generate_schedules">
+            
+            <div class="mb-3">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <label class="form-label mb-0">Select Barbers</label>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="selectAllBarbersForSchedule" onclick="toggleAllBarberScheduleCheckboxes()">
+                  <label class="form-check-label" for="selectAllBarbersForSchedule">Select All</label>
+                </div>
+              </div>
+              
+              <div class="barber-list" style="max-height: 200px; overflow-y: auto;">
+                {% for barber in barbers %}
+                  <div class="form-check">
+                    <input class="form-check-input barber-schedule-checkbox" type="checkbox" name="barber_ids" value="{{ barber.id }}" id="scheduleBarber{{ barber.id }}">
+                    <label class="form-check-label" for="scheduleBarber{{ barber.id }}">
+                      {{ barber.first_name }} {{ barber.last_name }}
+                    </label>
+                  </div>
+                {% empty %}
+                  <p>No barbers available to generate schedules for.</p>
+                {% endfor %}
+              </div>
+            </div>
+            
+            <div class="alert alert-info">
+              <small>
+                <i class="fas fa-info-circle"></i> This will generate schedules for the selected barbers for the upcoming week (Sunday to Saturday) from 8:00 AM to 5:30 PM.
+              </small>
+            </div>
+            
+            <div class="d-grid">
+              <button type="submit" class="btn schedule-action-button" style="background-color: #FF6B00; border-color: #FF6B00; color: white;">
+                <i class="fas fa-calendar-plus"></i> Generate Schedules
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Schedule Modal (from schedules.html) -->
+  <div class="modal fade" id="editScheduleModal" tabindex="-1" aria-labelledby="editScheduleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header" style="background-color: #FF6B00; color: white;">
+          <h5 class="modal-title" id="editScheduleModalLabel">Edit Schedule</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="editScheduleForm" action="{% url 'dashboard' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="form_type" value="edit_schedule">
+            <input type="hidden" name="schedule_id" id="editScheduleId">
+            
+            <div class="mb-3">
+              <label for="editScheduleBarber" class="form-label">Barber</label>
+              <select class="form-select" id="editScheduleBarber" name="barber_id" required>
+                <option value="">Select Barber</option>
+                {% for barber in barbers %}
+                  <option value="{{ barber.id }}">{{ barber.first_name }} {{ barber.last_name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            
+            <div class="mb-3">
+              <label for="editScheduleStartDate" class="form-label">Start Date</label>
+              <input type="date" class="form-control" id="editScheduleStartDate" name="start_date" required>
+            </div>
+            
+            <div class="mb-3">
+              <label for="editScheduleStartTime" class="form-label">Start Time</label>
+              <input type="time" class="form-control" id="editScheduleStartTime" name="start_time" required>
+            </div>
+            
+            <div class="mb-3">
+              <label for="editScheduleEndDate" class="form-label">End Date</label>
+              <input type="date" class="form-control" id="editScheduleEndDate" name="end_date" required>
+            </div>
+            
+            <div class="mb-3">
+              <label for="editScheduleEndTime" class="form-label">End Time</label>
+              <input type="time" class="form-control" id="editScheduleEndTime" name="end_time" required>
+            </div>
+            
+            <div class="d-grid">
+              <button type="submit" class="btn schedule-action-button" style="background-color: #FF6B00; border-color: #FF6B00; color: white;">
+                <i class="fas fa-save"></i> Save Changes
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Logout Confirm Modal (already present, kept for completeness if merging blindly) -->
+  <div class="modal fade" id="logoutConfirmModal" tabindex="-1" aria-labelledby="logoutConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header" style="background-color: #FF6B00; color: white;">
+          <h5 class="modal-title" id="logoutConfirmModalLabel">Confirm Logout</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure you want to logout?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Selected Schedules Form (from schedules.html) -->
+  <form id="deleteSelectedSchedulesForm" action="{% url 'dashboard' %}" method="post" style="display: none;">
+    {% csrf_token %}
+    <input type="hidden" name="form_type" value="delete_selected_schedules">
+    <div id="selectedScheduleIdsContainer"></div>
+  </form>
 
 
 <script>
@@ -494,18 +728,31 @@
         navTexts.forEach(text => { text.style.display = sidebar.classList.contains('collapsed') ? 'none' : 'inline'; });
     }
     function hideAllViews() { document.querySelectorAll('.content-section').forEach(view => view.classList.remove('active')); }
-    function setActiveNav(index) { document.querySelectorAll('.nav-item').forEach((item, i) => item.classList.toggle('active', i === index));}
+    function setActiveNav(index) { 
+        document.querySelectorAll('.sidebar-nav .nav-item').forEach((item, i) => {
+            item.classList.toggle('active', i === index);
+            const link = item.querySelector('.nav-link');
+            if (link) link.classList.toggle('active', i === index);
+        });
+    }
     function showDashboard() { hideAllViews(); document.getElementById('dashboardView').classList.add('active'); document.getElementById('pageTitle').textContent = 'Dashboard'; setActiveNav(0); }
     function showBarbers() { hideAllViews(); document.getElementById('barbersView').classList.add('active'); document.getElementById('pageTitle').textContent = 'Barbers'; setActiveNav(1); }
     function showReservations() { hideAllViews(); document.getElementById('reservationsView').classList.add('active'); document.getElementById('pageTitle').textContent = 'Reservations'; setActiveNav(2); }
     function showServices() { hideAllViews(); document.getElementById('servicesView').classList.add('active'); document.getElementById('pageTitle').textContent = 'Services'; setActiveNav(3); }
+    function showSchedules() { hideAllViews(); document.getElementById('schedulesView').classList.add('active'); document.getElementById('pageTitle').textContent = 'Schedules'; setActiveNav(4); }
+
     function toggleBarberView(viewType) {
         document.getElementById('barbersGridView').style.display = viewType === 'grid' ? 'flex' : 'none';
         document.getElementById('barbersListView').style.display = viewType === 'list' ? 'block' : 'none';
         document.getElementById('gridViewBtn').classList.toggle('active', viewType === 'grid');
         document.getElementById('listViewBtn').classList.toggle('active', viewType === 'list');
     }
-    function confirmLogout() { if (confirm('Are you sure you want to logout?')) { document.getElementById('logoutForm').submit(); } }
+    function confirmLogout() { 
+        // Use the existing Bootstrap modal for logout confirmation
+        var logoutModal = new bootstrap.Modal(document.getElementById('logoutConfirmModal'));
+        logoutModal.show();
+     }
+
 
     // --- Delete Selected Functions ---
     function deleteSelectedBarbers() {
@@ -533,7 +780,7 @@
     // --- Prepare Edit Modals & Dynamic Services ---
     function prepareEditBarber(barberId) {
         document.getElementById('edit_barber_id').value = barberId;
-        fetch(`{% url 'get_barber' barber_id=0 %}`.replace('0', barberId)) // Use direct URL name
+        fetch(`{% url 'get_barber' barber_id=0 %}`.replace('0', barberId)) 
             .then(response => response.json()).then(data => {
             if (data.status === 'success') {
                 const barber = data.barber;
@@ -547,13 +794,14 @@
                     barber.services.forEach(sId => { const opt = servicesSelect.querySelector(`option[value="${sId}"]`); if (opt) opt.selected = true; });
                 }
                 document.getElementById('photoPreview').src = barber.profile_picture || "{% static 'images/avatar-1.jpg' %}";
+                document.getElementById('removeProfilePicture').checked = false; // Ensure 'remove' is unchecked
             } else { console.error('Error fetching barber:', data.message); }
         }).catch(err => console.error('Fetch error for barber:', err));
     }
 
     function prepareEditService(serviceId) {
         document.getElementById('edit_service_id').value = serviceId;
-        fetch(`{% url 'get_service' service_id=0 %}`.replace('0', serviceId)) // Use direct URL name
+        fetch(`{% url 'get_service' service_id=0 %}`.replace('0', serviceId)) 
             .then(response => response.json()).then(data => {
             if (data.status === 'success') {
                 const service = data.service;
@@ -576,7 +824,7 @@
         }
 
         servicesSelect.disabled = false;
-        const apiUrl = `{% url 'get_barber' barber_id=0 %}`.replace('0', barberId); // Use direct URL name
+        const apiUrl = `{% url 'get_barber' barber_id=0 %}`.replace('0', barberId); 
         fetch(apiUrl)
             .then(response => { if (!response.ok) throw new Error('Failed to fetch barber details'); return response.json(); })
             .then(data => {
@@ -601,7 +849,7 @@
 
     function prepareEditReservation(reservationId) {
         document.getElementById('edit_reservation_id').value = reservationId;
-        const apiUrl = `{% url 'get_reservation' reservation_id=0 %}`.replace('0', reservationId); // Use direct URL name
+        const apiUrl = `{% url 'get_reservation' reservation_id=0 %}`.replace('0', reservationId);
         fetch(apiUrl)
             .then(response => { if (!response.ok) { console.error("API Response not OK for get_reservation:", response.status, response.statusText); return response.text().then(text => { throw new Error(`HTTP error! status: ${response.status}, body: ${text}`); }); } return response.json(); })
             .then(data => {
@@ -618,7 +866,7 @@
                     document.getElementById('modalReservationIsSelf').checked = reservation.is_reserved_for_self;
                     if (reservation.start_datetime) {
                         const [datePart, timePartFull] = reservation.start_datetime.split('T');
-                        const timePart = timePartFull.substring(0,5);
+                        const timePart = timePartFull.substring(0,5); // HH:mm
                         document.getElementById('modalReservationDate').value = datePart;
                         document.getElementById('modalReservationTime').value = timePart;
                     } else { document.getElementById('modalReservationDate').value = ''; document.getElementById('modalReservationTime').value = ''; }
@@ -662,12 +910,32 @@
         else { console.error("cancelReservationModal element not found!"); }
     }
 
+    // --- Handle URL hash for section navigation ---
+    function handleUrlHash() {
+        const hash = window.location.hash.substring(1);
+        if (hash === 'barbers') {
+            showBarbers();
+        } else if (hash === 'services') {
+            showServices();
+        } else if (hash === 'reservations') {
+            showReservations();
+        } else if (hash === 'schedules') {
+            showSchedules();
+        } else {
+            showDashboard();
+        }
+    }
+
     // --- Client-side Filtering & DOMContentLoaded Setup ---
     document.addEventListener('DOMContentLoaded', function() {
+        handleUrlHash();
+        window.addEventListener('hashchange', handleUrlHash);
+
         const reservationSearchInput = document.getElementById('reservationSearchInput');
         const reservationStatusSelect = document.getElementById('reservationStatusSelect');
         const reservationBarberSelect = document.getElementById('reservationBarberSelect');
         const reservationTableRows = document.querySelectorAll('#reservationTableBody tr');
+        
         const serviceSearchInput = document.getElementById('serviceSearchInput');
         const serviceCategorySelect = document.getElementById('serviceCategorySelect');
         const serviceTableRows = document.querySelectorAll('#serviceTableBody tr');
@@ -707,32 +975,57 @@
         if (serviceSearchInput) serviceSearchInput.addEventListener('input', filterServices);
         if (serviceCategorySelect) serviceCategorySelect.addEventListener('change', filterServices);
         
-        // Checkbox select all functionality
-        function setupSelectAll(selectAllId, checkboxClass, deleteButtonId) {
+        function setupSelectAll(selectAllId, checkboxClass, deleteButtonId, updateButtonStateFn) {
             const selectAllCheckbox = document.getElementById(selectAllId);
             const itemCheckboxes = document.querySelectorAll(`.${checkboxClass}`);
             const deleteButton = document.getElementById(deleteButtonId);
+
             if (selectAllCheckbox) {
                 selectAllCheckbox.addEventListener('change', function() {
                     itemCheckboxes.forEach(checkbox => { checkbox.checked = this.checked; });
-                    if (deleteButton) deleteButton.disabled = !this.checked && itemCheckboxes.length > 0; // Corrected logic
+                    if (updateButtonStateFn) updateButtonStateFn();
+                    else if (deleteButton) deleteButton.disabled = !this.checked && itemCheckboxes.length > 0;
                 });
             }
             itemCheckboxes.forEach(checkbox => {
                 checkbox.addEventListener('change', function() {
-                    const anyChecked = document.querySelectorAll(`.${checkboxClass}:checked`).length > 0;
-                    if (deleteButton) deleteButton.disabled = !anyChecked;
+                    if (updateButtonStateFn) updateButtonStateFn();
+                    else {
+                        const anyChecked = document.querySelectorAll(`.${checkboxClass}:checked`).length > 0;
+                        if (deleteButton) deleteButton.disabled = !anyChecked;
+                    }
                     if (selectAllCheckbox) {
-                        selectAllCheckbox.checked = document.querySelectorAll(`.${checkboxClass}:checked`).length === itemCheckboxes.length && itemCheckboxes.length > 0;
+                        const allChecked = document.querySelectorAll(`.${checkboxClass}:checked`).length === itemCheckboxes.length;
+                         selectAllCheckbox.checked = allChecked && itemCheckboxes.length > 0;
+                         selectAllCheckbox.indeterminate = !allChecked && document.querySelectorAll(`.${checkboxClass}:checked`).length > 0;
+
                     }
                 });
             });
         }
         setupSelectAll('selectAllBarbers', 'barber-checkbox', 'deleteSelectedBarbersBtn');
         setupSelectAll('selectAllReservations', 'reservation-checkbox', 'deleteSelectedReservationsBtn');
+        setupSelectAll('selectAllSchedules', 'schedule-checkbox', 'deleteSelectedSchedulesBtn', updateDeleteSelectedButtonState); // For schedules
 
+        // Initial states
         showDashboard(); 
         if (document.getElementById('barbersGridView')) { toggleBarberView('grid'); }
+        updateDeleteSelectedButtonState(); // Initialize schedules delete button
+
+        // For Generate Schedules Modal - Barber Checkboxes
+        const selectAllBarbersForScheduleCheckbox = document.getElementById('selectAllBarbersForSchedule');
+        const barberScheduleCheckboxes = document.querySelectorAll('.barber-schedule-checkbox');
+        if(selectAllBarbersForScheduleCheckbox) {
+            barberScheduleCheckboxes.forEach(checkbox => {
+              checkbox.addEventListener('change', function() {
+                const allChecked = Array.from(barberScheduleCheckboxes).every(cb => cb.checked);
+                const anyChecked = Array.from(barberScheduleCheckboxes).some(cb => cb.checked);
+                
+                selectAllBarbersForScheduleCheckbox.checked = allChecked;
+                selectAllBarbersForScheduleCheckbox.indeterminate = anyChecked && !allChecked;
+              });
+            });
+        }
     });
 
     // Image Preview Functions
@@ -751,6 +1044,178 @@
             reader.onload = function(e) { document.getElementById('newPhotoPreview').src = e.target.result; }
             reader.readAsDataURL(input.files[0]);
         }
+    }
+
+    // --- Schedules Specific JavaScript (from schedules.html, adapted) ---
+
+    // Toggle all barber checkboxes in the generate schedules modal
+    function toggleAllBarberScheduleCheckboxes() {
+      const selectAllCheckbox = document.getElementById('selectAllBarbersForSchedule');
+      const barberCheckboxes = document.querySelectorAll('.barber-schedule-checkbox');
+      
+      barberCheckboxes.forEach(checkbox => {
+        checkbox.checked = selectAllCheckbox.checked;
+      });
+    }
+    
+    // Toggle all schedule checkboxes in the main list
+    function toggleAllScheduleCheckboxes() {
+      const selectAllCheckbox = document.getElementById('selectAllSchedules');
+      const scheduleCheckboxes = document.querySelectorAll('.schedule-checkbox');
+      
+      scheduleCheckboxes.forEach(checkbox => {
+        checkbox.checked = selectAllCheckbox.checked;
+      });
+      updateDeleteSelectedButtonState();
+    }
+    
+    // Update delete selected schedules button state
+    function updateDeleteSelectedButtonState() {
+      const scheduleCheckboxes = document.querySelectorAll('.schedule-checkbox:checked');
+      const deleteButton = document.getElementById('deleteSelectedSchedulesBtn');
+      
+      if (deleteButton) {
+          if (scheduleCheckboxes.length > 0) {
+            deleteButton.disabled = false;
+            deleteButton.innerHTML = `<i class="fas fa-trash"></i> Delete Selected (${scheduleCheckboxes.length})`;
+          } else {
+            deleteButton.disabled = true;
+            deleteButton.innerHTML = '<i class="fas fa-trash"></i> Delete Selected (0)';
+          }
+      }
+      
+      const allScheduleCheckboxes = document.querySelectorAll('.schedule-checkbox');
+      const selectAllSchedulesCheckbox = document.getElementById('selectAllSchedules');
+      if (selectAllSchedulesCheckbox && allScheduleCheckboxes.length > 0) {
+        if (scheduleCheckboxes.length === 0) {
+          selectAllSchedulesCheckbox.checked = false;
+          selectAllSchedulesCheckbox.indeterminate = false;
+        } else if (scheduleCheckboxes.length === allScheduleCheckboxes.length) {
+          selectAllSchedulesCheckbox.checked = true;
+          selectAllSchedulesCheckbox.indeterminate = false;
+        } else {
+          selectAllSchedulesCheckbox.indeterminate = true;
+          selectAllSchedulesCheckbox.checked = false; 
+        }
+      } else if (selectAllSchedulesCheckbox) {
+         selectAllSchedulesCheckbox.checked = false;
+         selectAllSchedulesCheckbox.indeterminate = false;
+      }
+    }
+    
+    // Delete selected schedules
+    function deleteSelectedSchedules() {
+      const scheduleCheckboxes = document.querySelectorAll('.schedule-checkbox:checked');
+      
+      if (scheduleCheckboxes.length === 0) {
+        alert('No schedules selected for deletion.');
+        return;
+      }
+      
+      if (confirm(`Are you sure you want to delete ${scheduleCheckboxes.length} selected schedule(s)?`)) {
+        const form = document.getElementById('deleteSelectedSchedulesForm');
+        const container = document.getElementById('selectedScheduleIdsContainer');
+        
+        container.innerHTML = ''; // Clear previous inputs
+        
+        scheduleCheckboxes.forEach(checkbox => {
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = 'schedule_ids'; // This will be a list in request.POST
+          input.value = checkbox.value;
+          container.appendChild(input);
+        });
+        form.submit();
+      }
+    }
+    
+    // Prepare edit schedule modal
+    function prepareEditScheduleModal(scheduleId) {
+      const scheduleRow = document.querySelector(`tr[data-schedule-id="${scheduleId}"]`);
+      if (!scheduleRow) { console.error("Schedule row not found for ID:", scheduleId); return; }
+      
+      const barberId = scheduleRow.getAttribute('data-barber-id');
+      const startDateTimeText = scheduleRow.cells[2].textContent.trim(); // "May 31, 2025, 8:00 AM"
+      const endDateTimeText = scheduleRow.cells[3].textContent.trim();   // "May 31, 2025, 5:30 PM"
+      
+      const parseDateTime = (dateTimeStr) => {
+          try {
+            const dateObj = new Date(dateTimeStr);
+            if (isNaN(dateObj.getTime())) { 
+                const parts = dateTimeStr.match(/(\w{3})\s(\d{1,2}),\s(\d{4}),\s(\d{1,2}):(\d{2})\s(AM|PM)/);
+                if (!parts) throw new Error("Could not parse date string: " + dateTimeStr);
+                let hours = parseInt(parts[4]);
+                if (parts[6] === 'PM' && hours < 12) hours += 12;
+                if (parts[6] === 'AM' && hours === 12) hours = 0; 
+                const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                const monthIndex = monthNames.findIndex(m => m.toLowerCase() === parts[1].toLowerCase());
+                if(monthIndex === -1) throw new Error("Invalid month name: " + parts[1]);
+                return new Date(parseInt(parts[3]), monthIndex, parseInt(parts[2]), hours, parseInt(parts[5]));
+            }
+            return dateObj;
+          } catch (e) {
+            console.error("Error parsing date-time string:", dateTimeStr, e);
+            return null;
+          }
+      };
+
+      const startDateObj = parseDateTime(startDateTimeText);
+      const endDateObj = parseDateTime(endDateTimeText);
+
+      if (!startDateObj || !endDateObj) {
+          alert("Could not parse schedule dates. Please check the format.");
+          return;
+      }
+
+      const formatDateForInput = (date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      };
+      
+      const formatTimeForInput = (date) => {
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        return `${hours}:${minutes}`;
+      };
+      
+      document.getElementById('editScheduleId').value = scheduleId;
+      document.getElementById('editScheduleBarber').value = barberId;
+      document.getElementById('editScheduleStartDate').value = formatDateForInput(startDateObj);
+      document.getElementById('editScheduleStartTime').value = formatTimeForInput(startDateObj);
+      document.getElementById('editScheduleEndDate').value = formatDateForInput(endDateObj);
+      document.getElementById('editScheduleEndTime').value = formatTimeForInput(endDateObj);
+    }
+    
+    // Delete a single schedule
+    function deleteSingleSchedule(scheduleId) {
+      if (confirm('Are you sure you want to delete this schedule?')) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{% url "dashboard" %}'; 
+        
+        const csrfTokenInput = document.createElement('input');
+        csrfTokenInput.type = 'hidden';
+        csrfTokenInput.name = 'csrfmiddlewaretoken';
+        csrfTokenInput.value = '{{ csrf_token }}';
+        form.appendChild(csrfTokenInput);
+        
+        const formTypeInput = document.createElement('input');
+        formTypeInput.type = 'hidden';
+        formTypeInput.name = 'form_type';
+        formTypeInput.value = 'delete_schedule'; 
+        form.appendChild(formTypeInput);
+        
+        const scheduleIdInput = document.createElement('input');
+        scheduleIdInput.type = 'hidden';
+        scheduleIdInput.name = 'schedule_id';
+        scheduleIdInput.value = scheduleId;
+        form.appendChild(scheduleIdInput);
+        
+        document.body.appendChild(form);
+        form.submit();
+      }
     }
 </script>
 </body>
